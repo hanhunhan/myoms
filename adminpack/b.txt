@@ -1,1 +1,0 @@
-http://passport.house365.com/?app=api&act=changePwd&phone=13776601230&newpass=123456&signature=

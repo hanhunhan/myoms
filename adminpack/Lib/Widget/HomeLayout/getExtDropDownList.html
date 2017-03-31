@@ -1,9 +1,0 @@
-<!--扩展下拉列表-->
-<?php if($extList){?>
-<select name="extId" id="extId">
-    <option value="">请选择</option>
-    <?php foreach($extList as $ext){?>
-    <option value="<?=$ext['extId']?>"  <?php if($ext['extId']==$extId){?> selected="selected" <?php }?>><?=$ext['extName']?></option>
-    <?php }?>
-</select>
-<?php }?>

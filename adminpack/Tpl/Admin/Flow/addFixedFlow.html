@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>流程角色管理</title>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="Public/third/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="./Public/css/style2.css" type="text/css" rel="stylesheet"/>
+    <link href="./Public/css/jquery-ui.css" type="text/css" rel="stylesheet"/>
+    <script type="text/javascript" src="./Public/validform/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="./Public/validform/js/Validform_v5.3.2.js"></script>
+    <script src="Public/third/bootstrap/js/bootstrap.min.js"></script>
+    <!--<script type="text/javascript" src="./Public/validform/js/common.js"></script>
+    <script type="text/javascript" src="./Public/js/common.js"></script>-->
+    <link rel="stylesheet" href="./Public/validform/css/style.css" type="text/css" media="all"/>
+    <link rel="stylesheet" href="./Public/validform/css/validateForm.css" type="text/css" media="all"/>
+</head>
+<body>
+<div class="right fright j-right">
+    <div class="flow_title">
+        固定流程配置
+    </div>
+    <form class="registerform" action="{:U('Flow/addFixedFlow',array('add'=>1))}" method="post">
+        <div class="caseinfo-table">
+            <table style="table-layout:fixed;width:90%">
+                <tbody>
+                <tr>
+                    <td width='20%'>流程关联配置</td>
+                    <td>
+                        <select name="FLOWSETID" id="FLOWSETID" class="form-control">
+                            <option value=''>请选择</option>
+                            <foreach name="device" item="val">
+                                <option value="{$val['ID']}">{$val["FLOWNAME"]}</option>
+                            </foreach>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>城市</td>
+                    <td>
+                        <select name="CITY" class="form-control">
+                            <option value=''>请选择</option>
+                            <foreach name="city" item="val">
+                                <option value="{$val['ID']}">{$val["NAME"]}</option>
+                            </foreach>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>定义角色</td>
+                    <td>
+                        <span class="btn btn-info"
+                              id="addRole">新 增</span>
+
+                        <div id="roleDiv" style="margin-top:10px;"></div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <input type="hidden" value="" name="FLOWCURRENT" id="FLOWCURRENT"/>
+            <input type="hidden" value="{$parentID}" name="parentID" id="parentID"/>
+        </div>
+        <div class="handle-btn">
+            <input class="btn btn-primary" type="submit" value="保 存">
+            <input class="j-formclose btn btn-default" type="button" value="关 闭">
+        </div>
+    </form>
+</div>
+<script>
+    var roleList = {
+        EditChooseRole: function (roleId) {
+            $.ajax({
+                url: "{:U('Api/getRole')}",
+                async: false,
+                dataType: "json",
+                success: function (obJect) {
+                    if (obJect) {
+
+                        var html = "<p style='margin-top:5px;'>第 1 步：<select name='FLOWCURRENTID' onchange=roleList.getFlowCurrent()><option value=''>请选择</option>";
+                        $.each(obJect, function (key, val) {
+                            var sign = (val['ID'] == roleId) ? "selected" : "";
+
+                            html += "<option value='" + val['ID'] + "' " + sign + ">" + val['ROLENAME'] + "</option>";
+                        });
+
+                        html += "</select><span style='margin-left:20px;cursor:pointer' onclick =roleList.delRole('0')><small class='btn btn-danger btn-sm'>删除</small></span></p>";
+                        $("#roleDiv").html(html);
+                        $("#FLOWCURRENT").val(roleId);
+                    }
+                }
+            });
+        },
+        addRole: function () {
+
+            $.ajax({
+                url: "{:U('Api/getRole')}",
+                async: false,
+                dataType: "json",
+                success: function (obJect) {
+                    if (obJect) {
+
+                        var stepNum = $("#roleDiv p").length + 1;
+                        var html = "<p style='margin-top:5px;'>第 " + stepNum + " 步：<select name='FLOWCURRENTID' onchange=roleList.getFlowCurrent()><option value=''>请选择</option>";
+                        $.each(obJect, function (key, val) {
+
+                            html += "<option value='" + val['ID'] + "'>" + val['ROLENAME'] + "</option>";
+                        });
+
+                        html += "</select><span style='margin-left:20px;cursor:pointer' onclick =roleList.delRole('" + (stepNum - 1) + "')><small>删除</small></span></p>";
+
+                        $("#roleDiv").append(html);
+                    }
+                }
+            });
+        },
+        getFlowCurrent: function () {
+
+            var str = '';
+            for (var i = 0; i < $("#roleDiv select").length; i++) {
+                var current = $("#roleDiv select:eq(" + i + ")").val();
+                if (current) {
+                    str += current + ",";
+                }
+            }
+            if (str) str = str.substring(0, str.length - 1);
+
+            $("#FLOWCURRENT").val(str);
+        },
+        delRole: function (num) {
+            var currentArr = $("#FLOWCURRENT").val().split(",");
+            var str = '';
+            var html = '';
+            $("#roleDiv").html('');
+            for (var i = 0; i < currentArr.length; i++) {
+                if (i != num) {
+                    str += currentArr[i] + ",";
+                    this.rewriteRole(currentArr[i]);
+                }
+            }
+
+            if (str) str = str.substring(0, str.length - 1);
+
+            $("#FLOWCURRENT").val(str);
+        },
+        rewriteRole: function (roleId) {
+
+            $.ajax({
+                url: "{:U('Api/getRole')}",
+                async: false,
+                dataType: "json",
+                success: function (obJect) {
+                    if (obJect) {
+
+                        var stepNum = $("#roleDiv p").length + 1;
+                        var html = "<p style='margin-top:5px;'>第 " + stepNum + " 步：<select name='FLOWCURRENTID' onchange=roleList.getFlowCurrent()><option value=''>请选择</option>";
+                        $.each(obJect, function (key, val) {
+                            var sign = (val['ID'] == roleId) ? "selected" : "";
+                            html += "<option value='" + val['ID'] + "' " + sign + ">" + val['ROLENAME'] + "</option>";
+                        });
+
+                        html += "</select><span style='margin-left:20px;cursor:pointer' onclick =roleList.delRole('" + (stepNum - 1) + "')><small>删除</small></span></p>";
+
+                        $("#roleDiv").append(html);
+                    }
+                }
+            });
+
+        }
+    };
+    $(function () {
+        $("#addRole").click(function () {
+            roleList.addRole();
+        });
+        $(".j-formclose").bind('click', function () {
+            window.history.back();
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>置换明细</title>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <include file="./Tpl/Admin/Public/comm_css_js.html" />
+    <style>
+        .ui-autocomplete-input {
+            background-image: none;
+        }
+    </style>
+</head>
+<body>
+<div class="containter">
+    {$form}
+</div>
+<script type="text/javascript">
+    var allowProductNameAutoComplete = '{$product_name_autocomplete}';
+    if (parseInt(allowProductNameAutoComplete) > 0) {
+        // 通过品名联想库存商品
+        $("input[name='PRODUCT_NAME']").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "{:U('Warehouse/ajaxMatchedStorage',array('search_type'=>'displace'))}",
+                    type: "GET",
+                    dataType: "JSON",
+                    data: {keyword: request.term},
+                    success: function (data) {
+                        if (data.status == 'noauth') {
+                            location.reload();
+                        } else {
+                            //判断返回数据是否为空，不为空返回数据。
+                            if (data[0]['value'] > 0) {
+                                response(data);
+                            } else {
+                                response(data);
+                            }
+                        }
+                    }
+                });
+            },
+            select: function (event, ui) {
+                var item = ui.item;
+                $("input[name='BRAND']").val(item['brand']);
+                $("input[name='MODEL']").val(item['model']);
+            }
+        })
+                .data("ui-autocomplete")._renderItem = function (ul, item) {
+                    return $("<li></li>")
+                .data("item.autocomplete", item)
+                .append("<a>" + item.label + "</a>")
+                .appendTo(ul);
+        };
+
+
+        //有效期判断
+        $('input[name="LIVETIME"]').blur(function() {
+            if (!$('input[name="LIVETIME"]').val().trim()) return;
+
+            var postDate = new Date($('input[name="LIVETIME"]').val());
+            var nowDate = new Date();
+
+            if (postDate< nowDate) {
+                alert('“有效期时间”不得小于当前时间');
+                $('input[name="LIVETIME"]').val('');
+            }
+        });
+
+        //有效期提醒时间
+        $('input[name="ALARMTIME"]').blur(function() {
+            if (!$('input[name="ALARMTIME"]').val().trim()) return;
+
+            var postDate = new Date($('input[name="ALARMTIME"]').val());
+            var liveDate = new Date($('input[name="LIVETIME"]').val());
+            var nowDate = new Date();
+
+            if (postDate< nowDate) {
+                alert('“有效期提醒时间”不得小于当前时间!');
+                $('input[name="ALARMTIME"]').val('');
+            }
+
+            if(postDate >= liveDate){
+                alert('“有效期提醒时间”必须小于有效期!');
+                $('input[name="ALARMTIME"]').val('');
+            }
+        });
+    }
+</script>
+<include file="./Tpl/Admin/Public/filter.html"/>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>开票记录</title>
+        <meta charset="GBK">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <include file="./Tpl/Admin/Public/comm_css_js.html" />
+    </head>
+    <body>
+        <div class="containter">
+            <div class="right fright j-right">
+            <div class="handle-tab">
+            {$tabs}
+            </div>
+            {$form}
+            <input type="hidden" id="caseid" value="{$case_id}">
+            <input type="hidden" id="contractid" value="{$contract_id}">
+            <input type="hidden" id="current_applyinvoice_url" value="{:U('Advert/applyInvoice',$paramUrl)}">
+            </div>
+        </div>
+        <script type="text/javascript">
+            //开票明细页面发起开票流程
+            $("#applyInvoice").click(function(){
+                 var i=0;
+                 var invoiceId;
+                 var contractid = $("#contractid").val();
+                 var caseId = $("#caseid").val();
+                 var current_url = $("#current_applyinvoice_url").val();
+                 var flowtype = 'hetongkaipiao';
+                 $("input[name = 'checkedtd']").each(function(){
+                     if($(this).prop("checked") == true){
+                         invoiceId = $(this).val();
+                         i++;
+                     }
+                 })
+                 if(i <= 0 || i > 1)
+                 {
+                     if(i <= 0)
+                     {
+                         layer.alert("请选择需要开票的记录!",{icon:0});
+                         return false;
+                     }
+                     else if(i > 1)
+                     {
+                         layer.alert("每次申请只能选择一条记录！",{icon:0});
+                         return false;
+                     }
+
+                 }
+                 else
+                 {                        
+                     $.ajax({
+                         type:"post",
+                         url:"{:U('Advert/applyInvoice',$paramUrl)}",
+                         dataType:"JSON",
+                         data:{"RECORDID":contractid,"CASEID":caseId,"invoiceId":invoiceId,"is_ajax":1},
+                         success:function(data)
+                         {
+                             if(data.state == 0)
+                             {
+                                 layer.alert(data.msg,{icon:2});
+                             }
+                             else if(data.state ==1)
+                             {
+                                 var url = current_url + "/RECORDID/"+contractid+"/CASEID/"+caseId+"/FLOWTYPE/"+flowtype+"/invoiceId/"+invoiceId+"/is_ajax/0";
+
+                                 var appUrl = "__APP__";
+                                 var url = appUrl + '/Touch/Advert/process&RECORDID=' + contractid + '&CASEID=' + caseId + '&flowTypePinYin=' + flowtype + '&invoiceId=' + invoiceId;
+
+                                 window.open(url,"_self","");
+                             } else {
+                                 layer.alert(data.msg,{icon:2});
+                             }
+                         }
+                     })
+                 }                
+             });
+
+            //申请换票
+            $("#changeInvoice").click(function(){
+                //计数
+                var i=0;
+                //发票
+                var invoiceId = new Array();
+
+                $("input[name = 'checkedtd']").each(function(){
+                    if($(this).prop("checked") == true){
+                        invoiceId[i] = $(this).val();
+                        i++;
+                    }
+                });
+
+                //申请换票
+                if(i <= 0)
+                {
+                    layer.alert("亲，请选择<已开票>的记录!",{icon:0});
+                    return false;
+                }
+                else
+                {
+                    $.ajax({
+                        type:"GET",
+                        url:"{:U('Advert/change_refund_invoice',$paramUrl)}",
+                        dataType:"JSON",
+                        data:{"invoiceId":invoiceId,"is_ajax":1,"type":"change_invoice"},
+                        success:function(data)
+                        {
+                            if(data.status)
+                            {
+                                layer.alert(data.msg,{icon:1}, function (index) {
+                                    window.location.reload();
+                                });
+                            }
+                            else
+                            {
+                                layer.alert(data.msg,{icon:2});
+                            }
+                        },
+                        error:function(data){
+                            alert("网络错误，请重试~~~");
+                        },
+                    })
+                }
+            });
+
+            //申请退票
+            $("#refundInvoice").click(function(){
+                //计数
+                var i=0;
+                //发票
+                var invoiceId = new Array();
+
+                $("input[name = 'checkedtd']").each(function(){
+                    if($(this).prop("checked") == true){
+                        invoiceId[i] = $(this).val();
+                        i++;
+                    }
+                });
+
+                //申请退票
+                if(i <= 0)
+                {
+                    layer.alert("亲，请选择<已开票>的记录!",{icon:0});
+                    return false;
+                }
+                else
+                {
+                    $.ajax({
+                        type:"GET",
+                        url:"{:U('Advert/change_refund_invoice',$paramUrl)}",
+                        dataType:"JSON",
+                        data:{"invoiceId":invoiceId,"is_ajax":1,"type":"refund_invoice","dis":"1"},
+                        success:function(data)
+                        {
+                            if(data.status)
+                            {
+                                layer.alert(data.msg,{icon:1}, function (index) {
+                                    window.location.reload();
+                                });
+                            }
+                            else
+                            {
+                                layer.alert(data.msg,{icon:2});
+                            }
+                        },
+                        error:function(data){
+                            alert("网络错误，请重试~~~");
+                        },
+                    })
+                }
+            });
+
+            $('#add_invoice').click(function () {
+                var caseId = '{$case_id}';
+                var projId = '{$project_id}';
+                var contractId = '{$contract_id}';
+                layer.open({
+                    type: 2,
+                    title: '新增开票',
+                    skin: 'layui-layer-rim',
+                    shadeClose: true,
+                    shade: 0.8,
+                    area: ['800px', '550px'],
+                    content: '{:U("MemberDistribution/addInvoice")}' + '&prjid=' + projId + '&contract_id' + contractId,
+                    end: function() {
+                        location.reload();
+                    }
+                });
+            });
+      </script>
+        <include file="./Tpl/Admin/Public/filter.html" />
+    </body>
+</html>

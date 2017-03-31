@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>小蜜蜂采购明细</title>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <include file="./Tpl/Admin/Public/comm_css_js.html" />
+    <style>
+    /* 防止水平滚动条 */
+    .ui-autocomplete { max-height: 200px;overflow-y: auto;overflow-x: hidden;}
+    </style>
+</head>
+<body>   
+<div class="containter">     
+  <div class="right fright j-right">
+      {$form}
+  </div>   
+</div>
+<script>
+$(function(){
+	$('#commit_bee_detail').click(function(){
+		var purchaseId = new Array();
+        var i = 0;
+        $("input[name='checkedtd']:checkbox").each(function() {   
+            if ($(this).prop("checked") == true) {  
+               purchaseId[i] = $(this).val(); 
+               i += 1;
+            }
+        }); 
+        if( i == 0 ){   
+            layer.alert('请先选择需要提交报销的任务', {icon: 2});
+            return false;
+        }else{
+        	$.post('index.php?s=/Purchasing/bee_detail_commit',{'data':purchaseId},function(r){
+				switch(r.data){
+					case 400 :
+						layer.alert('请选择需要提报销的任务', {icon: 2});
+						break;
+					case 401 :
+						layer.alert('选中任务中没有需要报销的任务', {icon: 2},function(){
+							location = location;
+						});
+						break;
+					case 402:
+						var msg = '选中报销金额已超出总预算金额,是否申请超额流程（每条小蜜蜂采购仅能申请一次,如果申请超额流程被否决，所选的任务明细状态将被置为已驳回）？';
+						//var to_href = "index.php?s=/Purchasing/BeeOpinionFlow/prjid/0/beeId/"+r.status+"/beeWork/"+r.info+"/TAB_NUMBER/25/purchaseIds/"+purchaseId.join(',');
+						var to_href = "__APP__/Touch/PurchasingBee/show/prjid/0/beeId/"+r.status+"/beeWork/"+r.info+"/purchaseIds/"+purchaseId.join(',');
+						 
+						layer.confirm(msg, {icon: 2},function(r){
+							parent.location.href = to_href;
+						});
+						break;
+					case 403:
+						layer.alert('小蜜蜂采购明细不存在，请核实', {icon: 2});
+						break;
+					case 404:
+						layer.alert('请选择相同的供应商进行报销', {icon: 2});
+						break;
+					case 405:
+						layer.alert('选中报销金额已超出总预算金额且已经发起过超额流程，请联系财务人员', {icon: 2});
+						break;
+					case 500:
+						layer.alert('添加报销申请失败', {icon: 2});
+						break;
+					case 501:
+						layer.alert('添加报销明细失败', {icon: 2});
+						break;
+					case 502:
+						layer.alert('修改小蜜蜂任务报销状态失败', {icon: 2});
+						break;
+					case 503:
+						layer.alert('请提交未报销的任务', {icon: 2});
+						break;
+					case 200:
+						layer.alert('申请报销成功', {icon: 1},function(){
+							location = location;
+						});
+						break;
+        		}
+        	});
+        }
+	});
+	$('.J-export-file').click(function(){
+		var id = $(this).parent().attr('fid');
+		var file = $(this).attr('data-file');
+		location.href =  "index.php?s=/Purchasing/export_bee_file/id/"+id+'/file/'+file;
+	});
+	/*$('.checkedtd').change(function(){
+		if($(this).prop('checked') ){
+			var fid = $(this).val();
+			var status = $("select[name='"+fid+"_STATUS']").val();
+			if(status!=2 && status!=3  ){
+				layer.alert('该条任务未报销，请先报销！', {icon: 2});
+				$(this).attr('checked',false);
+			}else if($("select[name='"+fid+"_IS_BACK_TO_ZK']").val()==1 ){
+				layer.alert('该条任务反馈状态不符，请选择未反馈的任务', {icon: 2});
+				$(this).attr('checked',false);
+			}
+		}
+	});*/
+	$('#back_result_to_zk').click(function(){
+		//var id = $(this).data('id'); alert(id);
+		var purchaseId = new Array();
+        var i = 0;
+        $("input[name='checkedtd']:checkbox").each(function() {   
+            if ($(this).prop("checked") == true) {  
+               purchaseId[i] = $(this).val(); 
+               i += 1;
+            }
+        }); 
+        if( i == 0 ){   
+            layer.alert('请先选择需要提交报销的任务', {icon: 2});
+            return false;
+        }else{
+			$.post('index.php?s=/Purchasing/send_result_to_zk',{'data':purchaseId},function(r){
+				switch(r.status){
+					case 401:
+						layer.alert('请求参数错误', {icon: 2});
+						break;
+					case 402:
+						layer.alert('没有需要反馈的任务明细', {icon: 2});
+						break;
+					case 501:
+						layer.alert('请求众客接口出错，请稍后重试', {icon: 2});
+						break;
+					case 200:
+						layer.alert('申请报销反馈成功', {icon: 1},function(){
+							location = location;
+						});
+						break;
+				}
+			});
+		}
+	});
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+<title>项目特色列表</title>
+<link rel=stylesheet href="./Tpl/css/global.css" type="text/css">
+<link rel=stylesheet href="./Tpl/css/mainPage.css" type="text/css">
+<script type="text/javascript" src="./Tpl/js/jquery-1.5.2.min.js"></script>
+</head>
+
+<body>
+	<div class="box" id="interestManage">
+    	<div class="box-tit"><h3>项目特色列表</h3></div>
+        <div class="box-con">
+            <div class="box-b">
+            	<div class="hd"><h3>项目特色列表</h3></div>
+                <div class="bd">
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table-a">
+                      <tr>
+                        <th>序号</th>
+                        <th>名称</th>
+						<th>图标</th>
+                        <th>添加时间</th>
+						<th>修改时间</th>
+                        <th><a class="font-blue" href="{:U('Product_features/edit?todo=add')}">添加特色</a></th>
+                      </tr>
+					  <volist name="re" id="vo">
+						<tr>
+						<td width="5%">{$vo.pf_id}</td>
+                        <td width="40%">{$vo.pf_name}</td>
+						<td width="5%"><img src="{$vo.pf_img}"/></td>
+						<td width="15%">{$vo.pf_created|date='Y-m-d H:i:s',###}</td>
+						<td width="15%">{$vo.pf_updated|date='Y-m-d H:i:s',###}</td>
+                        <td>
+							<if condition="$vo['pf_del'] eq 0">
+							<a href="{:U('Product_features/edit?todo=edit&id='.$vo[pf_id])}">修改</a> | <a href="{:U('Product_features/edit?todo=lock&id='.$vo[pf_id])}">锁定</a>
+							<else/>
+							<a href="{:U('Product_features/edit?todo=unlock&id='.$vo[pf_id])}">解锁</a>
+							</if>
+						</td>	
+						</tr>
+					  </volist>
+                    </table>
+                  <div class="cut-page">{$page}</div>
+              </div>
+
+
+          </div>
+
+        </div>
+    </div>
+</body>
+</html>

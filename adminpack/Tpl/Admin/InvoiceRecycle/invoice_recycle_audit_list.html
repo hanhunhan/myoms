@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>退票审核单</title>
+        <meta charset="GBK">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <include file="./Tpl/Admin/Public/comm_css_js.html" />
+        <!--<link href="./Public/css/style2.css" type="text/css" rel="stylesheet"/>-->
+        <!--<script type="text/javascript" src="./Public/validform/js/jquery-1.9.1.min.js"></script>-->
+        <!--<script type="text/javascript" src="./Public/validform/js/Validform_v5.3.2.js"></script>-->
+        <!--<script type="text/javascript" src="./Public/validform/js/common.js"></script>-->
+        <!--<script type="text/javascript" src="./Public/js/common.js"></script>-->
+        <!--<script language="javascript" type="text/javascript" src="./Public/layer/layer.js"></script>-->
+        <!--<link rel="stylesheet" href="./Public/validform/css/style.css" type="text/css" media="all" />-->
+        <!--<link rel="stylesheet" href="./Public/validform/css/validateForm.css" type="text/css" media="all" />-->
+    </head>
+    <body>
+        <div>{$form}</div>
+        <input type="hidden" name ="invoice_recycle_list_id" id="invoice_recycle_list_id" value="{$invoice_recycle_list_id}">
+        <input type="hidden" name ="flow_url_current" id="flow_url_current" value="{$flow_url_current}">
+        <script type="text/javascript">
+        //删除审核单明细
+        $(".delete_from_audit_list").click(function()
+        {
+            var invoice_recycle_details_id = $(this).parent().filter('.fedit').attr('fid');
+            
+            if(invoice_recycle_details_id > 0)
+            {   
+                layer.confirm('确定从退票单删除？', {
+                    btn: ['确定', '取消'],
+                    title: '是否删除?',
+                    closeBtn: false
+                }, function(index, layero){
+                    //确认操作
+                    $.ajax({
+                        type: "POST",
+                        url: "{:U('InvoiceRecycle/delete_from_audit_list')}",
+                        data:{'invoice_recycle_details_id' : invoice_recycle_details_id},
+                        dataType:"JSON",
+                        success:function(data){
+                            if(data.state == 0)
+                            {   
+                                layer.close(index);
+                                layer.alert(data.msg, {icon: 2, closeBtn: false}, 
+                                            function(){window.location.reload();});
+                            }
+                            else if(data.state == 1)
+                            {   
+                                layer.close(index);
+                                layer.alert(data.msg, {icon: 1, closeBtn: false}, 
+                                            function(){window.location.reload();});
+                            }
+                            else
+                            {   
+                                layer.close(index);
+                                var msg = data.msg ? data.msg : '操作异常';
+                                layer.alert(msg, {icon: 2, closeBtn: false},
+                                            function(){window.location.reload();});
+                            }
+                        }
+                    })
+                }, function(index){
+                   layer.close(index);
+                });
+            }
+            else
+            {
+                layer.alert('操作异常，删除失败', {icon: 2, closeBtn: false},
+                    function(){window.location.reload();});
+            }
+        })
+        
+        //撤销退票
+        $(".revoke_invoice_recycle").click(function()
+        {
+            var invoice_recycle_details_id = $(this).parent().filter('.fedit').attr('fid');
+            
+            if(invoice_recycle_details_id > 0)
+            {   
+                layer.confirm('确定撤销退票？', {
+                    btn: ['确定', '取消'],
+                    title: '是否撤销退票?',
+                    closeBtn: false
+                }, function(index, layero){
+                    //确认操作
+                    $.ajax({
+                        type: "POST",
+                        url: "{:U('InvoiceRecycle/revoke_invoice_recycle')}",
+                        data:{'invoice_recycle_details_id' : invoice_recycle_details_id},
+                        dataType:"JSON",
+                        success:function(data){
+                            if(data.state == 0)
+                            {   
+                                layer.close(index);
+                                layer.alert(data.msg, {icon: 2, closeBtn: false}, 
+                                            function(){window.location.reload();});
+                            }
+                            else if(data.state == 1)
+                            {   
+                                layer.close(index);
+                                layer.alert(data.msg, {icon: 1, closeBtn: false}, 
+                                            function(){window.location.reload();});
+                            }
+                            else
+                            {   
+                                layer.close(index);
+                                var msg = data.msg ? data.msg : '操作异常';
+                                layer.alert(msg, {icon: 2, closeBtn: false},
+                                            function(){window.location.reload();});
+                            }
+                        }
+                    })
+                }, function(index){
+                   layer.close(index);
+                });
+            }
+            else
+            {
+                layer.alert('操作异常，删除失败', {icon: 2, closeBtn: false}, 
+                    function(){window.location.reload();});
+            }
+        })
+        
+        //提交审核单
+        $("#sub_audit_list").click(function()
+        {   
+            var fids = new Array();
+            var i = 0;
+            $(".itemlist").each(function(){
+                fids[i] = $(this).attr("fid");
+                i++;
+            })
+            //alert(fids.length);
+            if(fids.length == 0){
+                layer.alert("退票单下没有关联要退票的会员，请先选择要退票的记录加入到退票单",{icon:0});
+                return false;
+            }
+            
+            layer.confirm('确定提交退票审核单吗？确定会提交该退票审核单下所有退票申请', {
+                btn: ['确定', '取消'],
+                title: '是否提交?',
+                closeBtn: false,
+                }, function(index, layero){
+                    layer.close(index);
+                    var invoice_recycle_list_id = $('#invoice_recycle_list_id').val();
+//                    var url_current = $('#flow_url_current').val();
+//                    var url = url_current + "/invoice_recycle_list_id/"+ invoice_recycle_list_id;
+
+                    var appUrl = "__APP__";
+                    var url = appUrl + '/Touch/InvoiceRecycle/process&RECORDID=' + invoice_recycle_list_id + '&flowTypePinYin=huiyuantuipiao';
+                    window.parent.location.href = url;
+                }, function(index){
+                    layer.close(index);
+                    return false;
+                }
+            );
+        })
+        //导出退票
+            $('#export_recycle').click(function() {
+            var filter_sql = "<php>echo $filter_sql;</php>";
+            var list_id = $('#invoice_recycle_list_id').val();
+            window.location.href = "index.php?s=/InvoiceRecycle/export_recycle/list_id/" + list_id ;
+                                   // "index.php?s=/Financial/exportInvoice/member_id/" + member_id + "&Filter_Sql=" + filter_sql;
+        });
+        </script>
+    </body>
+</html>

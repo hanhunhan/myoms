@@ -1,0 +1,9 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: Administrator
+ * Date: 15-1-28
+ * Time: ÏÂÎç3:30
+ */
+echo 'ok';
+phpinfo();

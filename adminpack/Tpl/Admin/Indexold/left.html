@@ -1,0 +1,111 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+<title>无标题文档</title>
+<link rel=stylesheet href="./Tpl/css/global.css" type="text/css">
+<link rel=stylesheet href="./Tpl/css/left.css" type="text/css">
+<script type="text/javascript" src="./Tpl/js/jquery-1.5.2.min.js"></script>
+<script>
+$(function(){
+	var navTitle = $('.nav-title');
+	var navList = $('.nav-list');
+	var clickObj = navList.find('li');
+	navList.height(0);
+	navTitle.bind('click',function(){
+		var self = $(this);
+		var oLen = self.next().find('li').length
+		var oHeight = (self.next().find('li').height())*oLen;
+		var siblings = self.parent().siblings().find('ul');
+        var time = 150;
+		if($(this).next().height()<=0){
+			if(oLen>0){
+				self.next().animate({
+					'height':oHeight+'px'
+				}, time)
+			}else{
+				return false;
+			}
+		}else{
+			self.next().animate({
+				'height':'0px'
+			}, time)
+		}
+		siblings.animate({
+			'height':'0px'
+		}, time)
+	});
+	//点击导航名称变色
+	clickObj.bind('click',function(){
+		if($(this).hasClass('on')) return;
+		$('.on').removeClass('on');
+		$(this).addClass('on');
+	})
+})
+</script>
+<style>
+a:focus{
+-moz-outline:none;
+outline:none
+}
+</style>
+</head>
+
+<body style="background:#EFEFEF">
+    <ul class="nav">
+		<volist name="menu" id="vo">
+			<li>
+				<h3 class="nav-title"><a href="javascript:void(0);" target="mainFrame">{$vo.name}</a></h3>
+				<ul class="nav-list">	
+					<volist name="vo['smenu']" id="smenu">
+					<li class="changePassword"><a href="{:U($smenu[LOAN_ROLECONTROL].'/'.$smenu[LOAN_ROLEACTION])}" target="mainFrame">{$smenu.LOAN_ROLENAME}</a></li>
+					</volist>
+				</ul>
+			</li>			
+		</volist>
+    	 <!--<li>
+        	<h3 class="nav-title"><a href="{$vo.module}" target="mainFrame">菜单管理</a></h3>
+            <ul class="nav-list">	
+            	<li class="changePassword"><a href="{:U('Group/menu')}" target="mainFrame">菜单管理</a></li>
+            </ul>
+        </li>
+        <li>
+        	<h3 class="nav-title"><a href="interestManage.html" target="mainFrame">权限管理</a></h3>
+            <ul class="nav-list">       	             
+                <li class="addUser"><a href="{:U('User/viewUser')}" target="mainFrame">用户管理</a></li>
+                <li class="addUser"><a href="{:U('Group/viewGroup')}" target="mainFrame">用户组管理</a></li>
+            </ul>
+        </li>
+       <li>
+        	<h3 class="nav-title"><a href="itemManage.html" target="mainFrame">项目管理</a></h3>
+            <ul class="nav-list">
+            	<li class="addItem"><a href="propertyItem.html" target="mainFrame">添加项目</a></li>
+                <li class="cornet"><a href="#">短号管理</a></li>
+                <li class="cornet"><a href="cornetSMS.html" target="mainFrame">短号修改</a></li>
+                <li class="account"><a href="#">账户管理</a></li>
+                <li class="sms"><a href="sms.html" target="mainFrame">短信模块管理</a></li>
+                <li class="blacklist"><a href="blacklist.html" target="mainFrame">黑名单管理</a></li>
+            </ul>
+        </li>
+        <li>
+        	<h3 class="nav-title"><a href="javascript:void(0)">客服管理</a></h3>
+            <ul class="nav-list">
+            	<li class="addCustom"><a href="#">添加客服</a></li>
+            </ul>
+        </li>
+        <li>
+        	<h3 class="nav-title"><a href="javascript:void(0)">数据统计</a></h3>
+            <ul class="nav-list">
+            	<li class="basis"><a href="#">同比</a></li>
+                <li class="linkRatio"><a href="#">环比</a></li>
+                <li class="phoneDetail"><a href="phoneDetail.html" target="mainFrame">电话转接明细</a></li>
+            </ul>
+        </li>
+        <li>
+        	<h3 class="nav-title"><a href="javascript:void(0)">报表管理</a></h3>
+            <ul class="nav-list">
+            </ul>
+        </li>-->
+    </ul>
+</body>
+</html>

@@ -1,0 +1,1 @@
+<script type='text/javascript'>var jytx_m='5721612648713387380';var jytx_img='http://bj.user.web4008.com/CallPic/Big/201202221433551646.jpg';var jytx_t='y';var jytx_page='PPCall/PPCall.aspx';var jytx_s='n';</script><script src='http://bj.customer.web4008.com/Message/codenew.js'></script>

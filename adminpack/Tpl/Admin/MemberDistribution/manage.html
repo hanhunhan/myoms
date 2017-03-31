@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>分销客户</title>
+        <meta charset="GBK">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="//cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+        <link href="./Public/css/style2.css" type="text/css" rel="stylesheet"/>
+        <script type="text/javascript" src="./Public/validform/js/jquery-1.9.1.min.js"></script>
+        <script type="text/javascript" src="./Public/validform/js/Validform_v5.3.2.js"></script>
+        <script type="text/javascript" src="./Public/validform/js/common.js"></script>
+        <script type="text/javascript" src="./Public/js/common.js"></script>
+        <script language="javascript" type="text/javascript" src="./Public/My97DatePicker/WdatePicker.js"></script>
+        <script type="text/javascript" src="./Public/validform/plugin/swfupload/swfuploadv2.2.js"></script>
+        <script type="text/javascript"
+                src="./Public/validform/plugin/swfupload/Validform.swfupload.handler.js"></script>
+        <script src="./Public/third/jquery_ui_autocomplete/ui/jquery.ui.core.js"></script>
+        <script src="./Public/third/jquery_ui_autocomplete/ui/jquery.ui.widget.js"></script>
+        <script src="./Public/third/jquery_ui_autocomplete/ui/jquery.ui.position.js"></script>
+        <script type="text/javascript"
+                src="./Public/third/jquery_ui_autocomplete/ui/jquery.ui.autocomplete.js"></script>
+        <script language="javascript" type="text/javascript" src="./Public/layer/layer.js"></script>
+        <script src="//cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="./Public/third/jquery_ui_autocomplete/themes/base/jquery.ui.all.css">
+        <link rel="stylesheet" href="./Public/validform/css/style.css" type="text/css" media="all"/>
+        <link rel="stylesheet" href="./Public/validform/css/validateForm.css" type="text/css" media="all"/>
+    </head>
+    <body>
+    <div class="containter">
+        <div class="right fright j-right">
+            <div class="handle-tab">{$tabs}</div>
+            {$form}
+            <input type="hidden" name="prjid" id="prjid" value="{$prjid}">
+        </div>
+    </div>
+    <script type="text/javascript">
+        //中介费用报销申请
+        $("#agency_reward_reim,#agency_deal_reward_reim,#property_deal_reward_reim").click(function()
+        {
+            var reim_type_str = $(this).attr('id');
+            var memberId = new Array();
+            var i = 0;
+            $("input[name='checkedtd']:checkbox").each(function() 
+            {   
+                if ($(this).prop("checked") == true) 
+                {  
+                   memberId[i] = $(this).val();  
+                   i += 1;
+                }
+            }); 
+
+            if( i == 0 )
+            {   
+                layer.alert('请至少选择一条记录!', {icon: 2});
+                return false;
+            }
+			var caseid='{$case_id}';
+            $.ajax({
+                type: "POST",
+                url: 'index.php?s=/Reimbursement/apply_agency_reward_reim_fx',
+                data:{'memberId':memberId, 'reim_type_str':reim_type_str,'case_id':caseid},
+                dataType:"JSON",
+                success:function(data){
+                    if(data.state == 0)
+                    {
+                        layer.alert(data.msg, {icon: 2, closeBtn: false}, 
+                            function(){window.location.reload();});
+                    }
+                    else if(data.state == 1)
+                    {
+                        layer.alert(data.msg, {icon: 1, closeBtn: false}, 
+                            function(){window.location.reload();});
+                    }
+                    else
+                    {
+                        var msg = data.msg ? data.msg : '操作异常';
+                        layer.alert(msg, {icon: 2, closeBtn: false},
+                          function(){window.location.reload();});
+                    }
+                }
+             })   
+        })
+        
+        //分销会员申请开票
+        $("#apply_billing").click(function(){
+            var memberId = new Array();
+            var memberid_str = "";
+            var i = 0;
+            var prjid = $("#prjid").val();
+            $("input[name='checkedtd']:checkbox").each(function() 
+            {   
+                if ($(this).prop("checked") == true) 
+                {  
+                   memberId[i]= $(this).val();  
+                   memberid_str += $(this).val() + ",";
+                   i += 1;
+                }
+            }); 
+
+            if( i == 0 )
+            {   
+                layer.alert('请至少选择一条记录!', {icon: 2});
+                return false;
+            }
+            
+            for(var j=0,len = memberId.length;j<len;j++)
+            { 
+                if(!$("input[name = '"+memberId[j]+"_SIGNTIME']").parent().parent().find('span').first().html()
+                        || !$("input[name = '"+memberId[j]+"_SIGNEDSUITE']").parent().parent().find('span').first().html())
+                {
+                    layer.alert('签约时间跟签约套数未填写，不能申请开票!', {icon: 2});
+                    return false;
+                }
+            }
+            
+            $.ajax({
+                url:"index.php?s=/MemberDistribution/open_billing_record&showForm=3&prjid="+prjid +"&is_ajax=1",
+                type:"post",
+                data:{"memberid":memberId},
+                dataType:'JSON',
+                success:function(data){
+                    if(data.state == 0)
+                    {
+                        layer.alert(data.msg,{icon:2});
+                    }
+                    else if(data.state == 1)
+                    {
+                        var iframe_open_billing_record = layer.open({
+                            type: 2,
+                            title: '发票信息',
+                            btn: ['保存', '取消'],
+                            shadeClose: true,
+                            shade: 0.8,
+                            area: ['90%', '500px'],
+                            content: 'index.php?s=/MemberDistribution/open_billing_record&showForm=3&prjid='+prjid +"&memberid_str="+memberid_str,
+                            yes: function(index, layero){ //或者使用btn1
+                                var invoice_money = $(window.frames["layui-layer-iframe"+iframe_open_billing_record].document).find("input[name='INVOICE_MONEY']").val(); 
+                                var remark = $(window.frames["layui-layer-iframe"+iframe_open_billing_record].document).find("textarea[name='REMARK']").val();
+                                var create_time = $(window.frames["layui-layer-iframe"+iframe_open_billing_record].document).find("input[name='CREATETIME']").val();
+								 var INVOICE_CLASS = $(window.frames["layui-layer-iframe"+iframe_open_billing_record].document).find("select[name='INVOICE_CLASS']").val();
+								 var INVOICE_BIZ_TYPE = $(window.frames["layui-layer-iframe"+iframe_open_billing_record].document).find("select[name='INVOICE_BIZ_TYPE']").val();
+                                $.ajax({
+                                    type:"post",
+                                    url:'index.php?s=/MemberDistribution/open_billing_record&faction=saveFormData&prjid='+prjid +"&memberid_str="+memberid_str,
+                                    data:{
+                                        "INVOICE_MONEY": invoice_money,
+                                        "REMARK": remark,
+                                        "CREATETIME": create_time,
+                                        'INVOICE_CLASS': INVOICE_CLASS,
+                                        'INVOICE_BIZ_TYPE': INVOICE_BIZ_TYPE
+                                    },
+                                    dataType:"JSON",
+                                    success:function(data){
+                                        if(data.status == 0)
+                                        {
+                                            layer.alert(data.msg,{icon:2});
+                                        }
+                                        else if(data.status == 2)
+                                        {
+                                            layer.alert(data.msg,{icon:1},function(index){window.location.reload()});
+                                        } else {
+                                            layer.alert(data.msg,{icon:2});
+                                        }
+                                    }
+                                })
+                            },cancel: function(index){ //或者使用btn2
+                                //按钮【按钮二】的回调
+                            }
+                        })
+                    } else {
+                        layer.alert(data.msg,{icon:2});
+                    }
+                }
+            })
+        })
+
+        $(function () {
+            var isShowOptionBtn = "{$isShowOptionBtn}";
+            if (isShowOptionBtn == DISPLAY_OPTION_BTN.HIDE) {
+                $.each($('.page a'), function (index, elem) {
+                    if (REG_EXPS.ADD.test($(elem).text())) {
+                        $(elem).remove();
+                    }
+                });
+
+                $('.buttons').remove();
+                $('.handle-btn').remove();
+            }
+        });
+
+         
+    </script>
+    <include file="./Tpl/Admin/Public/filter.html" />
+    </body>
+</html>

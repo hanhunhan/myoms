@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>项目权限</title>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="./Public/css/style2.css" type="text/css" rel="stylesheet"/>
+    <link href="./Public/ztree/css/demo.css" type="text/css" rel="stylesheet"/>
+    <link href="./Public/ztree/css/metroStyle/metroStyle.css" type="text/css" rel="stylesheet"/>
+    <script type="text/javascript" src="./Public/validform/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="./Public/ztree/js/jquery.ztree.core-3.5.js"></script>
+    <script type="text/javascript" src="./Public/ztree/js/jquery.ztree.excheck-3.5.js"></script>
+    <script type="text/javascript" src="./Public/ztree/js/jquery.ztree.exedit-3.5.js"></script>
+    <style>
+        .project li {
+            list-style: none;
+            text-align: center;
+            border-bottom: 1px solid #617775;
+            height: 61px;
+            line-height: 61px;
+            cursor: pointer;
+            /*margin-bottom:-1px;
+            display:inline;*/
+        }
+
+        .highlight {
+            background-color: #349ac0;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <div>
+        <h1>项目权限</h1>
+    </div>
+    <div class="content_wrap">
+        <div class="zTreeDemoBackground left">
+            <ul id="treeDemo" class="ztree"></ul>
+        </div>
+        <div class="right" style="width:300px;height:372px;border:1px solid #617775;margin-top:10px;">
+            <div style="width:80%;height:100%;float:left;overflow:auto;" id="lists"></div>
+            <div style="width:59px;height:100%;border-left:1px solid #617775;float:left;overflow:hidden;">
+                <ul class="project">
+                    <li>电商</li>
+                    <li>分销</li>
+                    <li>硬广</li>
+                    <li>活动</li>
+                    <li>产品</li>
+                    <li style="border-bottom:none">驻场</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var setting = {
+        async: {
+            enable: true,
+            url: "../asyncData/getNodes.php",
+            autoParam: ["id", "name=n", "level=lv"],
+            otherParam: {"otherParam": "zTreeAsyncTest"},
+            dataFilter: filter
+        },
+        data: {
+            simpleData: {
+                enable: true
+            }
+        },
+        callback: {
+            onClick: onClick
+        }
+    };
+
+    function onClick(event, treeId, treeNode) {
+        var zTree = $.fn.zTree.getZTreeObj("treeDemo"),
+                nodes = zTree.getSelectedNodes(),
+                v = "";
+        for (var i = 0, l = nodes.length; i < l; i++) {
+            v += nodes[i].name + ",";
+        }
+        if (v.length > 0) v = v.substring(0, v.length - 1);
+        alert(v);
+    }
+
+    $(document).ready(function () {
+        $.fn.zTree.init($("#treeDemo"), setting);
+        $(".project li").bind('click', function () {
+            if ($(this).hasClass('highlight')) {
+                $(this).removeClass('highlight');
+            } else {
+                $(this).addClass('highlight');
+            }
+        });
+    });
+</script>
+</body>
+</html>

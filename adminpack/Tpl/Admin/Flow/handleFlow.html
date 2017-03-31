@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>工作流</title>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="./Public/css/style2.css" type="text/css" rel="stylesheet"/>
+    <link href="./Public/css/jquery-ui.css" type="text/css" rel="stylesheet"/>
+    <link href="./Public/uploadify/uploadify.css" type="text/css" rel="stylesheet"/>
+    <script type="text/javascript" src="./Public/validform/js/jquery-1.9.1.min.js"></script>
+
+    <script type="text/javascript" src="./Public/js/common.js"></script>
+    <script type="text/javascript" src="./Public/js/jquery-ui.js"></script>
+    <script type="text/javascript" src="./Public/uploadify/jquery.uploadify-3.1.js"></script>
+</head>
+<body>
+<div class="containter">
+    <div class="right fright j-right">
+        <div class="flow_title">
+            办理
+        </div>
+        <form class="registerform" method="post"
+              action="{:U('Flow/handleFlow',array('status'=>'add','FLOWID'=>$record['ID']))}"
+              enctype="multipart/form-data">
+            <div class="caseinfo-table">
+                <table>
+                    <tr>
+                        <td width="20%" align="center">文字/说明</td>
+                        <td>{$record.INFO}</td>
+                    </tr>
+                    <tr>
+                        <td align="center">转交至</td>
+                        <td>
+                            <input type="text" name="DEAL_USERID" id="user" placeholder="名称" size="30" maxlength="30"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center">审批意见</td>
+                        <td>
+						<span class="fclos" style="display:inline">
+							<textarea cols="100" rows="4" maxlength="300" name="DEAL_INFO"></textarea>
+						</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center">同意</td>
+                        <td>
+                            <input type="radio" name="DEAL_SIGN" value="1" checked/>是
+                            &nbsp;
+                            <input type="radio" name="DEAL_SIGN" value="2"/>否
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center">附件</td>
+                        <td>
+                            <input type="file" id="file"/>
+                            <input type="hidden" id="filename" name="ATTACH"/>
+
+                            <div id="file_info"></div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="handle-btn">
+                <input type="submit" value="备&nbsp;案" name="store" class="btn-blue"/>
+                <input type="submit" value="转&nbsp;交" name="nextstep" class="btn-blue"/>
+                <input type="submit" value="终&nbsp;止" name="finish" class="btn-blue"/>
+                <input type="button" value="关&nbsp;闭" class="btn-gray j-formclose"/>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    $(function () {
+        $("#user").autocomplete({
+            source: "__URL__/getPerson",
+            select: function (event, ui) {
+                $(this).val(ui.item.value);
+            }
+        })
+
+        $("#file").uploadify({
+            'height': 30,
+            'swf': './Public/uploadify/uploadify.swf',
+            'uploader': './Public/uploadify/uploadify.php',
+            'width': 100,
+            'buttonText': '上传',
+            'auto': true,//关闭自动上传
+            'multi': false,//允许同时上传多张图片
+            onUploadSuccess: function (file, data, respone) {
+                var info = eval("(" + data + ")");
+                if (info.status) {
+
+                    alert("上传成功");
+
+                    $("#file_info").append("<p><a href='/adminpack/index.php?s=/Flow/download/filename/" + info.filename + "'>" + info.filename + "</a></p>");
+                    var filename = $("#filename").val();
+                    if (filename) {
+                        $("#filename").val(filename + ',' + info.filename);
+                    } else {
+                        $("#filename").val(info.filename);
+                    }
+                } else {
+                    alert("上传失败");
+                }
+            }
+
+        })
+
+    })
+</script>
+</body>
+</html>

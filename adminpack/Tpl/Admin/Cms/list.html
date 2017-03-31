@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=gb2312"/>
+    <title>栏目列表</title>
+    <link rel=stylesheet href="./Tpl/css/global.css" type="text/css">
+    <link rel=stylesheet href="./Tpl/css/mainPage.css" type="text/css">
+    <script type="text/javascript" src="./Tpl/js/jquery-1.5.2.min.js"></script>
+</head>
+<body>
+<div class="box" id="interestManage">
+    <div class="box-tit"><h3>栏目列表</h3></div>
+    <div class="box-con">
+        <div class="box-b">
+            <div class="hd" style="height:auto"><h3>目前可用的栏目：</h3>
+
+                <p style="padding-left:18px"><!--明星经纪人、本月赚佣金排行、免费看房通图、-->搜索关键词</p></div>
+            <div class="bd">
+                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table-a">
+                    <tr>
+                        <th>序号</th>
+                        <th>名称</th>
+                        <th>描述</th>
+                        <th><a href="{:U('Cms/category',array('id'=>0))}">新增</a></th>
+                    </tr>
+                    <volist name="re" id="vo">
+                        <tr>
+                            <td width="10%">{$vo.cid}</td>
+                            <td width="10%">{$vo.name}</td>
+                            <td style="padding:0 0 0 30px;text-align:left">{$vo.description}</td>
+                            <td width="20%">
+                                <a target="_blank" href="{$vo.link}">预览</a> |
+                                <a href="{:U('Cms/content_list',array('id'=>$vo['cid']))}">查看</a> |
+                                <a href="{:U('Cms/category',array('id'=>$vo['cid']))}">修改</a> |
+                                <a onclick="return confirm('确定删除吗?');"
+                                   href="{:U('Cms/del_category',array('id'=>$vo['cid']))}">删除</a>
+                            </td>
+                        </tr>
+                    </volist>
+                </table>
+                <div class="cut-page">{$page}</div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

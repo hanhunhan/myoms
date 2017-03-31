@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+<title>表单管理</title>
+<link rel=stylesheet href="./Tpl/css/global.css" type="text/css">
+<link rel=stylesheet href="./Tpl/css/mainPage.css" type="text/css">
+<script type="text/javascript" src="./Tpl/js/jquery-1.5.2.min.js"></script>
+<script >
+    function delCheck() {
+        
+       if(confirm("确定要删除吗？"))
+            {
+                return true;
+            }
+       else
+            {
+                return false;
+            }
+    }
+</script>
+</head>
+
+<body>
+	<div class="box" id="interestManage">
+    	<div class="box-tit"><h3>表单管理</h3></div>
+        <div class="box-con">
+             <form action="{:U('Show/viewForm')}" method="post">
+             <div class="c-tit"><h4>搜索条件</h4></div>
+             <div class="search-condition">
+            	<div class="search-con">快速搜索：					
+                            <select name="seartchtype">
+                                    <option value=''>--请选择类型--</option>
+                                    <option value="1" <if condition="$con['searchtype'] eq 1 ">selected</if> >界面标题</option>
+                                    <option value="2" <if condition="$con['searchtype'] eq 2 ">selected</if>>界面类型</option>
+                            </select>
+                            <input type="text" style="width:120px" class="input-text ml10" name="keyword" value="{$con['keyword']}"/>
+                            <input type="submit" value="搜索" style="width:50px">
+					
+                  </div>
+            </div>
+            </form>
+            <div class="box-b">
+                <div class="hd"><h3>搜索结果</h3></div>
+                    <div class="bd">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table-a">
+                          <tr>
+                            <th width="10%">编号</th>
+                            <th width="10%">界面标题</th>
+                            <th width="10%">界面类型</th> 
+                            <th><a class="font-blue" href="{:U('Show/addForm')}">添加 </a></th>
+                          </tr>
+                           <volist name="re" id="vo" >
+                                <tr>
+                                    <td >{$vo.FORMNO}</td>
+                                    <td >{$vo.FORMTITLE}</td>
+                                    <td >{$vo.FORMTYPE}</td>
+                                    <td>
+                                        <a href="{:U('Show/editForm?todo=edit&id='.$vo[FORMNO].'&formtitle='.$vo[FORMTITLE])}">修改</a> | 
+                                        <!--a href="{:U('Show/delForm?FORMNO='.$vo[FORMNO])}" onclick='return delCheck();' >删除</a-->  
+                                        <a href="{:U('Show/fieldList?FORMNO='.$vo[FORMNO].'&formtitle='.$vo[FORMTITLE])}">字段</a> |
+                                        <a  target='_blank' href="{:U('Show/preView?FORMNO='.$vo[FORMNO])}">预览</a>  
+
+                                    </td>	
+                                </tr>
+                           </volist> 
+                          <empty name = 're'>
+                               <tr>
+                                  <td colspan = '4'>暂无相关记录</td>
+                              </tr>  
+                          </empty>
+                        </table>
+                      <div class="cut-page">{$page}</div>
+                  </div>
+          </div>
+        </div>
+    </div>
+</body>
+</html>

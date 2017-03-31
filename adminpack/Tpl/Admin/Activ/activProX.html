@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>活动立项</title>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <include file="./Tpl/Admin/Public/comm_css_js.html"/>
+    <style>
+        .ui-autocomplete {
+            max-height: 200px;
+            overflow-y: auto;
+            /* 防止水平滚动条 */
+            overflow-x: hidden;
+        }
+    </style>
+</head>
+<body>
+<div class="containter">
+    <div class="right fright j-right">
+        <div class="handle-tab">
+            <ul>
+                <li class="selected"><a href="{:U('Activ/activProX',$paramUrl)}">活动详情</a></li>
+            </ul>
+        </div>
+        {$form}
+        <input type="hidden" value="{$prjid}" name="prjid" id="prjid"/>
+        <textarea id="last_filter_text" style="display: none">{$lastFilter}</textarea>
+        <script>
+            $(function () {
+                $(".contractinfo-table tbody tr").click(function () {
+                    $(this).siblings().removeClass("selected");
+                    $(this).addClass("selected");
+                });
+
+                $(".itemlist").each(function () {
+                    var activId = $(this).attr("fid");
+                    var self = $(this);
+                    $.ajax({
+                        type: "post",
+                        url: "{:U('Activ/get_summery_money',$paramUrl)}",
+                        dataType: "text",
+                        data: {"activId": activId},
+                        success: function (res) {
+                            //self.children().eq(9).children().eq(0).html(res);
+                            //self.children().eq(9).children().eq(1).children().eq(0).val(res);
+                        }
+
+                    })
+                })
+            });
+
+            function addActiv() {
+                var url = "{:U('Activ/activPro')}" + '&active=3' + '&prjid=' + $("#prjid").val() + '&tabNum=10';
+                layer.open({
+                    type: 2,
+                    title: '添加项目下活动',
+                    shadeClose: true,
+                    shade: 0.8,
+                    area: ['1024px', '90%'],
+                    content: url,
+                    end: function () {
+
+                        window.location.reload();
+                    }
+                });
+            }
+
+            function editActiv(obj) {
+                var url = "{:U('Activ/activPro')}" + '&active=2' + '&prjid=' + $("#prjid").val() + '&activId=' + $(obj).parent().attr('fid') + '&tabNum=10';
+                layer.open({
+                    type: 2,
+                    title: '编辑项目下活动',
+                    shadeClose: true,
+                    shade: 0.8,
+                    area: ['1024px', '90%'],
+                    content: url,
+                    end: function () {
+
+                        window.location.reload();
+                    }
+                });
+            }
+
+            function viewActiv(obj) {
+                var url = "{:U('Activ/activPro')}" + '&active=1' + '&prjid=' + $("#prjid").val() + '&activId=' + $(obj).parent().attr('fid') + '&tabNum=10';
+                layer.open({
+                    type: 2,
+                    title: '查看项目下活动',
+                    shadeClose: true,
+                    shade: 0.8,
+                    area: ['1024px', '90%'],
+                    content: url,
+                    end: function () {
+                        window.location.reload();
+                    }
+                });
+            }
+
+            function submitActiv() {
+                var activId = $(".contractinfo-table tbody .selected").attr('fid');
+                if (activId) {
+                    var status = $("select[name='" + activId + "_STATUS']").val();
+                    var url;
+                    if (status == 0) {
+                        url = "{:U('Activ/XiangMuOpinionFlow')}" + '&active=2&flowType=xiangmuxiahuodong' + '&CASEID=' + $("#prjid").val() + '&RECORDID=' + activId + '&activId=' + activId + '&tabNum=10';
+                        //window.location.href =url;
+                        $.ajax({
+                            url: url,
+                            dataType: "json",
+                            data: {
+                                act: 'checkbudgetFee'
+                            },
+                            success: function (data) {
+                                if (data.status == 'y') {
+                                    url = "{:U('Touch/Activ/process')}" + '&active=2&flowType=xiangmuxiahuodong' + '&CASEID=' + $("#prjid").val() + '&RECORDID=' + activId + '&activId=' + activId + '&tabNum=10';
+                                    location.href = url;
+//                                    layer.open({
+//                                        type: 2,
+//                                        title: '提交项目下活动',
+//                                        shadeClose: true,
+//                                        shade: 0.8,
+//                                        area: ['1024px', '90%'],
+//                                        content: url,
+//                                        end: function () {
+//
+//                                            window.location.reload();
+//                                        }
+//                                    });
+                                } else alert(data.info);
+                            }
+                        });
+
+                    } else {
+                        alert('该活动状态不能提交');
+                    }
+                } else {
+                    alert('请选择活动');
+                }
+            }
+
+            function changeActiv() {
+                var activId = $(".contractinfo-table tbody .selected").attr('fid');
+
+                if (activId) {
+                    var status = $("select[name='" + activId + "_STATUS']").val();
+                    var url;
+                    if (status == 2) {
+                        var url = appUrl + '/Case/project_change/tabNum/9/type/2/activId/' + activId + '/prjid/' + $("#prjid").val();
+
+                        $.ajax({
+                            url: url,
+                            dataType: "json",
+                            data: {
+                                act: 'checkprjChange'
+                            },
+                            success: function (data) {
+                                //console.log(data);
+                                if (data.status == 'y') {
+                                    window.location.href = url;
+                                } else alert(data.info);
+                            }
+                        });
+
+                    } else {
+                        alert('该活动不能变更');
+                    }
+                } else {
+                    alert('请选择活动');
+                }
+            }
+
+            function execActiv() {
+                var activId = $(".contractinfo-table tbody .selected").attr('fid');
+                if (activId) {
+                    var status = $("select[name='" + activId + "_STATUS']").val();
+                    var bclass = $("select[name='" + activId + "_BUSINESSCLASS_ID']").val();
+                    if (status == 2) {
+                        $.ajax({
+                            url: "{:U('Api/get_Case_id')}",
+                            dataType: "json",
+                            data: {
+                                'activId': activId
+                            },
+                            success: function (obJect) {
+                                var url = appUrl + '/Advert/index/is_from/2/CASE_TYPE/xmxhd&activId=' + activId + '&prjid=' + $("#prjid").val() + '&businessclass=' + bclass + '&CASEID=' + obJect.CASE_ID;
+
+                                window.location.href = url;
+                            }
+                        });
+                    } else {
+                        alert('该活动未申请通过,不能执行！');
+                    }
+                } else {
+                    alert('请选择活动');
+                }
+            }
+
+            function delActiv(obj) {
+                var activId = $(obj).closest('.itemlist').attr('fid');
+                var url = "{:U('Activ/delActiv')}";
+                var delConfirm = confirm("确定要删除吗？");
+                if (delConfirm == true) {
+                    $.ajax({
+                        url: url,
+                        dataType: "json",
+                        data: {
+                            'activId': activId
+                        },
+                        success: function (obJect) {
+                            alert(obJect.msg);
+                            window.location.reload();
+                        }
+                    });
+                }
+            }
+        </script>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>售卖管理</title>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .layer-content {
+            /*min-height: 50px;*/
+        }
+
+        .layui-layer-content {
+            /*min-height: 50px;*/
+            padding: 20px 15px;
+        }
+
+        .table-input {
+            padding: 4px;
+            text-indent: 6px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            border-top: 1px solid #aaa;
+            outline: none;
+        }
+
+        .template-form-wrap {
+            border: 1px solid #ccc;
+            margin-top: 30px;
+            padding: 20px;
+        }
+
+        .text-red {
+            color: #f00;
+        }
+
+        .summary {
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            padding: 8px;
+        }
+
+        .summary li {
+            display: inline-block;
+            width: 32%;
+            /*border: 1px solid #f00;*/
+            padding: 4px;
+        }
+
+        .summary li > select {
+            min-width: 80px;
+            padding: 4px 8px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .star-mark {
+            font-style: normal;
+            color: #f00;
+        }
+
+        .summary label {
+            font-weight: normal;
+        }
+
+        .summary textarea {
+            float: left;
+            padding: 4px 8px;
+            line-height: 1.3;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            outline: none;
+        }
+    </style>
+    <include file="./Tpl/Admin/Public/comm_css_js.html"/>
+    <script id="sale_change_tpl" type="text/html">
+        <div class="contractinfo-table layer-content" id="sale_manage">
+            <table>
+                <thead>
+                <tr>
+                    <td>编号</td>
+                    <td>项目名称</td>
+                    <td>品牌</td>
+                    <td>型号</td>
+                    <td>品名</td>
+                    <td>来源</td>
+                    <td>置换价</td>
+                    <td>变更单价</td>
+                    <td>当前单价</td>
+                    <td>变更数量</td>
+                    <td>当前数量</td>
+                </tr>
+                </thead>
+                <tbody>
+                {{each list as value i}}
+                <tr>
+                    <td>{{value.ID}}</td>
+                    <td>{{value.PROJECT_NAME}}</td>
+                    <td>{{value.BRAND}}</td>
+                    <td>{{value.MODEL}}</td>
+                    <td>{{value.PRODUCT_NAME}}</td>
+                    <td>{{value.SOURCE}}</td>
+                    <td>{{value.WAREHOUSE_PRICE}}</td>
+                    <td><input type="text" data-id="{{value.ID}}" data-did="{{value.DID}}" class="table-input" data-type="money" data-old="{{value.MONEY}}" value="{{value.MONEY}}"></td>
+                    <td>{{value.MONEY}}</td>
+                    <td><input type="text" data-id="{{value.ID}}" class="table-input" data-type="amount" data-old="{{value.AMOUNT}}" value="{{value.AMOUNT}}"></td>
+                    <td>{{value.AMOUNT}}</td>
+                </tr>
+                {{/each}}
+                </tbody>
+            </table>
+        </div>
+        <div class="template-form-wrap">
+            <form class="form-horizontal" role="form">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">总金额：</label>
+                    <div class="col-sm-6">
+                        <p class="form-control-static"><span id="total_money">{{total_money}}</span>元<span class="text-red">（原售卖总额：{{total_money}}元）</span></p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">买家<i class="star-mark">*</i>：</label>
+                    <div class="col-sm-6">
+                        <input type="text" name="buyer" id="buyer" class="form-control" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">变更说明<i class="star-mark">*</i>：</label>
+                    <div class="col-sm-6">
+                        <textarea id="remark" name="remark" rows="5" class="form-control"></textarea>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </script>
+    <script id="apply_invoice_tpl" type="text/html">
+        <div class="summary">
+            <ul>
+                <li><label>总金额<i class="star-mark">*</i></label>：<input type="text" id="total_amount"  class="table-input" value="{{totalMoney}}">元</li>
+                <li><label>发票种类<i class="star-mark">*</i></label>：<select id="invoice_class">
+                    <option value="1">普通发票</option>
+                    <option value="2">专用发票</option>
+                </select></li>
+                <li><label>发票类型<i class="star-mark">*</i></label>：<select id="invoice_biz_type">
+                    <option value="1">广告费</option>
+                    <option value="2" selected="selected">服务费</option>
+                </select></li>
+                <li><label>备注<i class="star-mark">*</i></label>：<textarea rows="5" cols="110" id="invoice_desc"></textarea>
+            </ul>
+        </div>
+    </script>
+</head>
+<body>
+<div class="containter">
+    <div class="right fright j-right">
+        <div class="handle-tab">{$tabs}</div>
+        <div>{$form}</div>
+    </div>
+</div>
+<include file="./Tpl/Admin/Public/filter.html"/>
+<script>
+    $(function () {
+        function getTableInputData(isFilter) {
+            var idData = [];  // 售卖记录ID数组
+            var result = [];  // 存储真正的数据
+            var inputList = $('.table-input', '#sale_manage');
+            for (var i = 0, len = inputList.length; i < len; i++) {
+                var elem = $(inputList[i]);
+                var id = elem.attr('data-id');
+                var type = elem.attr('data-type');
+                var obj;
+                var indexNum = $.inArray(id, idData);
+                if (indexNum == -1) {
+                    idData.push(id);
+                    obj = {};
+                    obj.id = id;
+                    result.push(obj);
+                } else {
+                    obj = result[indexNum];
+                }
+
+                if (type == 'money') {
+                    obj['newMoney'] = elem.val();
+                    obj['oldMoney'] = elem.attr('data-old');
+                    obj['did'] = elem.attr('data-did');
+                } else {
+                    obj['newAmount'] = elem.val();
+                    obj['oldAmount'] = elem.attr('data-old');
+                }
+            }
+
+            // 过滤数据
+            if (isFilter == 1) {
+                result = $.grep(result, function (obj) {
+                    return ((obj.newAmount != obj.oldAmount) || (obj.newMoney != obj.oldMoney));
+                });
+            }
+
+            return result;
+        }
+
+        function getSelectedSaleRequest() {
+            var data = {};
+            var listId = $('tr.itemlist.selected').attr('fid');
+            var status = $('[name="' + listId + '_STATUS"] option:selected', 'tr.itemlist.selected').val();
+            var invoiceStatus = $('[name="' + listId + '_INVOICE_STATUS"] option:selected', 'tr.itemlist.selected').val();
+            data['list_id'] = listId;
+            data['status'] = status;
+            data['invoice_status'] = invoiceStatus;
+
+            return data;
+        }
+
+        var SALE_MANAGE_URLS = {
+            EXPORT: "{:U('Displace/export')}",  // 导出报表的URL
+            DETAIL: "{:U('Displace/getApplyDetail')}",  // 获取售卖明细
+            DO_CHANGE: "{:U('Displace/doSaleChange')}",  // 售卖变更
+            APPLY_INVOICE: "{:U('Displace/applyInvoice')}",  // 申请开票
+            DO_INVOICE_PROCESS: "{:U('Touch/Advert/process')}",  // 发起开票申请工作流
+            DO_SALE_CHANGE_PROCESS: "{:U('Touch/DisplaceSaleChange/process')}",  // 发起售卖变更工作流
+            COMMIT_CHANGE: "{:U('Displace/commitSaleChange')}"  // 提交售卖变更申请
+        };
+
+        $(".handle-tab a").each(function () {
+            var href = $(this).prop("href");
+            if(href.indexOf("{$typeOpreate}")==-1){
+                $(this).parent().removeClass("selected");
+            }
+        });
+
+        //提交工作流
+        $('#submit_flow').click(function(){
+
+            var dId = $('.itemlist').filter('.selected').attr('fid'); //ID
+            var status = $("select[name=" + dId + "_STATUS]").val(); //状态
+
+            if (status == 0) {
+                layer.confirm(
+                        '确定要提交该条申请吗？',
+                        {title: '提交申请'},
+                        function (index) {
+                            $.ajax({
+                                type: "GET",
+                                url: "{:U('Displace/checkDisplaceFlow')}",
+                                data: {'dId': dId},
+                                dataType: "JSON",
+                                success: function (data) {
+                                    if (data.status == 1) {
+                                        var url = "{:U('Touch/InboundUse/process')}" + '/RECORDID/' + dId + '/flowTypePinYin/' + "{$typeOpreate}";
+                                        window.location.href = url;
+                                    }
+                                    else {
+                                        layer.alert(data.msg, {icon: 2, closeBtn: false},
+                                                function () {
+                                                    layer.close(index);
+                                                    window.location.reload();
+                                                });
+                                    }
+                                }
+                            })
+                        }
+                );
+            }
+            else {
+                layer.alert('未提交过的记录才能提交', {icon: 2});
+            }
+
+        });
+
+        // 导出报表
+        $('#export_excel').click(function () {
+            var caseId = '{$caseId}';
+            var filterSql = "{$filter_sql}";
+            var sortSql = "{$sort_sql}";
+            layer.confirm('确定导出报表?', {icon: 3, title: '导出报表'}, function (index) {
+                layer.close(index);
+                location.href = SALE_MANAGE_URLS.EXPORT + '/case_id/' + caseId + '/filter/' + filterSql + '/sort/' + sortSql;
+            });
+        });
+
+
+        // 变更售卖
+        $('#change_sale').click(function () {
+            var request = getSelectedSaleRequest();
+            if (request.list_id <= 0) {
+                layer.alert('请选择一条售卖');
+                return;
+            }
+
+            if (request.status != 2 || request.invoice_status != 1) {
+                layer.alert('只有已通过审核且处于未开票状态的售卖才能进行变更');
+                return;
+            }
+
+            $.ajax({
+                url: SALE_MANAGE_URLS.DETAIL,
+                data: request,
+                success: onGetDetailListSuccess
+            });
+
+            function onGetDetailListSuccess(resp) {
+                if (resp.status) {
+                    layer.open({
+                        type: 1,
+                        title: '变更售卖',
+                        btn: ['提交', '取消'],
+                        area: ['1000px', 'auto'],
+                        content: template('sale_change_tpl', resp.data),
+                        yes: function () {
+                            var buyer = $('#buyer').val();
+                            var remark = $('#remark').val();
+                            if (!buyer) {
+                                layer.alert('买家不能为空，不能提交申请');
+                                return;
+                            }
+
+                            if(buyer.length >60){
+                                layer.alert("亲，买家输入过长");
+                                return ;
+                            }
+                            if(!remark){
+                                layer.alert('变更说明不能为空，不能提交申请！');
+                                return;
+                            }
+                            if(remark.length >300){
+                                layer.alert('亲，变更说明文字输入超长');
+                                var remarkInfo = remark.substring(0,300);
+                                $("#remark").val(remarkInfo);
+                                return;
+                            }
+
+
+                            var inputData = getTableInputData(1);
+                            if(inputData.length === 0) {
+                                layer.alert('数据没有变更，不能提交申请');
+                                return;
+                            }
+
+                            for (var i = 0, len = inputData.length; i < len; i++) {
+                                var maxApplyAmount = parseInt(inputData[i].oldAmount);
+                                if (inputData[i].newAmount > maxApplyAmount) {
+                                    layer.alert('亲，编号为' + inputData[i].id + '的变更数量不能超过了目前已售卖数量' + maxApplyAmount);
+                                    return false;
+                                } else if (inputData[i].newAmount <= 0) {
+                                    layer.alert('编号为' + inputData[i].id + '的数量不能小于等于0');
+                                    return false;
+                                }
+                            }
+
+                            $.ajax({
+                                url: SALE_MANAGE_URLS.DO_CHANGE,
+                                data: {
+                                    items: inputData,
+                                    remark: $('#remark').val(),
+                                    buyer: $('#buyer').val(),
+                                    list_id: request.list_id
+                                },
+                                type: 'POST',
+                                success: onDoChangeSuccess
+                            });
+                        }
+                    });
+                } else {
+                    layer.alert(resp.msg || '获取售卖详情失败');
+                }
+
+                function onDoChangeSuccess(resp) {
+                    if (resp.status == 1) {
+                        layer.alert(resp.msg || '提交售卖申请成功');
+                        var changeId = resp.data;
+                        var changeUrl = SALE_MANAGE_URLS.DO_SALE_CHANGE_PROCESS + '&sale_change_id=' + changeId + '&RECORDID=' + changeId;
+                        setTimeout(function() {
+                            location.href = changeUrl;
+                        }, 800);
+                    } else if (resp.status == 0){
+                        layer.alert(resp.msg || '提交售卖申请失败');
+                    } else {
+                        layer.alert("您的权限不足，请联系管理员",{icon:2});
+                    }
+                }
+            }
+        });
+
+        // 申请开票
+        $('#apply_invoice').click(function () {
+            var request = getSelectedSaleRequest();
+            if (request.list_id <= 0) {
+                layer.alert('请选择一条售卖记录！');
+                return;
+            }
+
+            if (request.status != 2 || request.invoice_status != 1) {
+                layer.alert('只有处于审核通过状态且未开票状态的售卖才能申请开票！');
+                return;
+            }
+
+            $.ajax({
+                url: "{:U('Displace/getTotalMoney')}",
+                data: request,
+                success: onGetTotalSuccess
+            });
+
+            function onGetTotalSuccess(resp) {
+
+                resp = JSON.parse(resp);
+                //console.log(resp);
+                layer.open({
+                    type: 1,
+                    title: '申请开票',
+                    btn: ['提交', '取消'],
+                    area: ['1000px', 'auto'],
+                    content: template('apply_invoice_tpl', resp.data),
+                    yes: function () {
+                        var total_amount = $('#total_amount').val();
+                        if(total_amount <=0){
+                            layer.alert('总金额不能小于等于0');
+                            return;
+                        }
+                        var invoice_desc = $('#invoice_desc').val();
+//                        console.log(invoice_desc);
+                        if (!invoice_desc) {
+                            layer.alert('备注为空，不能提交！');
+                            return;
+                        }
+                        if(invoice_desc.length >300){
+                            layer.alert('亲，备注文字输入超长');
+                            var invoiceDescInfo = invoice_desc.substring(0,300);
+                            $("#invoice_desc").val(invoiceDescInfo);
+                            return;
+                        }
+                        request['invoice_class'] = $('#invoice_class').val();
+                        request['invoice_biz_type'] = $('#invoice_biz_type').val();
+                        request['invoice_desc'] = $('#invoice_desc').val();
+                        request['total_amount'] = $('#total_amount').val();
+
+                        $.ajax({
+                            url: SALE_MANAGE_URLS.APPLY_INVOICE,
+                            type: 'POST',
+                            data: {request: request},
+                            success: onApplyInvoiceSuccess
+                        });
+                    }
+                });
+            }
+
+            function onApplyInvoiceSuccess(resp) {
+                console.log(resp);
+                if (resp.status == 1) {
+                    layer.alert('提交开票申请成功');
+                    var data = resp.data;
+                    var url = SALE_MANAGE_URLS.DO_INVOICE_PROCESS + '&RECORDID=' + data.record_id
+                        + '&CASEID=' + data.case_id + '&flowTypePinYin=hetongkaipiao' + '&invoiceId=' + data.invoice_id;
+                    location.href = url;
+
+                } else if (resp.status == 0){
+                    layer.alert(resp.msg || '提交开票申请失败');
+                } else {
+                    layer.alert("您的权限不足，请联系管理员",{icon:2});
+                }
+            }
+        });
+
+        // 提交变更申请
+        $("#commit_change_apply").click(function () {
+            var request = getSelectedSaleRequest();
+            if (request.list_id <= 0) {
+                layer.alert('请选择一条售卖');
+                return;
+            }
+
+            if (request.status != 0) {
+                layer.alert('只有未提交状态的变更申请才可提交');
+                return;
+            }
+
+            $.ajax({
+                url: SALE_MANAGE_URLS.COMMIT_CHANGE,
+                type: 'POST',
+                data: { request: request },
+                success: onCommitChangeSuccess
+            });
+
+            function onCommitChangeSuccess(resp) {
+                console.log(resp);
+                if (resp.status == 1) {
+                    var data = resp.data;
+                    var url = SALE_MANAGE_URLS.DO_SALE_CHANGE_PROCESS + '&sale_change_id=' + data.ID + '&CASEID=0'+ '&RECORDID=' + data.ID;
+                    location.href = url;
+                } else  if(resp.status == 0){
+                    layer.alert(resp.msg || '提交售卖变更申请失败');
+                } else {
+                    layer.alert("您的权限不足，请联系管理员",{icon:2});
+                }
+            }
+        });
+
+        function save2DigsAfterPoint(num) {
+            return Math.round(num * 100) / 100;
+        }
+
+        function calcSaleChangeTotalMoney() {
+            var data = getTableInputData();
+            //console.dir(data);  // todo
+            var total = 0;
+            for (var i = 0, len = data.length; i < len; i++) {
+                var newAmount = data[i].newAmount;
+                var newPrice = data[i].newMoney;
+//                var remainAmount = data[i].oldAmount - data[i].newAmount;
+//                var oldPrice = data[i].oldMoney;
+                total += parseFloat(newAmount) * parseFloat(newPrice);
+            }
+
+            total = save2DigsAfterPoint(total);
+            return total;
+        }
+        $(document).on('blur', '#sale_manage input.table-input', function () {
+            var totalMoney = calcSaleChangeTotalMoney();
+            $('#total_money').html(totalMoney);
+        })
+    });
+
+</script>
+</body>
+</html>

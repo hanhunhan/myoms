@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>数据展示</title>
+    <meta http-equiv="content-type" content="text/html; charset=gbk"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,minimum-scale=1,user-scalable=no">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <link rel="stylesheet" type="text/css" href="Public/TOUCH/CSS/business.css">
+    <link rel="stylesheet" href="Public/TOUCH/CSS/styles.css"/>
+    <script src="Public/TOUCH/JS/datejs/jquery-1.9.1.min.js" type="text/javascript"></script>
+    <script src="Public/TOUCH/JS/valide.js" type="text/javascript"></script>
+    <script src="Public/TOUCH/JS/datejs/iscroll.js" type="text/javascript"></script>
+
+<script>
+$(document).ready(function(){
+	$('.sanjiao').live('click',function(){
+		//$(this).parent().find('.detail_info_cont').html('ss');
+	});
+	
+});
+</script>
+
+</head>
+<body>
+<div class="wrap">
+    <div class="nav">
+        <div class="nav_cont clearfix">
+            {$tabs}
+        </div>
+        <div class="dataplay_cont">
+			<!--list start-->
+		<volist name="flist" id="vo">
+            <div class="dataplaylist dataplaylist_two_bg">
+                <div class="title">
+                    <span class="name">{$vo.BTYPE}决算</span>
+                    <i class="sanjiao"></i>
+                </div>
+                <div class="detail_info_cont">
+						<div class="detail_info">
+                                <dl class="clearfix">
+                                    <dt class="d_dt fir_d">项 目 名 称</dt>
+                                    <dd class="d_dd fir_d">{$vo.PROJECT} </dd>
+                                    <dt class="d_dt">城 市：</dt>
+                                    <dd class="d_dd">{$vo.CITY}</dd>
+                                    <dt class="d_dt">合 同 编 号：</dt>
+                                    <dd class="d_dd">{$vo.CONTRACT_NUM}</dd>
+                                    <dt class="d_dt">业 务 类 型</dt>
+                                    <dd class="d_dd">{$vo.BTYPE}</dd>
+                                    <dt class="d_dt">申 请 人：</dt>
+                                    <dd class="d_dd">{$vo.APPLICANT}</dd>
+                                    <dt class="d_dt">申 请 时 间：</dt>
+                                    <dd class="d_dd">{$vo.APPDATE2}</dd>
+                                    <dt class="d_dt">流 程 状 态：</dt>
+                                    <dd class="d_dd">{$vo.STATUS}</dd>
+                                    
+                                </dl>
+                        </div>
+
+                     
+                    <div class="dataplaylist dataplaylist_two_level" >
+                        <div class="title">
+                            <span class="name">项目决算表</span>
+                            <i class="sanjiao"></i>
+                        </div>
+                        <div class="detail_info_cont">
+                            <div class="detail_info">
+                                <dl class="clearfix">
+                                    <dt class="d_dt  ">进场时间:</dt>
+                                    <dd class="d_dd  ">{$vo.jsdata.FROMDATE}&nbsp;</dd>
+                                    <dt class="d_dt">撤场时间：</dt>
+                                    <dd class="d_dd">{$vo.jsdata.TODATE}&nbsp;</dd>
+                                    <dt class="d_dt">财务预收：</dt>
+                                    <dd class="d_dd">{$vo.jsdata.caiwuyushou}&nbsp;</dd>
+                                    <dt class="d_dt">已开票回款:</dt>
+                                    <dd class="d_dd">{$vo.jsdata.yikaipiaohk}&nbsp;</dd>
+									 <dt class="d_dt"> 我方成本:</dt>
+									  <dd class="d_dd">&nbsp;</dd>
+                                    <dt class="d_dt">(已报销费用): </dt>
+                                    <dd class="d_dd">{$vo.jsdata.w_yibaoxiaofy}&nbsp;</dd>
+                                    <dt class="d_dt">(已发生未报销费用):</dt>
+                                    <dd class="d_dd">{$vo.jsdata.w_yifswbxfy}&nbsp;</dd>
+									 <dt class="d_dt"> 资金池及项目分成：</dt>
+									  <dd class="d_dd">&nbsp;</dd>
+                                    <dt class="d_dt">(已报销费用) </dt>
+                                    <dd class="d_dd">{$vo.jsdata.z_yibaoxiaofy}&nbsp;</dd>
+									 <dt class="d_dt">(已发生未报销费用) </dt>
+                                    <dd class="d_dd">{$vo.jsdata.z_yifswbxfy}&nbsp;</dd>
+									<dt class="d_dt">(已冲抵费用) </dt>
+                                    <dd class="d_dd">{$vo.jsdata.z_yichongdi}&nbsp;</dd>
+                                    <dt class="d_dt">付现利润:</dt>
+                                    <dd class="d_dd"> {$vo.jsdata.fuxianlirun}&nbsp; </dd>
+									 <dt class="d_dt">付现利润率:</dt>
+                                    <dd class="d_dd"> {$vo.jsdata.fuxianlirunlv}&nbsp;</dd>
+									<dt class="d_dt"> 利润率:</dt>
+                                    <dd class="d_dd"> {$vo.jsdata.lirunlv}&nbsp; </dd>
+									 <dt class="d_dt">立项预估收入:</dt>
+                                    <dd class="d_dd"> {$vo.jsdata.lixiangyugushouru}&nbsp; </dd>
+									<dt class="d_dt">立项预估付现利润率:</dt>
+                                    <dd class="d_dd"> {$vo.jsdata.lixiangyugufuxianlirunlv} &nbsp; </dd>
+                                </dl>
+                            </div>
+                            
+                        </div>
+                    </div>
+
+
+
+
+
+                </div>
+            </div>
+		</volist>
+			<!--list end-->
+
+
+            
+             
+
+
+             
+
+
+        </div>
+    </div>
+</div>
+<!--div class="confirmDivbtn addnewGroupDiv2" >
+    <button class="comfirmbtn newbtn btn01">转交</button>
+    <button class="comfirmbtn newbtn btn02">终止</button>
+</div>
+<div class="confirmDivbtn addnewGroupDiv2 addnewGroupDiv3"  style="display: none">
+    <button class="comfirmbtn newbtn btn01">转交</button>
+    <button class="comfirmbtn newbtn btn02">终止</button>
+    <button class="comfirmbtn newbtn btn03">终止</button>
+</div>
+<div class="confirmDivbtn addnewGroupDiv2 addnewGroupDiv3 addnewGroupDiv4" style="display: none">
+    <button class="comfirmbtn newbtn btn01">转交</button>
+    <button class="comfirmbtn newbtn btn02">终止</button>
+    <button class="comfirmbtn newbtn btn03">终止</button>
+    <button class="comfirmbtn newbtn btn04">终止</button>
+</div-->
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>流程角色管理</title>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./Public/select2/select2.css" type="text/css" media="all"/>
+    <link rel="stylesheet" href="./Public/select2/bootstrap.min.css" type="text/css" media="all"/>
+    <link href="./Public/css/style2.css" type="text/css" rel="stylesheet"/>
+    <script type="text/javascript" src="./Public/validform/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="./Public/select2/select2.js"></script>
+    <script type="text/javascript" src="./Public/layer/layer.js"></script>
+</head>
+<body>
+<div class="right fright j-right  registerform">
+    <div class="caseinfo-table">
+        <table>
+            <tbody>
+            <tr>
+                <td class="leftlable" align="center" width="20%">关联流程配置</td>
+                <td align="left">
+                    <select name="FLOWSETID" class="js-example-placeholder-single" style="width:30%">
+                        <option value="">请选择</option>
+                        <foreach name="flowsetList" item="vo">
+                            <option value="{$vo.ID}"
+                            <if condition="$list.FLOWSETID eq $vo.ID ">selected="selected"</if>
+                            >{$vo.FLOWNAME}</option>
+                        </foreach>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td class="leftlable" align="center">sql执行条件</td>
+                <td align="left">
+                    <select name="SIGN" class="js-example-placeholder-single" style="width:30%">
+                        <option value="">请选择</option>
+                        <option value=">"
+                        <php>if($list['SIGN'] == ">") echo "selected='selected'";</php>
+                        > 大于 </option>
+                        <option value="<"
+                        <php>if($list['SIGN'] == "<") echo "selected='selected'";</php>
+                        > 小于 </option>
+                        <option value="=="
+                        <php>if($list['SIGN'] == "==") echo "selected='selected'";</php>
+                        > 等于 </option>
+                        <option value="!="
+                        <php>if($list['SIGN'] == "!=") echo "selected='selected'";</php>
+                        > 不等于 </option>
+                        <option value=">="
+                        <php>if($list['SIGN'] == ">=") echo "selected='selected'";</php>
+                        > 大于等于 </option>
+                        <option value="<="
+                        <php>if($list['SIGN'] == "<=") echo "selected='selected'";</php>
+                        > 小于等于 </option>
+
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td class="leftlable" align="center">sql执行结果</td>
+                <td align="left">
+                    <input type="text" name="VALUE" value="{$list['VALUE']}" placeholder="" style="height:30px;"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="leftlable" align="center">流程开始角色</td>
+                <td align="left">
+                    <select name="FLOWSTART" multiple="multiple" class="js-example-placeholder-multiple"
+                            style="width:80%">
+                        <option value=""></option>
+                        <foreach name="flowroleList" item="vo">
+                            <option value="{$vo['LOAN_GROUPID']}">{$vo['LOAN_GROUPNAME']}</option>
+                        </foreach>
+                    </select>
+
+                    <php>
+                        if($list["FLOWSTART"]){
+                        echo '
+                        <script>$("select[name=FLOWSTART]").select2().val(['.$list["FLOWSTART"].'])</script>
+                        ';
+                        }
+                    </php>
+
+                </td>
+            </tr>
+            <tr>
+                <td class="leftlable" align="center">流程备案角色</td>
+                <td align="left">
+                    <select name="FLOWEND" multiple="multiple" class="js-example-placeholder-multiple"
+                            style="width:80%">
+                        <option value=""></option>
+                        <foreach name="flowroleList" item="vo">
+                            <option value="{$vo['LOAN_GROUPID']}">{$vo['LOAN_GROUPNAME']}</option>
+                        </foreach>
+                    </select>
+
+                    <php>
+                        if($list["FLOWEND"]){
+                        echo '
+                        <script>$("select[name=FLOWEND]").select2().val(['.$list["FLOWEND"].'])</script>
+                        ';
+                        }
+                    </php>
+
+                </td>
+            </tr>
+            <tr>
+                <td class="leftlable" align="center">流程否决角色</td>
+                <td align="left">
+                    <select name="FLOWNOT" multiple="multiple" class="js-example-placeholder-multiple"
+                            style="width:80%">
+                        <option value=""></option>
+                        <foreach name="flowroleList" item="vo">
+                            <option value="{$vo['LOAN_GROUPID']}">{$vo['LOAN_GROUPNAME']}</option>
+                        </foreach>
+                    </select>
+
+                    <php>
+                        if($list["FLOWNOT"]){
+                        echo '
+                        <script>$("select[name=FLOWNOT]").select2().val(['.$list["FLOWNOT"].'])</script>
+                        ';
+                        }
+                    </php>
+                </td>
+            </tr>
+            <tr>
+                <td class="leftlable" align="center">流程同意角色</td>
+                <td align="left">
+                    <select name="FLOWPASS" multiple="multiple" class="js-example-placeholder-multiple"
+                            style="width:80%">
+                        <option value=""></option>
+                        <foreach name="flowroleList" item="vo">
+                            <option value="{$vo['LOAN_GROUPID']}">{$vo['LOAN_GROUPNAME']}</option>
+                        </foreach>
+                    </select>
+                    <php>
+                        if($list["FLOWPASS"]){
+                        echo '
+                        <script>$("select[name=FLOWPASS]").select2().val(['.$list["FLOWPASS"].'])</script>
+                        ';
+                        }
+                    </php>
+                </td>
+            </tr>
+            <tr>
+                <td class="leftlable" align="center">流程必经角色</td>
+                <td align="left">
+                    <select name="FLOWTHROUGH" multiple="multiple" class="js-example-placeholder-multiple"
+                            style="width:80%">
+                        <option value=""></option>
+                        <foreach name="flowroleList" item="vo">
+                            <option value="{$vo['LOAN_GROUPID']}">{$vo['LOAN_GROUPNAME']}</option>
+                        </foreach>
+                    </select>
+
+                    <php>
+                        if($list["FLOWTHROUGH"]){
+                        echo '
+                        <script>$("select[name=FLOWTHROUGH]").select2().val(['.$list["FLOWTHROUGH"].'])</script>
+                        ';
+                        }
+                    </php>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <input type="hidden" value="{$roleId}" id="roleId"/>
+    <input type="hidden" value="{$parentID}" id="parentID" name="parentID"/>
+
+    <div class="handle-btn">
+        <input class="btn btn-primary" type="button" onclick="submitForm();" value="保 存">
+        <input class="btn btn-default" onclick="window.history.back()" type="button" value="返 回">
+    </div>
+</div>
+<script>
+    $(function () {
+        $(".js-example-placeholder-single").select2({
+            placeholder: '请选择..',
+            allowClear: true
+        });
+        $(".js-example-placeholder-multiple").select2({
+            placeholder: '请选择..'
+        });
+
+    });
+
+    function submitForm() {
+        var endVal = $("select[name='FLOWEND']").select2().val();
+        var notVal = $("select[name='FLOWNOT']").select2().val();
+        var passVal = $("select[name='FLOWPASS']").select2().val();
+        var startVal = $("select[name='FLOWSTART']").select2().val();
+        var throughVal = $("select[name='FLOWTHROUGH']").select2().val();
+        var flowSetId = $("select[name='FLOWSETID']").select2().val();
+        var sign = $("select[name='SIGN']").select2().val();
+        var value = $("input[name='VALUE']").val();
+        var ID = $("#roleId").val();
+
+        $.ajax({
+            url: "{:U('Flow/handleRole',array('save'=>1))}",
+            dataType: 'json',
+            type: 'POST',
+            data: {
+                'FLOWSETID': flowSetId,
+                'FLOWEND': endVal,
+                'FLOWNOT': notVal,
+                'FLOWPASS': passVal,
+                'FLOWTHROUGH': throughVal,
+                'SIGN': sign,
+                'VALUE': value,
+                'FLOWSTART': startVal,
+                'ID': ID
+            },
+            success: function (obJect) {
+                alert(obJect.msg);
+                window.location.href = "{:U('Flow/workflowRole')}" + "&parentchooseid=" + $("#parentID").val();
+            }
+        });
+    }
+</script>
+</body>
+</html>

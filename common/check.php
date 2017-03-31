@@ -1,8 +1,0 @@
-<?php
-if(!$_SESSION['username']){
-	Jalert('ÇëÏÈµÇÂ¼','login.php');
-	//$locl = $_SERVER['HTTP_HOST'];
-	//header("Location:login.php"); 
-	exit;
-}
-?>

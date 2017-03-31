@@ -1,0 +1,85 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>资金池-电商项目 非付现成本确认</title>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--<link href="./Public/css/style2.css" type="text/css" rel="stylesheet"/>-->
+    <!--<script type="text/javascript" src="./Public/validform/js/jquery-1.9.1.min.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/validform/js/Validform_v5.3.2.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/validform/js/common.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/js/common.js"></script>-->
+    <!--<script language="javascript" type="text/javascript" src="./Public/layer/layer.js"></script>-->
+    <!--<link rel="stylesheet" href="./Public/validform/css/style.css" type="text/css" media="all"/>-->
+    <!--<link rel="stylesheet" href="./Public/validform/css/validateForm.css" type="text/css" media="all"/>-->
+    <include file="./Tpl/Admin/Public/comm_css_js.html" />
+</head>
+<body>
+<div class="containter">
+    <div class="right fright j-right">
+        <div class="handle-tab">
+            <ul>
+                <li><a href="{:U('Financial/financialConfirm',$paramUr)}">预收确认</a></li>
+                <li><a href="{:U('Financial/invoice',$paramUrl)}">开票</a></li>
+                <li><a href="{:U('Financial/reimConfirm',$paramUrl)}">报销确认</a></li>
+                <li><a href="{:U('Financial/yw_invoice',$paramUrl)}">业务开票</a></li>
+                <li><a href="{:U('Financial/yw_refund',$paramUrl)}">业务回款</a></li>
+                <li><a href="{:U('Financial/callback_commission',$paramUrl)}">佣金索回</a></li>
+                <li class="selected"><a href="{:U('Financial/no_outlaycoat_confirm',$paramUrl)}">非付现成本</a></li>
+            </ul>
+        </div>
+        {$form}
+    </div>
+</div>
+<include file="./Tpl/Admin/Public/filter.html"/>
+</body>
+<script type="text/javascript">
+    $(function () {
+        $("#noncashcost").on("click", function () {
+
+            //行为选择
+            var Ids = new Array();
+            var i = 0;
+            $("input[name= 'checkedtd']:checkbox").each(function () {
+                if ($(this).prop("checked") == true) {
+                    Ids[i] = $(this).val();
+                    i++;
+                }
+            });
+
+            if (Ids.length == 0) {
+                layer.alert('请至少选择一条记录!', {icon: 2});
+                return false;
+            }
+
+            //确认
+            if (confirm("亲，您确定要确认吗？")) {
+                $.ajax({
+                    type: "POST",
+                    url: "<?php echo U('Financial/no_outlaycoat_confirm');?>",
+                    data: {'Ids': Ids, 'act': 'confirm'},
+                    dataType: "JSON",
+                    success: function (data) {
+                        if (data) {
+                            var show_flag = 2;
+                            if (data.status)
+                                show_flag = 1;
+                            layer.alert(data.msg, {icon: show_flag},
+                                    function () {
+                                        window.location.reload();
+                                    });
+                        }
+                        else {
+                            var msg = data.msg ? data.msg : '操作异常';
+                            layer.alert(msg, {icon: 2},
+                                    function () {
+                                        window.location.reload();
+                                    });
+                        }
+                    }
+                });
+            }
+        });
+    });
+</script>
+</html>

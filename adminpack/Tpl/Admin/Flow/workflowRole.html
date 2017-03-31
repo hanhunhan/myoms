@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>流程角色管理</title>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--<link href="./Public/css/style2.css" type="text/css" rel="stylesheet"/>-->
+    <!--<link href="./Public/css/jquery-ui.css" type="text/css" rel="stylesheet"/>-->
+    <!--<script type="text/javascript" src="./Public/validform/js/jquery-1.9.1.min.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/validform/js/Validform_v5.3.2.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/validform/js/common.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/js/common.js"></script>-->
+    <!--<link rel="stylesheet" href="./Public/validform/css/style.css" type="text/css" media="all"/>-->
+    <!--<link rel="stylesheet" href="./Public/validform/css/validateForm.css" type="text/css" media="all"/>-->
+    <include file="./Tpl/Admin/Public/comm_css_js.html" />
+</head>
+<body>
+<div class="right fright j-right">
+    {$form}
+    <input type="hidden" name="parentID" id="parentID" value="{$parentID}"/>
+</div>
+<script>
+    function addRole() {
+        var url = appUrl + '/Flow/handleRole/operate/add/parentID/' + $("#parentID").val();
+        window.location.href = url;
+    }
+
+    function editRole(obj) {
+        var url = appUrl + '/Flow/handleRole/operate/edit/ID/' + $(obj).parent().attr('fid') + "/parentID/" + $("#parentID").val();
+        window.location.href = url;
+    }
+
+    function delRole(obj) {
+        var fid = $(obj).parent().attr('fid');
+        $(obj).attr("fid", fid);
+
+        ofdel(obj);
+    }
+</script>
+</body>
+</html>

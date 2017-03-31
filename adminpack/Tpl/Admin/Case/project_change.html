@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>变更列表</title>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <include file="./Tpl/Admin/Public/comm_css_js.html"/>
+    <script>
+        //1 项目变更 2 独立活动变更 3 独立活动
+        function changeDetail(obj) {
+            var url;
+            if ($("#type").val() == '1') {
+                url = appUrl + '/House/projectDetail&tabNum=21&CHANGE=-1&active=2&CID=' + $(obj).parent().attr('fid') + '&prjid=' + $("#prjid").val();
+            } else if ($("#type").val() == '2') {
+                url = "{:U('Activ/activPro')}" + '&active=2&CHANGE=-1&CID=' + $(obj).parent().attr('fid') + '&activId=' + $("#activId").val() + '&prjid=' + $("#prjid").val() + '&tabNum=9';
+            } else {
+                url = "{:U('Activ/activPro')}" + '&active=2&CHANGE=-1&CID=' + $(obj).parent().attr('fid') + '&prjid=' + $("#prjid").val() + '&tabNum=9';
+            }
+
+            layer.open({
+                type: 2,
+                title: '变更详情',
+                shadeClose: true,
+                shade: 0.8,
+                area: ['98%', '90%'],
+                content: url,
+                end: function () {
+                    window.location.reload();
+                }
+            });
+        }
+
+        function submitFlow(obj) {
+            var recordId = $(".contractinfo-table tbody .selected").attr('fid');
+            var status = $("select[name='" + recordId + "_STATUS']").val();
+            if (recordId) {
+                if (status == 0) {
+                    var caseId = $("#prjid").val();
+                    var type = $("#type").val();
+                    // var url;
+                    // 先检查项目所处状态
+                    var url = appUrl + '/Case/project_change/type/' + type + '/prjid/' + caseId;
+                    //window.location.href = url;
+                    $.ajax({
+                        url: url,
+                        dataType: "json",
+                        data: {
+                            act: 'checkprjChange'
+                        },
+                        success: function (data) {
+                            //console.log(data);
+                            if (data.status == 'y') {
+                                if ($("#type").val() == '1') {
+                                   // url = appUrl + '/House/opinionFlow&active=1&CHANGE=-1&type=1&tabNum=20&flowType=lixiangbiangeng&CASEID=' + caseId + '&RECORDID=' + recordId;
+									url = appUrl + '/Touch/ProjectChange/show&prjid='+ caseId+ '&CHANGE=-1&type=1&flowType=lixiangbiangeng&active=1&tabNum=20&CASEID=' + caseId + '&RECORDID=' + recordId;
+									window.location.href=url;
+                                    /*layer.open({
+                                        type: 2,
+                                        title: '提交变更工作流',
+                                        shadeClose: true,
+                                        shade: 0.8,
+                                        area: ['1024px', '90%'],
+                                        content: url,
+                                        end: function () {
+                                            window.location.reload();
+                                        }
+                                    });*/
+                                } else {
+                                    $.ajax({
+                                        type: 'get',
+                                        url: "{:U('Activ/opinionFlowChange')}",
+                                        data: {
+                                            'act': 'checkbudgetFee',
+                                            'CASEID': caseId,
+                                            'RECORDID': recordId,
+                                            'ACTIVID': $("#activId").val()
+                                        },
+                                        async: false,
+                                        dataType: "JSON",
+                                        success: function (obJect) {
+                                            if (obJect.status == 'n') {
+                                                layer.alert(obJect.msg, {icon: 0});
+                                            }
+                                            else {
+                                                if ($("#type").val() == '2') {
+                                                    url = "{:U('Touch/Activ/process')}" + '&type=2&flowType=xiangmuxiahuodongbiangeng' + '&CASEID=' + caseId + '&RECORDID=' + recordId + '&ACTIVID=' + $("#activId").val() + '&active=1&tabNum=9&CHANGE=-1';
+                                                }
+                                                else {
+//                                                    url = "{:U('Activ/opinionFlowChange')}" + '&type=3&CHANGE=-1&tabNum=9&flowType=dulihuodongbiangeng' + '&CASEID=' + caseId + '&RECORDID=' + recordId + '&ACTIVID=' + $("#activId").val();
+                                                    url = "{:U('Touch/Activ/process')}" + '&type=3&CHANGE=-1&tabNum=9&flowType=dulihuodongbiangeng' + '&CASEID=' + caseId + '&RECORDID=' + recordId + '&ACTIVID=' + $("#activId").val();
+                                                }
+                                                location.href = url;
+//                                                layer.open({
+//                                                    type: 2,
+//                                                    title: '提交变更工作流',
+//                                                    shadeClose: true,
+//                                                    shade: 0.8,
+//                                                    area: ['1024px', '90%'],
+//                                                    content: url,
+//                                                    end: function () {
+//                                                        window.location.reload();
+//                                                    }
+//                                                });
+                                            }
+                                        }
+
+                                    });
+                                }
+
+                            } else  layer.alert(data.info, {icon: 0});
+                        }
+                    });
+                } else if (status == 1) {
+                    layer.alert("该变更正在进行中", {icon: 0});
+                } else if (status == 2) {
+                    layer.alert("该变更已经通过", {icon: 0});
+                } else {
+                    layer.alert("该变更已否决", {icon: 0});
+                }
+            } else {
+                layer.alert("请先选择记录", {icon: 0});
+            }
+        }
+
+        function viewDetail(obj) {
+            var url;
+            if ($("#type").val() == '1') {
+                url = "{:U('House/projectDetail')}" + '&tabNum=21&type=1&active=1&CHANGE=-1&CID=' + $(obj).parent().attr('fid') + '&prjid=' + $("#prjid").val();
+            } else if ($("#type").val() == '2') {
+                url = "{:U('Activ/activPro')}" + '&type=2&active=1&CHANGE=-1&CID=' + $(obj).parent().attr('fid') + '&activId=' + $("#activId").val() + '&prjid=' + $("#prjid").val() + '&tabNum=9';
+            } else {
+                url = "{:U('Activ/activPro')}" + '&type=3&active=1&CHANGE=-1&CID=' + $(obj).parent().attr('fid') + '&prjid=' + $("#prjid").val() + '&tabNum=9';
+            }
+
+            if ($("#flowId").val()) {
+                url += "&flowId=" + $("#flowId").val();
+            }
+
+            layer.open({
+                type: 2,
+                title: '查看变更',
+                shadeClose: true,
+                shade: 0.8,
+                area: ['1024px', '90%'],
+                content: url
+            });
+        }
+
+        function addChange(obj) {
+            var prjid = $("#prjid").val();
+            var activId = $("#activId").val();
+            var type = $("#type").val();
+
+            var url = appUrl + '/Case/project_change/type/' + type + '/prjid/' + prjid + '/activId/' + activId;
+            $.ajax({
+                url: url,
+                dataType: "json",
+                data: {
+                    act: 'addChange'
+                },
+                success: function (data) {
+
+                    if (data.status == 'y') {
+                        window.location.reload();
+                    } else  layer.alert(data.msg, {icon: 0});
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+<div class="containter">
+    <div class="right fright j-right">
+        <div class="handle-tab">
+            <ul>
+                <li class="selected">
+                    <a href="{:U('Case/project_change',$paramUrl)}">变更列表</a>
+                </li>
+            </ul>
+        </div>
+        {$form}
+        <input type="hidden" name="prjid" value="{$prjid}" id="prjid">
+        <input type="hidden" name="type" value="{$type}" id="type">
+        <input type="hidden" name="activId" value="{$activId}" id="activId">
+        <input type="hidden" name="flowId" value="{$flowId}" id="flowId">
+        <input type="hidden" name="is_show_add_btn" value="{$isShowAddBtn}" id="is_show_add_btn">
+        <textarea id="last_filter_text" style="display: none">{$lastFilter}</textarea>
+        <script>
+            $(function () {
+                $(".j-right tbody tr").click(function () {
+                    $(this).siblings().removeClass("selected");
+                    $(this).addClass("selected");
+                });
+
+                // 隐藏新增按钮新增按钮
+                if ($('#is_show_add_btn').val() == DISPLAY_OPTION_BTN.SHOW) {
+                    $('a[onclick *= "addChange"]').show();
+                } else if ($('#is_show_add_btn').val() == DISPLAY_OPTION_BTN.HIDE) {
+                    $('a[onclick *= "addChange"]').remove();  // 移除新增按钮
+                    $('a[onclick *= "submitFlow"]').remove();  // 移除提交按钮
+                }
+            })
+        </script>
+    </div>
+</div>
+</body>
+</html>

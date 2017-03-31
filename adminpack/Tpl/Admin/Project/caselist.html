@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>案例管理</title>
+        <meta charset="GBK">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="./Public/css/style2.css" type="text/css" rel="stylesheet"/>
+		<script type="text/javascript" src="./Public/validform/js/jquery-1.9.1.min.js"></script>
+		<script type="text/javascript" src="./Public/validform/js/Validform_v5.3.2.js"></script>
+		<script type="text/javascript" src="./Public/validform/js/common.js"></script>
+		<script type="text/javascript" src="./Public/js/common.js"></script>
+		<script language="javascript" type="text/javascript" src="./Public/My97DatePicker/WdatePicker.js"></script>
+		
+<script type="text/javascript" src="./Public/validform/plugin/swfupload/swfuploadv2.2.js"></script>
+<script type="text/javascript" src="./Public/validform/plugin/swfupload/Validform.swfupload.handler.js"></script>
+
+		<link rel="stylesheet" href="./Public/validform/css/style.css" type="text/css" media="all" />
+		<link rel="stylesheet" href="./Public/validform/css/validateForm.css" type="text/css" media="all" />
+    </head>
+    <body>
+         
+        <div class="containter">
+             
+
+            <div class="right fright j-right">
+               
+               
+
+               {$form}
+        </div>
+    </div>
+	<script>
+	$(document).ready(function(){
+		$(".j-right tbody tr").click(function () {
+			$(this).siblings().removeClass("selected");
+			$(this).addClass("selected");
+
+                   
+		});
+
+		$("select[name='FLOW']").change(function(){
+			 var flowid = this.options[this.options.selectedIndex].value;
+			 $.post("{:U('Project/ajaxgetFlow')}",{'flowId':flowid},function(d){
+				if(d){
+					//$("select[name='TYPEID']").attr("disabled","disabled"); 
+					$("select[name='TYPEID'] option[value='"+d.TYPEID+"']").attr("selected", "selected");
+					//$("select[name='TYPEID']").parent('.fclos').show();
+					var h = $("select[name='TYPEID'] option[value='"+d.TYPEID+"']").html();
+					$("select[name='TYPEID']").parent('.fclos').prev('.fclos').html(h)
+					 
+					//$("select[name='WFVID']").attr("disabled","disabled"); 
+					$("select[name='WFVID'] option[value='"+d.WFVID+"']").attr("selected", "selected");
+					//$("select[name='WFVID']").parent('.fclos').show();
+					var hh = $("select[name='WFVID'] option[value='"+d.WFVID+"']").html();
+					$("select[name='WFVID']").parent('.fclos').prev('.fclos').html(hh)
+
+				}
+			 },'json');
+			
+		});
+	});
+
+	function ajbanli(obj){
+		var id = $(".selected" ).find("td:eq(1)").html();
+		if(id){
+			var typeid = $("select[name='"+id+"_TYPEID']").val(); 
+		if(typeid==12)
+			var url = appUrl+'/Project/doproject&showForm=1&gcaseid='+id;
+		else
+		var url = appUrl+'/Project/paylist&gcaseid='+id;
+		window.location.href=url;
+		}else alert('请选择案件');
+	}
+	 
+	function thisedit(obj){
+		var url = appUrl+'/Project/caselist&add=0&FORMNO=95&showForm=1&ID='+$(obj).parent().attr('fid');
+		window.location.href =url;
+	}
+	function paylist(obj){
+		var url = appUrl+'/Project/paylist&caseid='+$(obj).parent().attr('fid');
+		window.location.href =url;
+	}
+	function customerlist(obj){
+		var url = appUrl+'/Project/customerlist&caseid='+$(obj).parent().attr('fid');
+		window.location.href =url;
+	}
+	function zhtongji(){
+		var id = $(".selected" ).find("td:eq(1)").html();
+		if(id){
+			var typeid = $("select[name='"+id+"_TYPEID']").val(); 
+		}
+		if(typeid==12){
+			var url = appUrl+'/Project/caiwuzk&zhtongji=1&gcaseid=16';
+			window.location.href =url;
+			}
+		else alert('请选择立项案件');
+
+	}
+
+	</script>
+             
+               
+       
+      
+     
+                      
+        
+    </body>
+</html>

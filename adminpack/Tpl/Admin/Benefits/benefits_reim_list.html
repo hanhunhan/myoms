@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>报销申请</title>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="Public/third/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="./Public/css/style2.css" type="text/css" rel="stylesheet"/>
+    <script type="text/javascript" src="./Public/validform/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="./Public/validform/js/Validform_v5.3.2.js"></script>
+    <script type="text/javascript" src="./Public/validform/js/common.js"></script>
+    <script type="text/javascript" src="./Public/js/common.js"></script>
+    <script language="javascript" type="text/javascript" src="./Public/layer/layer.js"></script>
+    <script language="javascript" type="text/javascript" src="./Public/My97DatePicker/WdatePicker.js"></script>
+    <script src="./Public/third/jquery_ui_autocomplete/ui/jquery.ui.core.js"></script>
+    <script src="./Public/third/jquery_ui_autocomplete/ui/jquery.ui.widget.js"></script>
+    <script src="./Public/third/jquery_ui_autocomplete/ui/jquery.ui.position.js"></script>
+    <script type="text/javascript" src="./Public/third/jquery_ui_autocomplete/ui/jquery.ui.autocomplete.js"></script>
+    <script type="text/javascript" src="./Public/validform/plugin/swfupload/swfuploadv2.2.js"></script>
+    <script type="text/javascript" src="./Public/validform/plugin/swfupload/Validform.swfupload.handler.js"></script>
+    <script src="Public/third/bootstrap/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="./Public/validform/css/style.css" type="text/css" media="all"/>
+    <link rel="stylesheet" href="./Public/validform/css/validateForm.css" type="text/css" media="all"/>
+    <script type="text/javascript">
+        $(function () {
+            //提交预算外报销申请
+            $("#sub_reim_apply").click(function () {
+                var reim_list_id = new Array();
+                reim_list_id[0] = $('.itemlist').filter('.selected').attr('fid');
+
+                $.ajax({
+                    type: "GET",
+                    url: 'index.php?s=/Benefits/sub_reim_to_apply',
+                    data: {'reim_list_id': reim_list_id},
+                    dataType: "JSON",
+                    success: function (data) {
+                        if (data.state == 0) {
+                            layer.alert(data.msg, {icon: 2, closeBtn: false},
+                                    function () {
+                                        window.location.reload();
+                                    });
+                        } else if (data.state == 1) {
+                            layer.alert(data.msg, {icon: 1, closeBtn: false},
+                                    function () {
+                                        window.location.reload();
+                                    });
+                        } else {
+                            var msg = data.msg ? data.msg : '操作异常';
+                            layer.alert(msg, {icon: 2, closeBtn: false}, function () {
+                                window.location.reload();
+                            });
+                        }
+                    }
+                })
+            });
+
+            //关联借款
+            $("#related_my_loan").click(function () {
+                var reim_list_id = new Array();
+                var i = 0;
+                $("input[name='checkedtd']:checkbox").each(function () {
+                    if ($(this).prop("checked") == true) {
+                        reim_list_id[i] = $(this).val();
+                        i += 1;
+                    }
+                });
+                var status = $("select[name='" + reim_list_id[0] + "_STATUS']").val();
+                if (status > 0) {
+                    layer.alert("该报销已提交，不允许再关联借款", {icon: 0});
+                    return false;
+                }
+                if (reim_list_id.length == 1) {
+                    //查看关联单
+                    layer.open({
+                        type: 2,
+                        title: '我的借款单',
+                        content: '{:U("Loan/my_loan_list")}' + '&reim_list_id=' + reim_list_id + '&fromTab=15',
+                        area: ['95%', '80%'],
+                        cancel: function (index) {
+                            window.location.reload();
+                        }
+                    });
+                } else {
+                    layer.alert('每次必须且只能勾选一条记录!', {icon: 2});
+                    return false;
+                }
+            })
+        })
+    </script>
+</head>
+<body>
+<div class="containter">
+    <div class="right fright j-right">
+        <div class="handle-tab">
+            <ul>
+                <li><a href="{:U('Benefits/otherBenefits',$paramUrl)}">预算外费用</a></li>
+                <li class="selected"><a href="{:U('Benefits/benefits_reim_list',$paramUrl)}">报销申请</a></li>
+            </ul>
+        </div>
+        {$form}
+        <textarea id="last_filter_text" style="display: none">{$lastFilter}</textarea>
+    </div>
+</div>
+<script>
+    $(function () {
+        var isShowOptionBtn = "{$isShowOptionBtn}";
+        if (isShowOptionBtn == DISPLAY_OPTION_BTN.HIDE) {
+            $.each($('.page a'), function (index, elem) {
+                if (!REG_EXPS.ORDER.test($(elem).text())
+                        && !REG_EXPS.SEARCH.test($(elem).text())
+                        && !REG_EXPS.REFRESH.test($(elem).text())
+                        && !REG_EXPS.REIM.test($(elem).text())
+                        && !REG_EXPS.DECLARE.test($(elem).text())) {
+                    $(elem).remove();
+                }
+            });
+
+            $('.buttons').remove();
+            $('.handle-btn').remove();
+        }
+    });
+</script>
+</body>
+</html>

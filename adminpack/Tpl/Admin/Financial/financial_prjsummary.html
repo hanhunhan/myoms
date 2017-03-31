@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>财务主页面</title>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="./Public/css/style2.css" type="text/css" rel="stylesheet"/>
+    <script type="text/javascript" src="./Public/validform/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="./Public/validform/js/Validform_v5.3.2.js"></script>
+    <script type="text/javascript" src="./Public/validform/js/common.js"></script>
+    <script type="text/javascript" src="./Public/js/common.js"></script>
+    <script language="javascript" type="text/javascript" src="./Public/My97DatePicker/WdatePicker.js"></script>
+    <script type="text/javascript" src="./Public/validform/plugin/swfupload/swfuploadv2.2.js"></script>
+    <script type="text/javascript" src="./Public/validform/plugin/swfupload/Validform.swfupload.handler.js"></script>
+    <link rel="stylesheet" href="./Public/validform/css/style.css" type="text/css" media="all"/>
+    <link rel="stylesheet" href="./Public/validform/css/validateForm.css" type="text/css" media="all"/>
+</head>
+<body>
+<div class="containter">
+    <div class="right fright j-right">
+        <div class="handle-tab">
+            <ul></ul>
+        </div>
+        {$form}
+        <div>
+            {$html}
+        </div>
+    </div>
+</div>
+<script>
+    $("input[name='save']").val("备案");
+    $(function () {
+        var fid;
+        var prjname;
+        var sub;
+        $(".itemlist").each(function () {
+            $(this).click(function () {
+                fid = $(this).attr("fid");
+                prjname = $(this).children("td").first().next().children("span").html();
+                //url = "{:U('Financial/prjSummary',array('flowid'=>'"+fid+"'))}";
+                url = "index.php?s=/Financial/prjSummary/flowid/" + fid + "/prjname/" + prjname;
+                location.href = url;
+            })
+        });
+
+        $("input[name='save']").click(function () {
+            sub = $(this).val();
+            url = "index.php?s=/Financial/prjSummary/save/" + sub;
+            location.href = url;
+        })
+    })
+</script>
+</body>
+</html>

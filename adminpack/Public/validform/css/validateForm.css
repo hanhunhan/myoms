@@ -1,0 +1,53 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 2015-4-23, 9:45:17
+    Author     : 365
+*/
+
+/*td{line-height:38px;}*/
+ 
+
+.Validform_checktip{margin-left:0;}
+.info{
+	border:1px solid #ccc; 
+	padding:2px 20px 2px 5px; 
+	color:#666; 
+	position:absolute;
+	display:none;
+	line-height:20px;
+	background-color:#fff;
+}
+.dec {
+    bottom: -8px;
+    display: block;
+    height: 8px;
+    overflow: hidden;
+    position: absolute;
+    left: 10px;
+    width: 17px;
+}
+.dec s {
+    font-family: simsun;
+    font-size: 16px;
+    height: 19px;
+    left: 0;
+    line-height: 21px;
+    position: absolute;
+    text-decoration: none;
+    top: -9px;
+    width: 17px;
+}
+.dec .dec1 {
+    color: #ccc;
+}
+.dec .dec2 {
+    color: #fff;
+    top: -10px;
+}
+td .gray{
+color:#ccc;
+}

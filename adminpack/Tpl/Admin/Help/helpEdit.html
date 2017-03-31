@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+<title></title>
+<link rel=stylesheet href="./Tpl/css/global.css" type="text/css">
+<link rel=stylesheet href="./Tpl/css/mainPage.css" type="text/css">
+<script type="text/javascript" src="__PUBLIC__/Js/jquery-1.8.0.min.js"></script>
+</head>
+
+<body>
+	<div class="box" id="interestManage">
+    	<div class="box-tit"><h3>帮助信息</h3></div>
+        <div class="box-con" >
+        	<div class="c-tit"><h4>{$actName|default='新增'}信息</h4></div>
+            <iframe name="targetHidden" name="targetHidden" style="display: none;"></iframe>
+			<form method="post" target="targetHidden"  action="{:U('Help/helpEdit')}">
+			 <div class="bd">				
+				<table class="table2" width="98%">
+					<tr><td><em class="xing">*</em>标题</td><td><input type="text" name="title" id="title"  style="width:250px;" value="{$info.h_title}"><label for="name" style='margin-left:10px;'></label>
+                    </td></tr>
+					<tr><td><em class="xing">*</em>分类：</td><td>
+                    <select name="sortid" id="sortid"  style="width:250px;">
+                    <option value="">选择分类</option>
+                    {$sortSelectOption}</select>
+                    <label for="sortid" style='margin-left:10px;'></label></td></tr>
+                
+					<tr><td><em class="xing">*</em>正文：</td><td>
+                    
+                    <textarea id="hcontent" name="hcontent" style="width:1024px;height:500px;">{$info.h_content|htmlspecialchars_decode}</textarea>
+                    
+                    <label for="hcontent" style='margin-left:10px;'></label></td></tr>
+				</table>
+                <div class="center-btn mt10"  style="margin:20px;"><input type="submit" value="确定" class="btn-a mr50"/><input name="重置" type="reset" class="btn-a" value="重填"/></div>
+				<input type="hidden" name="act" value="{$act|default='add'}" />
+				<input type="hidden" name="id"  value="{$id}" />
+                <input type="hidden" name="mod"  value="{$mod|default='add'}" />
+			</div>
+            
+			</form>
+
+          </div>
+
+        </div>
+    </div>
+<script>
+var upLoadAction="{:U('Upfile/ueditorUpImage')}"
+</script>
+<link rel=stylesheet href="__PUBLIC__/ueditor_mini/themes/default/css/umeditor.css" type="text/css">
+<script type="text/javascript" src="__PUBLIC__/ueditor_mini/umeditor.config.js"></script>  
+<script type="text/javascript"  src="__PUBLIC__/ueditor_mini/umeditor.js"></script>
+<script type="text/javascript"  src="__PUBLIC__/ueditor_mini/lang/zh-cn/zh-cn.js"></script>
+<script> 
+    var editor = UM.getEditor('hcontent');
+ 
+</script>
+
+    
+</body>
+</html>

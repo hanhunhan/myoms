@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>活动立项</title>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <include file="./Tpl/Admin/Public/comm_css_js.html"/>
+    <style>
+        .ui-autocomplete {
+            max-height: 200px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+    </style>
+</head>
+<body>
+<div class="containter">
+
+    <div class="right fright j-right">
+        <div class="handle-tab  ">
+            {$tabs}
+        </div>
+        {$form}
+        <input type="hidden" value="{$prj_active}" name="prj_active" id="prj_active"/>
+        <script>
+            $(function () {
+                $("input[name='MYFEE']").bind('change', function () {
+                    getBudgetFee();
+                });
+                $("input[name='BUSINESSFEE']").bind('change', function () {
+                    getBudgetFee();
+                });
+                $("input[name='PRINCOME']").bind('change', function () {
+                    getBudgetFee();
+                });
+            });
+
+            function getBudgetFee() {
+                var myFee =
+                        $("input[name='MYFEE']").val() ? $("input[name='MYFEE']").val() : 0;//我方费用
+                var businessFee = $("input[name='BUSINESSFEE']").val() ? $("input[name='BUSINESSFEE']").val() : 0;//电商费用
+                var princomeFee = $("input[name='PRINCOME']").val();//预计收入
+
+                var budgetFee = parseFloat(myFee) + parseFloat(businessFee);//预算费用
+                if(princomeFee>0){ var profitmarginRate = ((princomeFee - budgetFee) / princomeFee) * 100;//利润率*/
+				}else {
+					var profitmarginRate = 0;
+				}
+
+                if ($("#prj_active").val())//项目下活动利润率恒为0
+                {
+                    profitmarginRate = 0;
+                }
+                $("input[name='BUDGET']").parent().prev("span").text(budgetFee);
+                $("input[name='BUDGET']").val(budgetFee);
+                $("input[name='PROFITMARGIN']").parent().prev("span").text(profitmarginRate.toFixed(2));
+                $("input[name='PROFITMARGIN']").val(profitmarginRate.toFixed(2));
+            }
+
+            // 获取合同号自动补全
+            $("input[name='CONTRACT_NO']").autocomplete({
+                source:function(request, response){
+                    $.ajax({
+                        url: '{:U("Activ/getContractList")}',
+                        dataType:"json",
+                        data:{
+                            "keywords": request.term
+                        },
+                        success:function(resp){
+                            $("input[name='CONTRACT_NO']").attr('data-found', -1);
+                            if (resp.status) {
+                                response($.map(resp.data.fullcode, function (item) {
+                                    return {
+                                        label: item,
+                                        value: item
+                                    }
+                                }));
+                            } else {
+                                response([{
+                                    label: '没找到相应记录',
+                                    value: '-1'
+                                }]);
+                            }
+                        }
+                    });
+                },
+                minLength:1,
+                removeinput: 0,
+                select:function(event,ui) {
+                    // 如果找到合同号，则将合同号保存在输入文本框，否则清空文本框
+                    if (parseInt(ui.item.value) != -1) {
+                        $("input[name='CONTRACT_NO']").val(ui.item.value).attr('data-found', 1);
+                        removeinput = 2
+                    } else {
+                        $(this).val('');
+                        $("input[name='CONTRACT_NO']").val('').attr('data-found', -1);
+                        removeinput = 1
+                    }
+                },
+                close: function(event) {
+                    if(typeof(removeinput) == 'undefined' || removeinput == 1 )
+                    {
+                        $(this).val('');
+                        layer.alert('该合同号未在合同系统登记!');
+                    }
+                }
+            });
+
+            // 合同输入框失去焦点时
+//            $(function () {
+//                $("input[name='CONTRACT_NO']").blur(function () {
+//                    setTimeout(function(){
+//                        var found = $("input[name='CONTRACT_NO']").attr('data-found');
+//                        if (parseInt(found) === -1) {
+//                            if ($("input[name='CONTRACT_NO']").val()) {
+//                                layer.alert('该合同号未在合同系统登记!');
+//                            }
+//                            $("input[name='CONTRACT_NO']").val('');
+//
+//                        }
+//                    },0)
+//
+//                })
+//            });
+
+        </script>
+    </div>
+</div>
+</body>
+</html>

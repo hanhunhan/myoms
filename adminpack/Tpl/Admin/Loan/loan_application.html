@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>借款申请</title>
+        <meta charset="GBK">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <include file="./Tpl/Admin/Public/comm_css_js.html" />
+        <style>
+            .ui-autocomplete {
+                max-height: 200px;
+                overflow-y: auto;
+                /* 防止水平滚动条 */
+                overflow-x: hidden;
+            }
+        </style>
+    </head>
+<body>  
+<div class="containter">   
+    <div class="right fright j-right">
+        <div class="handle-tab">
+            <if condition="$ischildren neq 1 && $layer neq 1">
+                <ul>
+                <li class="selected"><a href="{:U('Loan/loan_application',$paramUrl)}">借款申请</a></li>
+                <!--<li ><a href="{:U('Loan/opinionFlow',$paramUrl)}">审批工作流</a></li>-->
+                </ul>
+            </if>
+        </div>
+        {$form}
+      <div>   
+</div>
+<script>
+    $(function(){
+        $(".contractinfo-table tbody tr").click(function () 
+        {
+            $(this).siblings().removeClass("selected");
+            $(this).addClass("selected");
+        });
+
+        var proOptions = '{$proOptions}';
+        if (proOptions) {
+            $('select[name="PID"]')
+                    .html(proOptions)
+                    .addClass('js-example-basic-single')
+                    .val($('input[name="PID_OLD"]').val())
+                    .unbind('focus')
+                    .select2({
+                        allowClear: true,
+                        noResults: '没有找到相关信息'
+                    });
+
+            //更新数据
+            $('select[name="PID"]').on("change", function (e) {
+                var pId = $('select[name="PID"]').val();
+                $.ajax({
+                    type: "GET",
+                    url: "index.php?s=/Loan/loan_application",
+                    data: {'pId': pId,'act': 'getContract'},
+                    dataType: "JSON",
+                    success: function (data) {
+                        if(data.status){
+                            $('input[name="CONTRACT"]').parent().prev().html(data.data.contract);
+                        }
+                    },
+                    error: function(data){
+
+                    },
+                })
+            });
+        }
+
+        function checkboxevent(obj)
+        {
+            var fid = $(obj).val(); 
+
+            if( $(obj).is(':checked') )
+            {
+                if(!$("#selecttr"+fid).length )$(obj).after('<input name="selecttr[]" id="selecttr'+fid+'"  class="selecttr" value="'+fid+'" type="hidden">');
+            }
+            else
+            {
+                $("#selecttr"+fid).remove();
+            }
+
+            var idsarr = [];
+            $(".selecttr").each(function()
+            {
+                idsarr.push($(this).val() );
+            });
+
+            var ids = idsarr.join(',');
+
+            $("input[name=loanapplicationIds]",window.parent.document).val(ids);
+        }
+
+        $('.checkedtd').each(function()
+        {
+            $(this).click(function()
+            {
+               checkboxevent(this);
+            });
+        });
+
+        $("#checkall").click( 
+            function()
+            { 
+                if(this.checked)
+                { 
+                    $("input[name='checkedtd']").each(function()
+                    { 
+                        this.checked = true;
+                        checkboxevent(this);
+                    }); 
+                }
+                else
+                { 
+                    $("input[name='checkedtd']").each(function()
+                    {
+                        this.checked = false;
+                        checkboxevent(this);
+                    }); 
+                } 
+            } 
+        );
+    }) ;
+
+    //状态编辑
+    function statusEdit(){
+        var i = 0,fid = 0;
+        //获取ID
+        $("input[name='checkedtd']").each(function(){
+            if($(this).prop("checked") == true)
+            {
+                fid = $(this).val();
+                i++;
+            }
+        });
+
+        if(i>1 || i==0){
+            layer.alert("对不起，请选择其中一条记录进行借款状态编辑!",{icon:2});
+            return false;
+        }
+
+        //状态判断
+        var status = $("input[name='"+ fid +"_STATUS_OLD']").val();
+        if(status != 2 && status != 6){
+            layer.alert('对不起，只能将"已审核"和"部分关联报销"调整至"已关联报销"状态！',{icon:2});
+            return false;
+        }
+
+        //确认提示
+        layer.confirm("您确定要将该条记录借款状态调整为’已关联报销‘状态吗？",
+            {
+                btn: ['确认','取消'] //按钮
+            },function(){
+                    //数据操作
+                    $.ajax({
+                        type: "GET",
+                        url: "index.php?s=/Loan/loan_application",
+                        data: {'loanId': fid,'act': 'updateStatus'},
+                        dataType: "JSON",
+                        success: function (data) {
+                            if(data.status){
+                                layer.alert(data.msg,{icon:1});
+                                window.location.reload();
+                            }else{
+                                layer.alert(data.msg,{icon:2});
+                            }
+                        },
+                        error: function(data){
+                        },
+                    });
+            }, function(index){
+                layer.close(index);
+                return false;
+        });
+    }
+
+    //提交借款申请
+    function addflow()
+    {
+        var fid = new Array();
+        var i = 0;
+        $("input[name='checkedtd']").each(function(){
+            if($(this).prop("checked") == true)
+            {
+                fid[i++] = $(this).val();
+            }
+        })
+               
+        if(fid.length != 1)
+        {
+            layer.alert("请选择一条借款记录",{icon:0});
+            return false;
+        }
+        
+        var status = $('select[name='+fid[0]+'_STATUS]').val();
+        if(status == 0)
+        {
+//            var url = '{:U("Loan/opinionFlow")}'+'&FLOWTYPE=jiekuanshenqing&RECORDID='+fid[0];
+            var url = '{:U("Touch/Loan/process")}'+'&FLOWTYPE=jiekuanshenqing&RECORDID='+fid[0];
+            window.location.href = url;
+        }
+        else
+        {
+            layer.alert('不允许重复提交！', {icon: 2});
+        }
+    }
+</script>
+        <include file="./Tpl/Admin/Public/filter.html" />
+</body>
+</html>

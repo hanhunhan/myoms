@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>费用预算</title>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--<link href="./Public/css/style2.css" type="text/css" rel="stylesheet"/>-->
+    <!--<link href="./Public/css/jquery-ui.css" type="text/css" rel="stylesheet"/>-->
+    <!--<script type="text/javascript" src="./Public/validform/js/jquery-1.9.1.min.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/validform/js/Validform_v5.3.2.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/validform/js/common.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/js/common.js"></script>-->
+    <!--<script language="javascript" type="text/javascript" src="./Public/My97DatePicker/WdatePicker.js"></script>-->
+
+
+    <!--<script type="text/javascript" src="./Public/js/jquery-ui.js"></script>-->
+
+    <!--<link rel="stylesheet" href="./Public/validform/css/style.css" type="text/css" media="all"/>-->
+    <!--<link rel="stylesheet" href="./Public/validform/css/validateForm.css" type="text/css" media="all"/>-->
+    <include file="./Tpl/Admin/Public/comm_css_js.html"/>
+    <style>
+        .ui-autocomplete {
+            max-height: 200px;
+            overflow-y: auto;
+            /* 防止水平滚动条 */
+            overflow-x: hidden;
+        }
+    </style>
+
+</head>
+<body>
+
+<div class="containter">
+    <div class="right fright j-right">
+        <div class="handle-tab  ">
+            {$tabs}
+        </div>
+        {$form}
+        <script>
+            $(function () {
+				var SELECTID = '{$SELECTID}';
+				$(".contractinfo-table tr").each(function(){
+					if( $(this).attr('fid')== SELECTID ){
+						$(this).click();
+					}
+					
+				});
+
+                //关联楼盘
+                $("input[name='REL_PROPERTY']").autocomplete({
+                    source: function (request, response) {
+                        $.ajax({
+                            url: "/tpp/adminpack/index.php?s=/Api/getHouselist",
+                            dataType: "json",
+                            data: {
+                                'city': 'nj',//$("select option:selected").val(),
+                                'search': request.term
+                            },
+                            success: function (obJect) {
+                                response($.map(obJect.data.list, function (item) {
+                                    return {
+                                        label: item.itemname,
+                                        value: item.itemname,
+                                        REL_NEWHOUSEID: item.listid
+                                    }
+                                }));
+                            }
+                        });
+
+
+                    },
+                    select: function (event, ui) {
+                        $.ajax({
+                            url: "/tpp/adminpack/index.php?s=/Api/getHouseProperty",
+                            dataType: "json",
+                            data: {
+                                'city': 'nj',//$("select option:selected").val(),
+                                'search': ui.item.REL_NEWHOUSEID
+                            },
+                            success: function (obJect) {
+                                $("input[name='PRO_ADDR']").val(obJect.data.loc);
+                                $("input[name='REL_NEWHOUSEID']").val(obJect.data.listid);
+                                $("input[name='DEV_ENT']").val(obJect.data.kfsname);
+                                $("input[name='PROPERTY_CLASS']").val(obJect.data.channel_show_name);
+                            }
+                        })
+                    }
+                });
+
+                //关联项目
+                $("input[name='PRO_NAME']").autocomplete({
+                    source: "{:U('Api/getProjectName')}"/*'/adminpack/index.php?s=/Api/getProjectName',*/
+                });
+
+                //资金池变更情况显示
+                if ('{$hchange[VALUEE]}') {
+                    var FPSCALE = '{$hchange[VALUEE]} <span class="fclos fred">[原]{$hchange[ORIVALUEE]} </span>';
+                    $(".contractinfo-table tbody tr").each(function () {
+                        var thisid = $(this).attr('fid');
+                        var tag = thisid + "_" + "FPSCALE";
+                        console.log(tag);
+                        $("[name='" + tag + "']").parent().parent().find('span').first().html(FPSCALE);
+
+                    });
+                }
+
+                /***
+                 * 如果是非我方收筹，则不显示单套收费标准以及外部奖励标准，否则显示
+                 * 依据选中行中是否包含“非我方收筹”字样，隐藏、显示“单套收费标准”，“外部奖励标准”页签
+                 */
+                (function () {
+                    // 隐藏单套收费标准页签
+                    function hideSingleFeeScaleTab() {
+                        // “单套收费标准”正则
+                        var singleFeeScaleReg = /\u5355\u5957\u6536\u8d39\u6807\u51c6/;
+                        var lis = $('li.twolevelli');
+                        for (var i = 0; i < lis.length; i++) {
+                            var innerText = lis[i].innerText;
+                            if (singleFeeScaleReg.test(innerText)) {
+                                $(lis[i]).hide();
+                            }
+                        }
+                    }
+
+                    // 显示单套收费标准页签
+                    function showSingleFeeScaleTab() {
+                        $('li.twolevelli').show();
+                    }
+                    
+                    // 隐藏外部奖励标准页签
+                    function hideOutRewardScaleTab(){
+                        // “外部奖励标准”正则
+                        var outRewardScaleReg = /\u5916\u90e8\u6210\u4ea4\u5956\u52b1/;
+                        var lis = $('li.twolevelli');
+                        for (var i = 0; i < lis.length; i++) {
+                            var innerText = lis[i].innerText;
+                            if (outRewardScaleReg.test(innerText)) {
+                                $(lis[i]).hide();
+                            }
+                        }
+                        
+                    }
+                    
+                    // 显示外部奖励标准页签
+                    function showOutRewardScaleTab() {
+                        $('li.twolevelli').show();
+                    }
+                    
+                    // 更新非我方收筹页面
+                    function updateFwfscPage() {
+                        // “非我方收筹”正则
+                        var fwfscReg = /\u975e\u6211\u65b9\u6536\u7b79/;
+                        var currentSelectedRowHtml = $('.itemlist.selected').text();
+                        if (fwfscReg.test(currentSelectedRowHtml)) {
+                            hideSingleFeeScaleTab();
+                            hideOutRewardScaleTab();
+                        } else {
+                            showSingleFeeScaleTab();
+                            showOutRewardScaleTab();
+                        }
+                    }
+
+                    // 执行方法
+                    updateFwfscPage();
+                    $('tr.itemlist').click(updateFwfscPage);
+                })();
+            });
+
+            function budgetfeetotal() {
+                url = appUrl + '/House/budGetFeeTotal/prjid/' + '{$prjid}';
+                window.open(url);
+            }
+        </script>
+    </div>
+</div>
+</body>
+</html>

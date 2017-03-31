@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+<title>CRM管理系统</title>
+<link rel=stylesheet href="./Tpl/css/global.css" type="text/css">
+<link rel=stylesheet href="./Tpl/css/mainPage.css" type="text/css">
+<script type="text/javascript" src="./Tpl/js/jquery-1.5.2.min.js"></script>
+<script>
+	function vertify(tagname,info){
+		var objval = $('#'+tagname).val();
+		objval = objval.replace(/^\s+|\s+$/,'');
+		if(objval=='') { $('#'+tagname+'_info').html('<font style="color:red">*'+info+'</font>');return false; }
+		else {
+			$('#'+tagname+'_info').html('');			
+			return true
+		}
+	}
+
+	function check(){
+		if(!vertify('pf_name','项目特色名称不能为空！')) return false;
+		//if(!vertify('pf_img','特色图标不能为空！')) return false;
+		
+	}
+</script>
+</head>
+
+<body>
+	<div class="box" id="interestManage">
+    	<div class="box-tit"><h3>项目特色</h3></div>
+        <div class="box-con" >
+        	<div class="c-tit"><h4>{$menutitle}</h4></div>
+
+			<form method="post"  action="" onsubmit="return check();" enctype="multipart/form-data">
+			 <div class="bd">				
+				<table class="table2" width="98%">
+					<tr>
+						<td><em class="xing">*</em>项目特色名称：</td>
+						<td><input type="text" name="pf_name" id="pf_name" value="{$re.pf_name}" style="width:600px;"/><label id="pf_name_info" style='margin-left:10px;'></label></td>
+					</tr>
+					<tr>
+						<td><em class="xing">*</em>特色图标：</td>
+						<td>
+                        <input type="file" name="pf_img" id="pf_img" style="width:200px;"/>
+                        <input type="text" name="pf_img_old" id="pf_img_old" value="{$re.pf_img}" style="width:600px;"/><label id="pf_img_info" style='margin-left:10px;'></label></td>
+					</tr>
+				</table>
+                <div class="center-btn mt10"  style="margin:20px;"><input type="submit" value="确定" class="btn-a mr50"/><input name="重置" type="reset" class="btn-a" value="重填"/></div>
+				<input type="hidden" name="id"  value="{$re.pf_id}"/>
+			</div>
+			</form>
+
+          </div>
+
+        </div>
+    </div>
+</body>
+</html>

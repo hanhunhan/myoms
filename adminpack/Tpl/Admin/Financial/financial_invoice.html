@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>开票</title>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--<link href="./Public/css/style2.css" type="text/css" rel="stylesheet"/>-->
+    <!--<script type="text/javascript" src="./Public/validform/js/jquery-1.9.1.min.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/validform/js/Validform_v5.3.2.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/validform/js/common.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/js/common.js"></script>-->
+    <!--<script language="javascript" type="text/javascript" src="./Public/My97DatePicker/WdatePicker.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/validform/plugin/swfupload/swfuploadv2.2.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/validform/plugin/swfupload/Validform.swfupload.handler.js"></script>-->
+    <!--<script language="javascript" type="text/javascript" src="./Public/layer/layer.js"></script>-->
+    <!--<link rel="stylesheet" href="./Public/validform/css/style.css" type="text/css" media="all"/>-->
+    <!--<link rel="stylesheet" href="./Public/validform/css/validateForm.css" type="text/css" media="all"/>-->
+    <include file="./Tpl/Admin/Public/comm_css_js.html" />
+    <script>
+        $(function () {
+            var filter_sql = "<php>echo $filter_sql;</php>";
+            //导入开票
+            $("#importInvoice").click(function () {
+                var url = "index.php?s=/Financial/importInvoice";
+                layer.open({
+                    type: 2,
+                    //btn:["确定","取消"],
+                    title: '导入开票',
+                    content: url,
+                    area: ['60%', '50%'],
+                    cancel: function (index) {
+                        window.location.reload();
+                    }
+                });
+            });
+
+            //导出开票
+            $("#exportInvoice").click(function () {
+                var member_id = new Array();
+                var i = 0;
+                var member_id_str;
+                $("input[name='checkedtd']").each(function () {
+                    if ($(this).prop("checked") == true) {
+                        member_id[i] = $(this).val();
+                        i += 1;
+                    }
+                });
+
+                location.href = "index.php?s=/Financial/exportInvoice/member_id/" + member_id + "&Filter_Sql=" + filter_sql;
+            })
+        })
+    </script>
+</head>
+<body>
+<div class="right fright j-right">
+    <div class="handle-tab">
+        <ul>
+            <li><a href="{:U('Financial/financialConfirm',$paramUr)}">预收确认</a></li>
+            <li class="selected"><a href="{:U('Financial/invoice',$paramUrl)}">开票</a></li>
+            <li><a href="{:U('Financial/reimConfirm',$paramUrl)}">报销确认</a></li>
+            <li><a href="{:U('Financial/yw_invoice',$paramUrl)}">业务开票</a></li>
+            <li><a href="{:U('Financial/business_change_invoice',$paramUrl)}">业务换票</a></li>
+            <li><a href="{:U('Financial/business_refund_invoice',$paramUrl)}">业务退票</a></li>
+            <li><a href="{:U('Financial/yw_refund',$paramUrl)}">业务回款</a></li>
+            <li><a href="{:U('Financial/callback_commission',$paramUrl)}">佣金索回</a></li>
+        </ul>
+    </div>
+    {$form}
+</div>
+<include file="./Tpl/Admin/Public/filter.html"/>
+</body>
+</html>

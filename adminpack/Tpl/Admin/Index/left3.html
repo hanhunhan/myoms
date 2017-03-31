@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>业务人员</title>
+        <meta charset="GBK">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="./Public/css/style.css" type="text/css" rel="stylesheet"/>
+        <script src="./Public/js/jquery.js" type="text/javascript"></script>
+    </head>
+    <body>
+        <div class="containter">
+            <div class="  fleft menu" style="width:100%">
+                <ul class="j-menu">
+					<volist name="menu" id="vo">
+						<li>
+							<a href="javascript:;" class="second j-second">{$vo.name}</a> 
+							<ul class="menu-second">
+								<volist name="vo['smenu']" id="smenu">
+								<li class="changePassword"><a href="{:U($smenu[LOAN_ROLECONTROL].'/'.$smenu[LOAN_ROLEACTION].'?'.$smenu[param])}" target="mainFrame">{$smenu.LOAN_ROLENAME}</a></li>
+								</volist>
+							</ul>
+						</li>			
+					</volist>
+                     
+                </ul>
+                <div class="menu-ctrl fleft">
+                    <a href="javascript:;" class="menu-ctrl-btn j-menuctrl"><img src="./Public/images/menu-ctrl.png" /></a>
+                </div>
+            </div>
+
+        </div>    
+        <!-- 搜索end -->
+        <script>
+            $(function () {
+                $(".j-close").click(function () {
+                    $(this).parent().parent().hide();
+                    $(".j-alertbg").hide();
+                });
+                $(".j-showalert").click(function () {
+                    $(".j-alertbg").show();
+                    var tag = "." + $(this).attr("id") + "-alert";
+                    $(tag).show();
+                });
+                $(".j-refresh").click(function () {
+                    location.reload();
+                });
+                $(".j-list tr").click(function () {
+                    $(this).siblings().removeClass("selected");
+                    $(this).addClass("selected");
+                    $(".j-number").text($(this).children().first().text());
+                });
+                //侧栏滑动效果
+                var status = false;
+                $(".j-menuctrl").mouseover(function () {
+                    if(status) {
+                        status = false;
+                    $(".j-menu").show();
+                    $(".j-menuctrl").parent().css("left", "99%");
+                    $(".j-right").width("82%");
+                    $(".j-menuctrl img").attr("src","./Public/images/menu-ctrl.png"); 
+                    $(window.parent.document).find('.mainIframe').attr("cols",'160,*'); 
+                    } else {
+                        status = true;
+                    $(".j-menu").hide();
+                    $(".j-menuctrl").parent().css("left", "10px");
+                    $(".j-right").width("96%");
+                    $(".j-menuctrl img").attr("src","./Public/images/menu-ctrl-open.png");
+                    $(window.parent.document).find('.mainIframe').attr("cols",'10,*'); 
+                    }
+                    // $(".j-menuctrl").animate({width:"300px"});
+                })
+     //            $(".j-menuctrl").toggle(function () {
+     //                $(".j-menu").hide();
+     //                $(".j-menuctrl").parent().css("left", "10px");
+     //                $(".j-right").width("96%");
+     //                $(".j-menuctrl img").attr("src","./Public/images/menu-ctrl-open.png");
+					// $(window.parent.document).find('.mainIframe').attr("cols",'10,*'); 
+     //            }, function () {
+     //                $(".j-menu").show();
+     //                $(".j-menuctrl").parent().css("left", "99%");
+     //                $(".j-right").width("82%");
+     //                $(".j-menuctrl img").attr("src","./Public/images/menu-ctrl.png"); 
+					// $(window.parent.document).find('.mainIframe').attr("cols",'200,*'); 
+     //            });
+                $(".j-second").click(function () {
+                    if($(this).siblings("ul").css("display")=='none') {
+                        $(this).siblings("ul").show();
+                        $(this).css("background-position", "15px -88px");
+                        //隐藏前后ul对象
+                        var t = $(this).siblings("ul");
+                        $(this).parent().parent().find("ul").not(t).hide();
+                        $(this).parent().parent().find("a").not(this).css("background-position", "15px -118px");
+                    }
+                    else
+                    {
+                        $(this).siblings("ul").hide();
+                        $(this).siblings("a").css("background-position", "15px -118px");
+                    }
+                });
+                //scroll
+                // var s_height = $(window).height();
+                // $(".menu").css("height", s_height + "px");               
+                // $(window).resize(function () {
+                //     s_height = $(window).height();
+                //     $(".menu").css("height", s_height + "px");
+                // })
+                $(".menu").height() < $(window).height() - 50  ? $(".menu").height('auto') : $(".menu").css('overflow-y', 'scroll').height($(window).height());
+            });
+                
+        </script>
+    </body>
+    <style>
+       /* .menu{
+            overflow-y:scroll;
+            overflow-x:hidden;
+        }*/
+    </style>
+</html>

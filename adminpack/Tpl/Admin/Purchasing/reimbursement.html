@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>报销单</title>
+        <meta charset="GBK">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!--<link href="./Public/css/style2.css" type="text/css" rel="stylesheet"/>-->
+		<!--<link href="./Public/css/jquery-ui.css" type="text/css" rel="stylesheet"/>-->
+		<!--<script type="text/javascript" src="./Public/validform/js/jquery-1.9.1.min.js"></script>-->
+		<!--<script type="text/javascript" src="./Public/validform/js/Validform_v5.3.2.js"></script>-->
+		<!--<script type="text/javascript" src="./Public/validform/js/common.js"></script>-->
+		<!--<script type="text/javascript" src="./Public/js/common.js"></script>-->
+		<!--<script language="javascript" type="text/javascript" src="./Public/My97DatePicker/WdatePicker.js"></script>-->
+		<!---->
+		<!--<script type="text/javascript" src="./Public/validform/plugin/swfupload/swfuploadv2.2.js"></script>-->
+		<!--<script type="text/javascript" src="./Public/validform/plugin/swfupload/Validform.swfupload.handler.js"></script>-->
+		<!--<script type="text/javascript" src="./Public/js/jquery-ui.js"></script>-->
+		<!---->
+		<!--<script type="text/javascript" src="./Public/layer/layer.js"></script>-->
+
+		<!--<link rel="stylesheet" href="./Public/validform/css/style.css" type="text/css" media="all" />-->
+		<!--<link rel="stylesheet" href="./Public/validform/css/validateForm.css" type="text/css" media="all" />-->
+
+        <include file="./Tpl/Admin/Public/comm_css_js.html" />
+		<style>
+			.ui-autocomplete {
+				max-height: 200px;
+				overflow-y: auto;
+				/* 防止水平滚动条 */
+				overflow-x: hidden;
+			}
+		</style>
+   
+</head>
+<body>
+         
+  <div class="containter">
+             
+	<div class="right fright j-right">
+		 
+			<div class="handle-tab  ">
+                {$tabs}
+            </div>
+		 
+	   
+	 
+		{$form}
+
+	  <div>   
+  </div>
+<script>
+	$(function(){
+		var fid = $(".contractinfo-table tbody tr").first().attr('fid');
+		$('.registerform').append('<input type="hidden" value="'+fid+'" name="selectedtrId" /><input type="hidden" value="" name="loanapplicationIds" />');
+		
+        $(".contractinfo-table tbody tr").click(function () {
+			$(this).siblings().removeClass("selected");
+			$(this).addClass("selected");
+			  
+			$('input[name=selectedtrId]').val($(this).attr('fid')); 
+			
+		});
+		 
+		
+             
+	}) ;
+	//判断选择
+	function  ischeck(){
+		var count = 0;
+		$('.checkedtd').each(function(){
+			if(this.checked){
+				count++;
+			} 
+		});
+		return count;
+	}
+	 
+	//生成报销申请
+	function addreimbursement(){
+		if(ischeck()){
+			var ids = [];
+			$(".selecttr").each(function(){
+				ids.push($(this).val());
+			});
+			 
+			$.ajax({
+				url:"{:U('Purchasing/contract?act=addreimbursement' )}",
+				dataType:"json",
+				data:{
+					'select':ids.join(',') 	 
+				},
+				success:function(data){
+					 if(data.status == 1){
+						 alert('生成报销单成功');
+						 self.location = data.forward;
+					 }else{
+						  alert('生成报销单失败！');
+					 }
+					
+				}
+
+			});
+			 
+			
+		}else{
+			alert('请先选择采购合同');
+		}
+
+
+
+	}
+
+	//关联报销单
+	function addloanapplication(){
+		layer.open({
+					type: 2,
+					title: '选择关联报销单',
+					shadeClose: true,
+					shade: 0.8,
+					area: ['580px', '90%'],
+					content: '{:U("Purchasing/loanapplication?layer=1")}' //iframe的url
+				});		
+	}
+	//提交关联报销单
+	function submitloanapplication(){
+		if($('input[name=loanapplicationIds]').val()){
+			var demo = $(".registerform").Validform();
+			demo.submitForm(false,'__SELF__'+'&act=submitloanapplication');
+		}else{
+			alert('请先选择借款申请');
+		}
+
+	}
+	//提交报销申请
+	function addflow(){
+		var fid = $(".contractinfo-table tbody ").find('.selected').attr('fid'); 
+		if(fid ){
+			var status = $('select[name='+fid+'_STATUS]').val();
+			if(status==0){
+				var url = '{:U("Purchasing/opinionFlow")}'+'&FLOWTYPE=15&RECORDID='+fid;
+				window.location.href=url;
+			}else alert('不允许重复提交！');
+		}else alert('请选择要提交的报销单！');
+	}
+</script>
+</body>
+</html>

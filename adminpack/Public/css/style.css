@@ -1,0 +1,542 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+html {
+    -webkit-text-size-adjust: none
+}
+s{
+    text-decoration: none;
+}
+table{
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+body {
+    -moz-user-select: none;
+    font-family: "Microsoft Yahei", Tahoma, Arial, sans-serif;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    margin: 0;
+    color: #434343;
+}
+input,textarea,button{
+    font-family: "Microsoft Yahei", Tahoma, Arial, sans-serif;
+}
+img {
+    border: 0
+}
+a {
+    text-decoration: none;
+    outline: none;
+}
+ul li, ol li, dl li {
+    list-style-type: none
+}
+.f20{font-size: 20px;}
+.f12{font-size: 12px;}
+.fleft{float:left;}
+.fright{float:right;}
+.wrapper{
+    width: 1000px;
+    margin: auto;
+}
+/***登录****/
+.login-bg{
+    background-image: url(../images/bg.jpg);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-color: #369cc0;
+}
+.login{
+    width: 1000px;
+}
+.login-box{
+    width: 660px;
+    height: 360px;
+    padding: 30px 70px;
+    background-color: #34abc6;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -400px;
+    margin-top: -250px;
+}
+.login-tit{
+    text-align: center;
+}
+.login-cont{
+    width: 520px;
+    padding: 30px 70px;
+    background-color: #f1efee;
+    border-radius: 3px;
+    margin-top: 10px;
+}
+.login-cont li{
+    margin: 10px 0px;
+}
+.login-cont li *{
+    vertical-align: top;
+    line-height: 40px;
+}
+.login-left{
+    display: inline-block;
+    width: 80px;
+}
+.login-text{
+    border: 1px solid #b9b9b9;
+    padding: 10px 5px;
+    width: 280px;
+    height: 20px;
+    line-height: 20px;
+    outline: none;
+}
+.login-input-checknum{
+    width: 150px;
+}
+.login-checknum{
+    margin-left: 3px;
+}
+.login-checknum img{
+    border: 1px solid #b9b9b9;
+}
+.login-change{
+    font-family: "宋体";
+    color: #3e86bd;
+}
+.login-change:hover{
+    text-decoration: underline;
+}
+.login-submit{
+    color: #ffffff;
+    width: 148px;
+    height: 48px;
+    background: url(../images/btn-bg.png) no-repeat 0px 0px;
+    border: none;
+    outline: none;
+    cursor: pointer;
+}
+.login-daoyin{
+    position: relative;
+    left: -50px;
+    top: 50px;
+    *top: 60px;
+}
+/***业务人员界面*****/
+.header{
+    height: 60px;
+    background-color: #349ac0;
+}
+.logo{
+    margin: 12px 0px 0px 15px;
+    display: inline-block;
+}
+.header .fright{
+    margin-right: 15px;
+    line-height: 60px;
+    color: #ffffff;
+    font-size: 14px;
+}
+.header .fright a{
+    color: #ffffff;
+    padding-left: 20px;
+    background: url(../images/sprite1.png) no-repeat;
+    margin-left: 10px;
+}
+.header .fright .off{
+    background-position: 0px -1px;
+}
+.header .fright .update-password{
+    background-position: 0px -31px;
+}
+.header .fright .exit{
+    background-position: 0px -60px;
+}
+.header .fright .no{
+    background-position: 0px -100px;
+}
+.left{
+    width: 12%;
+}
+.menu>ul>li{
+    line-height: 40px;
+    background-color: #f8f8f8;
+    border-bottom: 1px solid #e8e8e8;
+}
+.menu>ul>li>a{
+    padding-left: 30px;
+    color: #333333;
+}
+.j-menu a{
+	font-size: 14px;
+}
+.menu>ul>li>.second{
+    background: url(../images/sprite1.png) no-repeat 15px -118px;
+}
+.menu-second{
+    /*padding-left: 60px;*/
+    text-align: center;
+    font-size: 14px;
+    background-color: #ffffff;
+    display: none;
+}
+.menu-second a{
+    color: #333333;
+    font-size: 14px;
+}
+.menu-second a:hover{
+    color: #349ac0;
+}
+.menu-ctrl{
+    width: 10px;
+    background-color: #f0f0f0;
+    height: 100%;
+    position: relative;
+    left: 0px;
+    top: 0px;
+}
+.right{
+    width: 82%;
+    margin-right: 2%;
+}
+.right-nav{
+    margin-top: 15px;
+    display: inline-block;
+    width: 100%;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+.right-nav{
+    line-height: 30px;
+}
+.right-nav .fleft a{
+    color: #333333;
+    background-color: #f2f2f2;
+    padding: 5px 15px;
+    border: 1px solid #b4b4b4;
+    margin-right: 3px;
+}
+.table{
+    border: 1px solid #c5ccdc;
+    line-height: 35px;
+    font-size: 14px;
+}
+.right .table{
+    width: 100%;
+}
+.right .table tr td{
+    border: 1px solid #c5ccdc;
+    text-align: center;
+}
+.right .table thead{
+    background-color: #349ac0;
+    color: #ffffff;
+}
+.right .table tbody tr:hover,.right .table tbody .selected{
+    background-color: #e3e3e3;
+    color: #157fd0;
+}
+.page{
+    margin-top: 15px;
+    font-size: 14px;
+    display: inline-block;
+    width: 100%;
+}
+.page>.fleft>s{
+    color: #157fd0;
+}
+.page>.fleft a{
+    margin: 0px 5px;
+    color: #333333;
+}
+.page>.fleft a:hover{
+    color: #157fd0;
+}
+.page .fright a{
+    color: #333333;
+    background-color: #f2f2f2;
+    padding: 3px 10px;
+    border: 1px solid #b4b4b4;
+    margin-right: 3px;
+    display: inline-block;
+}
+/****案件办理-项目信息*****/
+.handle-tit{
+    background-color: #349ac0;
+    line-height: 35px;
+    padding-left: 15px;
+    color: #ffffff;
+}
+.handle-tab{
+    margin-top: 15px;
+}
+.handle-tab ul{
+    display: inline-block;
+    width: 100%;
+    height: 35px;
+}
+.handle-tab ul li{
+    float: left;
+    height: 31px;
+    padding: 2px 0px;
+    width: 100px;
+    text-align: center;
+}
+.handle-tab ul li:last-child{
+    border-right: 0px;
+}
+.handle-tab a{
+    color: #333333;
+    display: inline-block;
+    width: 100%;
+    border-right: 1px solid #d1d4d9;
+    height: 25px;
+    line-height: 25px;
+}
+.handle-tab a:hover{
+    color: #349ac0;
+}
+.handle-tab li:hover{
+    border-bottom: 2px solid #349ac0;
+}
+.handle-tab ul .selected a{
+    color: #349ac0;
+}
+.handle-tab .selected{
+    border-bottom: 2px solid #349ac0;
+}
+.handle-cont{
+    padding: 15px;
+}
+.handle-tab ul{
+    border-bottom: 2px solid #d1d4d9;
+}
+.caseinfo-table{
+    margin-top: 15px;
+}
+.caseinfo-table table{
+    width: 100%;
+    font-size: 14px;
+}
+.caseinfo-table table td{
+    border: 1px solid #d1d4d9;
+    padding: 5px 10px;
+     
+    line-height: 30px;
+}
+.caseinfo-table table td:nth-of-type(2n+1){
+    background-color: #f0f0f0;
+}
+.table-bg{
+    background-color: #f0f0f0;
+}
+.caseinfo-table table input{
+    border: 1px solid #bbbbbb;
+    padding: 5px;
+    
+}
+.handle-btn{
+    text-align: center;
+}
+.handle-btn input{
+    margin: 10px 5px;
+}
+.btn-blue{
+    color: #ffffff;
+    background-color: #349ac0;
+    border: 1px solid #65b2cf;
+    padding: 5px 12px;
+    outline: none;
+    cursor: pointer;
+}
+.btn-gray{
+    color: #333333;
+    background-color: #f2f2f2;
+    border: 1px solid #b4b4b4;
+    padding: 5px 12px;
+    outline: none;
+    cursor: pointer;
+}
+/***案件办理-合同信息*****/
+.contractinfo-table{
+    margin-top: 15px;
+}
+.contractinfo-table table{
+    width: 100%;
+    border: 1px solid #c5ccdc;
+    font-size: 14px;
+    line-height: 30px;
+}
+.contractinfo-table table td{
+    border-bottom: 1px solid #c5ccdc;
+    text-align: center;
+    padding: 5px 10px;
+    
+}
+.contractinfo-table table td .fclos{
+	display:none;
+}
+.caseinfo-table table td .fclos{
+	display:none;
+}
+
+ .contractinfo-table table thead{
+   background-color: #f0f0f0;
+ }
+
+.contrtable-link{
+    color: #157fd0;
+    margin: 0px 10px;
+}
+/***弹出层****/
+.alert-bg{
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    background-color: #000000;
+    opacity: 0.5;
+    filter:alpha(opacity=50);
+    left: 0;
+    top: 0;
+    z-index: 999;
+    display: none;
+}
+.sequence,.newcase,.search{
+    background-color: #ffffff;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 9999;
+    display: none;
+}
+.sequence{
+    width: 340px;
+    height: 260px;
+    margin-top: -170px;
+    margin-left: -130px;
+}
+.alert-tit{
+    height: 40px;
+    line-height: 40px;
+    color: #ffffff;
+    padding: 0px 10px;
+    background-color: #349ac0;
+}
+.alert-tit span{
+    float:left;
+}
+.alert-close{
+    width: 15px;
+    height: 15px;
+    background: url(../images/sprite1.png) no-repeat 1px -149px;
+    margin-top: 12px;
+}
+.alert-cont{
+    padding: 20px;
+}
+.sequence-cont li{
+    padding: 5px 0px;
+}
+.sequence-cont li select{
+    font-family: "microsoft yahei";
+    padding: 5px 0px;
+    text-indent: 2px;
+}
+.sequence-first{
+    width: 150px;
+}
+.sequence-second{
+    width: 100px;
+}
+.alert-foot{
+    text-align: center;
+}
+.alert-foot input{
+    background-color: #f2f2f2;
+    color: #333333;
+    border: 1px solid #b4b4b4;
+    padding: 3px 10px;
+    cursor: pointer;
+    margin: 0px 5px;
+}
+.newcase{
+    width: 480px;
+    height: 280px;
+    margin-left: -240px;
+    margin-top: -140px;
+}
+.align-center{
+    text-align: center;
+    font-size: 18px;
+}
+.newcase-cont{
+    text-align: center;
+    margin: 20px 0px 15px 0px;
+}
+.newcase-cont select{
+    width: 160px;
+    padding: 5px;
+    font-family: "microsoft yahei";
+    text-indent: 2px;
+}
+.search{
+    width: 490px;
+    height: 300px;
+    margin-left: -245px;
+    margin-top: -150px;
+}
+.search-cont li{
+    padding: 5px 0px;
+}
+.search-cont select{
+    padding: 5px;
+    font-family: "microsoft yahei";
+}
+.search-cont input{
+    padding: 5px;
+    border: 1px solid #dddddd;
+}
+.search-first{
+    width: 150px;
+}
+.search-second{
+    width: 105px;
+}
+.menu-ctrl{
+    position: absolute;
+    left: 99%;
+    /*top: 80px;*/
+    width: 10px;
+/*    height: calc(100% - 80px);*/
+    background-color: #f0f0f0;
+}
+.menu-ctrl-btn{
+    position: relative;
+    left: -10px;
+    top: 50%;
+    margin-top: -26px;
+}
+
+/*swfupload*/
+#thumbnails table {
+	border-collapse: separate;
+	border-spacing: 0;
+}
+#thumbnails table  td {
+	font: 10pt Helvetica, Arial, sans-serif;
+	vertical-align: top;
+	word-break:break-all;
+	font-weight: normal;
+	width:auto;
+	background-color:#C5D9FF !important;
+	padding:0;
+
+}
+
+.text-white {
+    color: #fff;
+}
+
+.background-white {
+    background-color: #fff;
+}

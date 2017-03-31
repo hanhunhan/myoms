@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <include file="Tpl/Touch/Public/head.html" />
+    <title>{$title}</title>
+</head>
+<body>
+
+    <div class="head jumbotron">
+        <div class="container">
+            <h3>{$projectName}</h3>
+            <span class="label label-danger" {$labelStyle}>{$flowTypeText}</span>
+            <small>{$applicationTime}</small>
+            <include file="Tpl/Touch/Public/back_btn_box.html" />
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="container">
+            <!--申请说明-->
+            <include file="Tpl/Touch/Public/application_info.html" />
+
+            <!--置换详情-->
+            <div class="panel panel-primary">
+                <a name="displace-detail"></a>
+                <div class="panel-heading"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;置换详情</div>
+                <ul class="list-group">
+                    <volist name="require" id="item">
+                        <li class="list-group-item"><label>{$item['alias']}</label><div class="content">{$item['val']}&nbsp;</div></li>
+                    </volist>
+                </ul>
+            </div>
+
+            <!--采购明细-->
+            <div class="panel panel-primary">
+                <a name="displace-list"></a>
+                <div class="panel-heading"><i class="glyphicon glyphicon-th"></i>&nbsp;置换明细</div>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th class="text-center">序号</th>
+                            <th class="text-center">品牌</th>
+                            <th class="text-center">型号</th>
+                            <th class="text-center">品名</th>
+                            <th class="text-center">置换数量</th>
+                            <th class="text-center">置换价</th>
+                            <th class="text-center">合计</th>
+                            <th class="text-center">货源</th>
+                            <th class="text-center">有效期</th>
+                            <th class="text-center">有效报警期</th>
+                            <th class="text-center">添加人</th>
+                            <th class="text-center">添加时间</th>
+                            <notempty name="bizWebEditable">
+                                <th class="text-center">操作</th>
+                            </notempty>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <volist name="list" id="bItem" key="k">
+                            <tr>
+                                <td class="text-center">{$k}</td>
+                                <td class="text-center">{$bItem['BRAND']}</td>
+                                <td class="text-center">{$bItem['MODEL']}</td>
+                                <td class="text-center">{$bItem['PRODUCT_NAME']}</td>
+                                <td class="text-center">{$bItem['NUM']}</td>
+                                <td class="text-center">{$bItem['PRICE']}</td>
+                                <td class="text-center">{$bItem['TOTAL_COST']}</td>
+                                <td class="text-center">{$bItem['SOURCE']}</td>
+                                <td class="text-center"><?=oracle_date_format($bItem['LIVETIME'],'Y-m-d')?></td>
+                                <td class="text-center"><?=oracle_date_format($bItem['ALARMTIME'],'Y-m-d')?></td>
+                                <td class="text-center">{$bItem['USER_NAME']}</td>
+                                <td class="text-center"><?=oracle_date_format($bItem['ADD_TIME'],'Y-m-d')?></td>
+                                <notempty name="bizWebEditable">
+                                    <td class="text-center">
+                                        <a href="#" class="displace-row-op btn btn-primary btn-xs" data-update-url="<?=U('/Displace/displaceDetail') . '&TAB_NUMBER=' . $tabNumber . '&showForm=1&prjid=' . $prjid . '&CASE_TYPE=' . $caseTypePinYin . '&parentchooseid=' . $bItem['DR_ID']  . '&ID=' . $bItem['ID'] ?>" data-action="1" fid="{$bItem['ID']}"><i class="glyphicon glyphicon-edit"></i>&nbsp;</a>
+                                        <a href="#" class="displace-row-op btn btn-danger btn-xs" data-del-url="<?=U('/Displace/displaceDetail') . '&TAB_NUMBER=' . $tabNumber . '&prjid=' . $prjid . '&CASE_TYPE=' . $caseTypePinYin . '&parentchooseid=' . $bItem['DR_ID']  . '&faction=delData&ID=' . $bItem['ID'] ?>" data-action="3" fid="{$bItem['ID']}"><i class="glyphicon glyphicon-trash"></i></a>
+                                    </td>
+                                </notempty>
+                            </tr>
+                        </volist>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <p class="ps-text">注：横向拖动表格可查看完整数据</p>
+            <!--流程图-->
+            <include file="Tpl/Touch/Public/work_flows.html" />
+            <!--审批意见-->
+            <include file="Tpl/Touch/Public/opinion_flow.html" />
+        </div>
+    </div>
+
+    <div class="foot">
+        <!--菜单-->
+        <include file="Tpl/Touch/Public/menu.html" />
+        <!--用户选择列表-->
+        <include file="Tpl/Touch/Public/user_list.html" />
+    </div>
+
+<include file="Tpl/Touch/Public/foot.html" />
+</body>
+</html>

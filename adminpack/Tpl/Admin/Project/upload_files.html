@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>上传附件</title>
+        <meta charset="GBK">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="./Public/css/style2.css" type="text/css" rel="stylesheet"/>
+        <script type="text/javascript" src="./Public/validform/js/jquery-1.9.1.min.js"></script>
+        <script language="javascript" type="text/javascript" src="./Public/layer/layer.js"></script>
+        <link rel="stylesheet" href="./Public/validform/css/style.css" type="text/css" media="all" />
+        <link rel="stylesheet" type="text/css" href="./Public/uploadifive/uploadifive.css">
+        <script src="./Public/uploadifive/jquery.uploadifive.min.js" type="text/javascript"></script>
+        <link rel="stylesheet" type="text/css" href="./Public/uploadifive/uploadifive.css">
+        <link rel="stylesheet" href="./Public/TOUCH/CSS/business.css">
+        <link rel="stylesheet" href="./Public/TOUCH/CSS/styles.css"/>
+        <link rel="stylesheet" href="./Public/TOUCH/CSS/styles2.css"/>
+        <link rel="stylesheet" href="./Public/uploadify/uploadify.css"/>
+        <script src="./Public/TOUCH/JS/datejs/jquery-1.9.1.min.js" type="text/javascript"></script>
+        <script src="./Public/TOUCH/JS/valide.js" type="text/javascript"></script>
+        <script src="./Public/TOUCH/JS/common.js" type="text/javascript"></script>
+        <script src="./Public/TOUCH/JS/common.js" type="text/javascript"></script>
+        <script src="Public/uploadify/jquery.uploadify-3.1.min.js"></script>
+        <script src="./Public/uploadifive/jquery.uploadifive.min.js" type="text/javascript"></script>
+
+    <!-- Mobiscroll JS and CSS Includes -->
+    <link rel="stylesheet" href="./Public/TOUCH/CSS/mobiscroll.custom-2.17.1.min.css"/>
+    <script src="./Public/TOUCH/JS/mobiscroll.custom-2.17.1.min.js" type="text/javascript"></script>
+        <style>.caseinfo-table table td:nth-of-type(2n+1){width:10%}</style>
+        <style type="text/css">
+            .hide{display:none }
+            .progress{z-index: 2000}
+           .mask{position: fixed;top: 0;right: 0;bottom: 0;left: 0; z-index: 1000; background-color: #000000}
+       </style> 
+    </head>
+    <body>
+        <div>
+            <form class="registerform" id = 'registerform' method="post" action="{:U('Member/import_member')}/case_type/{$case_type}" enctype="multipart/form-data"> 
+                <div class="caseinfo-table"> 
+                    <table style="table-layout:fixed;width:90%">
+                        <tr> 
+                            <td  align='left' class='leftlable'>项目名称</td>
+                            <td  align='left'> 
+                                <span>{$projectName}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td  align='left' class='leftlable'>上传附件</td>
+                            <td  align='left' id="queue">
+                                 <input id="FILES" name="FILES" type="file" multiple="true" class="btn btn-default">
+                                    <input  name="filesvalue" class="form-control" tfield="FILES" type="hidden" value=""/>
+                                <php>
+                                    if($attach)
+                                    {
+                                    $attach = explode(',',$attach);
+                                    foreach($attach as $key=>$val)
+                                    {
+                                    if($val)
+                                    {
+                                    $fileInfo = explode('-',$val);
+                                    $filesize= $fileInfo[2];
+                                    $filename= $fileInfo[1];
+                                    $filecode= $fileInfo[0];
+                                    $field="Files";
+
+                                    echo '
+                                    <div id="'.$filecode.'" filename="'.$filename.'" filesize="'.$filesize.'"
+                                         name="filename_'.$field.'" class="uploadify-queue-item">
+                                        <div class="cancel">
+                                            <a href="javascript:void(0);" class="btn-remove-file" data-filecode="'.$filecode.'">X</a>
+                                        </div>
+                                        <span class="fileName"><a target="_blank"
+                                                                  href="index.php?s=/Upload/showfile&filecode='.$filecode.'">'.$filename.'('.$filesize.')</a></span><span
+                                            class="data"></span>
+
+                                        <div class="uploadify-progress">
+                                            <div></div>
+                                        </div>
+                                    </div>
+                                    ';
+                                    }
+                                    }
+                                    }
+
+                                </php>
+                            </td> 
+                        </tr>
+                         
+                    </table>
+                </div>
+                    <div class="handle-btn">
+                        <input type="button"  value="保&nbsp;存" class="btn-blue" id = 'save_file' />
+                        <input type="hidden" name ="opreate" value="import_data" />
+                    </div>
+            </form>
+        </div>
+        <img id="progressImgage" class="progress hide" alt="" src="./Public/images/loading_6.gif"/>
+        <div id="maskOfProgressImage" class="mask hide"></div>
+        <script type="text/javascript">
+            $(function() {
+                $("#save_file").click(function () {
+                    var attachmentData = [];
+                    var attachmentListElem = $(".uploadify-queue-item");
+                    if (attachmentListElem) {
+                        console.log(attachmentListElem)
+                        for (var i = 0; i < attachmentListElem.length; i++) {
+                            var elem = attachmentListElem[i];
+                            var fileAbstract = $(elem).attr('id') + '-' + $(elem).attr('filename') + '-' + $(elem).attr('filesize');
+                            attachmentData.push(fileAbstract);
+                        }
+                    }
+                    var filesvalue = attachmentData.join(',');
+                    if(filesvalue == ""){
+                        layer.alert("亲,请上传附件！",{icon:0});
+                        return;
+                    }
+                    var prjid = "{$prjId}";
+                    var url = "{:U('Project/upload_files')}" + "/prjid/" + prjid + "/act/save";
+                    $.ajax({
+                        url: url,
+                        dataType: "json",
+                        data: {
+                            file:filesvalue
+                        },
+                        success: function(data){
+                            if(data.status == 0){
+                                layer.alert("保存失败",{icon:0});
+                            }else if(data.status == 1){
+                                layer.alert('保存成功', {icon: 1},function(index){
+                                    var urls = "index.php?s=/Case/projectlist";
+                                    parent.window.location.href = urls;
+                                    parent.layer.close(index);
+                                });
+                            }
+                        },
+                        error:function(){
+                            alert("保存失败");
+                        }
+
+                    })
+                })
+            })
+      </script>
+      <script>
+    $(function(){
+        function uploadify_uploadfilelist(filename, filesize, filecode, field) {
+            var itemTemplate = '<div id="' + filecode + '" filename="' + filename + '" filesize="' + filesize + '"   name="filename_' + field + '" class="uploadify-queue-item">\
+					<div class="cancel">\
+						<a class="btn-remove-file" href="javascript:void(0);" data-filecode="' + filecode + '">&times;</a>\
+					</div>\
+					<span class="fileName"><a target="_blank" href="index.php?s=/Upload/showfile&filecode=' + filecode + '">' + filename + ' (' + filesize + ')</a></span><span class="data"></span>\
+					<div class="uploadify-progress">\
+						<div  > </div>\
+					</div>\
+				</div>';
+                $(".close").parent().hide();
+            $("#queue").append(itemTemplate);
+        }
+
+
+        $(document).on('click', '.btn-remove-file', function () {
+            var fileCode = $(this).attr('data-filecode');
+            $("#" + fileCode).remove();
+        });
+
+        $('#FILES').uploadifive({
+            'buttonText': '上传文件',
+            'auto'             : true,
+            'formData': {
+                'timestamp': '{:time()}',
+                'token': "{:md5('nr234n9i92n2' . time())}"
+            },
+            'queueID': 'queue',
+            'uploadScript'     : 'index.php?s=/Upload/save2oracle/',
+            'onUploadComplete' : function(file, data) {
+                uploadify_uploadfilelist(file.name, file.size, data, 'FILES');
+            },
+        });
+    });
+
+</script>
+    </body>
+</html>

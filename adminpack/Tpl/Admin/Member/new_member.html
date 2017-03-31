@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>自然到场</title>
+        <meta charset="GBK">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="//cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+        <link href="./Public/css/style2.css" type="text/css" rel="stylesheet"/>
+        <script type="text/javascript" src="./Public/validform/js/jquery-1.9.1.min.js"></script>
+        <script type="text/javascript" src="./Public/validform/js/Validform_v5.3.2.js"></script>
+        <script type="text/javascript" src="./Public/validform/js/common.js"></script>
+        <script type="text/javascript" src="./Public/js/common.js"></script>
+        <script language="javascript" type="text/javascript" src="./Public/My97DatePicker/WdatePicker.js"></script>		
+        <script type="text/javascript" src="./Public/validform/plugin/swfupload/swfuploadv2.2.js"></script>
+        <script type="text/javascript" src="./Public/validform/plugin/swfupload/Validform.swfupload.handler.js"></script>
+        <script src="//cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="./Public/validform/css/style.css" type="text/css" media="all" />
+        <link rel="stylesheet" href="./Public/validform/css/validateForm.css" type="text/css" media="all" />		
+        <script>
+            function viewVersion(obj){
+                    var url = appUrl+'/Flow/FlowVersonSet/showForm/1/FlowId/'+$(obj).parent().attr('fid'); 
+                    self.location =url;
+            }
+            function editFlow(obj){
+                    var url = appUrl+'/Flow/FlowSet/showForm/1/FlowId/'+$(obj).parent().attr('fid'); 
+                    self.location =url;
+            }
+        </script> 
+    </head>
+    <body>
+        <div class="containter">
+            <div class="right fright j-right">
+                <div class="handle-tab">{$tabs}</div>
+            <div>
+            <form name="member_form" id="member_form" method="post" action="">
+                <div class="caseinfo-table">
+                <table style="table-layout:fixed;width:100%">
+                    <tbody>
+                    <tr>
+                        <td align="left" class="leftlable" width="10%">项目名称<font style="color:#f00;font-size:18px; ">*</font></td>
+                        <td align="left">
+                            <select name="project_id" class="demo-test-select input_arri form-control" id="project_id">
+                                <option value="">--请选择--</option>
+                                <?php foreach ($projects as $_pro){ ?>
+                                <option <?php if($selected_project_id == $_pro['ID'] ) {?>selected<?php } ?> value="<?php echo $_pro['ID']; ?>" data_pro_listid ="<?php echo $_pro['PRO_LISTID']; ?>" ><?php echo $_pro['PROJECTNAME']; ?></option>
+                                <?php } ?>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="left" class="leftlable" width="10%">客户姓名<font style="color:#f00;font-size:18px; ">*</font></td>
+                        <td align="left"><input datatype="s" type="text" name="cusname" id="cusname" class="form-control" value="" size="16" maxlength="16"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="left" class="leftlable" width="10%">手机号码<font style="color:#f00;font-size:18px; ">*</font></td>
+                        <td align="left"><input datatype="m" type="text" size="11" name="telno" id="telno" value="" class="form-control" maxlength="11"></span></td>
+                    </tr>
+                    </tbody>
+                 </table>
+                </div>
+                <div class="handle-btn">
+                    <input type="button" value="保&nbsp;存" class="comfirmbtn btn btn-primary default-btn-padding">
+                    <input type="button" value="返&nbsp;回" class="j-formclose btn btn-default default-btn-padding">
+                </div>
+            </form>
+         </div>
+        </div>
+    </div>
+</body>
+    <script type="text/javascript">
+        /* ajax确认数据提交 */
+
+        $(".comfirmbtn").on("click",function(){
+            /**基础信息数据验证**/
+
+            var project_id = $("#project_id").val();
+            var cusname = $("#cusname").val();
+            var telno = $("#telno").val();
+
+            if(!project_id || !cusname || !telno){
+                alert("请保证所有的信息都已填写！");
+                return false;
+            }
+
+            //电话正则
+            var mobileReg = /^(13[0-9]{1}|145|147|15[0-9]{1}|18[0-9]{1}|17[0-9]{1})[0-9]{8}$/;
+            if(telno == '' || !mobileReg.test(telno)){
+                alert('请填入正确的手机号！');
+                return false;
+            }
+
+            //提交操作
+            $.ajax({
+                type: "POST",
+                url: "{:U('Member/newMember')}",
+                data:$('#member_form').serialize(),
+                async: false,
+                dataType:"JSON",
+                success:function(data)
+                {
+                    if(data.status)
+                    {
+                        alert("新用户已经成功录入!");
+                        location.href = "{:U('Member/newMember')}";
+                    }
+                    else
+                    {
+                        alert(data.msg);
+                    }
+                },
+                error: function(request) {
+                    alert("网络错误,请重试~~");
+                },
+            });
+        });
+    </script>
+</html>

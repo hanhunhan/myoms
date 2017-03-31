@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>退款审核单</title>
+        <meta charset="GBK">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!--<link href="./Public/css/style2.css" type="text/css" rel="stylesheet"/>-->
+        <!--<script type="text/javascript" src="./Public/validform/js/jquery-1.9.1.min.js"></script>-->
+        <!--<script type="text/javascript" src="./Public/validform/js/Validform_v5.3.2.js"></script>-->
+        <!--<script type="text/javascript" src="./Public/validform/js/common.js"></script>-->
+        <!--<script type="text/javascript" src="./Public/js/common.js"></script>-->
+        <!--<script language="javascript" type="text/javascript" src="./Public/layer/layer.js"></script>-->
+        <!--<link rel="stylesheet" href="./Public/validform/css/style.css" type="text/css" media="all" />-->
+        <!--<link rel="stylesheet" href="./Public/validform/css/validateForm.css" type="text/css" media="all" />-->
+        <include file="./Tpl/Admin/Public/comm_css_js.html" />
+
+    </head>
+    <body>
+        <div>{$form}</div>
+        <input type="hidden" name ="refund_list_id" id="refund_list_id" value="{$refund_list_id}">
+        <input type="hidden" name ="flow_url_current" id="flow_url_current" value="{$flow_url_current}">
+
+        <!--相关项目退库情况-->
+        <if condition="count($projectRefundStat) gt 0">
+            <div class="handle-tab-twolevl">
+                <div class="topline"></div>
+                <ul class="twolevelul">
+                    <li class="twolevelli on">
+                        <a href="javascript: void(0);">项目退款信息</a>
+                    </li>
+                </ul>
+                <div class="containter">
+                    <div class="contractinfo-table">
+                        <table style="width: auto;">
+                            <thead>
+                            <tr>
+                                <th style="width: 300px">项目名称</th>
+                                <th style="width: 200px;">退款条数</th>
+                                <th style="width: 200px;">项目退款总额</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <volist name="projectRefundStat" id="statItem">
+                                    <tr>
+                                        <td>{$statItem['PROJECTNAME']}</td>
+                                        <td>{$statItem['TOATL_COUNT']|intval}</td>
+                                        <td>{$statItem['TOTAL_AMOUNT']|floatval}</td>
+                                    </tr>
+                                </volist>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </if>
+        <script type="text/javascript">
+        //删除审核单明细
+        $(".delete_from_audit_list").click(function()
+        {
+            var reund_details_id = $(this).parent().filter('.fedit').attr('fid');
+            
+            if(reund_details_id > 0)
+            {   
+                layer.confirm('确定从退款单删除？', {
+                    btn: ['确定', '取消'],
+                    title: '是否删除?',
+                    closeBtn: false
+                }, function(index, layero){
+                    //确认操作
+                    $.ajax({
+                        type: "POST",
+                        url: "{:U('MemberRefund/delete_from_audit_list')}",
+                        data:{'reund_details_id' : reund_details_id},
+                        dataType:"JSON",
+                        success:function(data){
+                            
+                            if(data.status == 'noauth')
+                            {
+                                layer.alert(data.msg, {icon: 2, closeBtn: false},function(){layer.closeAll();});
+                                return false;
+                            }
+                            
+                            if(data.state == 0)
+                            {   
+                                layer.close(index);
+                                layer.alert(data.msg, {icon: 2, closeBtn: false}, 
+                                            function(){window.location.reload();});
+                            }
+                            else if(data.state == 1)
+                            {   
+                                layer.close(index);
+                                layer.alert(data.msg, {icon: 1, closeBtn: false}, 
+                                            function(){window.location.reload();});
+                            }
+                            else
+                            {   
+                                layer.close(index);
+                                var msg = data.msg ? data.msg : '操作异常';
+                                layer.alert(msg, {icon: 2, closeBtn: false},
+                                            function(){window.location.reload();});
+                            }
+                        }
+                    })
+                }, function(index){
+                   layer.close(index);
+                });
+            }
+            else
+            {
+                var msg = data.msg ? data.msg : '操作异常，删除失败';
+                layer.alert(msg, {icon: 2, closeBtn: false},
+                    function(){window.location.reload();});
+            }
+        })
+        
+        //撤销退款
+        $(".revoke_refund").click(function()
+        {
+            var reund_details_id = $(this).parent().filter('.fedit').attr('fid');
+            
+            if(reund_details_id > 0)
+            {   
+                layer.confirm('确定撤销退款？', {
+                    btn: ['确定', '取消'],
+                    title: '是否撤销退款?',
+                    closeBtn: false
+                }, function(index, layero){
+                    //确认操作
+                    $.ajax({
+                        type: "POST",
+                        url: "{:U('MemberRefund/revoke_refund')}",
+                        data:{'reund_details_id' : reund_details_id},
+                        dataType:"JSON",
+                        success:function(data){
+                            if(data.status == 'noauth')
+                            {
+                                layer.alert(data.msg, {icon: 2, closeBtn: false},function(){layer.closeAll();});
+                                return false;
+                            }
+                            
+                            if(data.state == 0)
+                            {   
+                                layer.close(index);
+                                layer.alert(data.msg, {icon: 2, closeBtn: false}, 
+                                            function(){window.location.reload();});
+                            }
+                            else if(data.state == 1)
+                            {   
+                                layer.close(index);
+                                layer.alert(data.msg, {icon: 1, closeBtn: false}, 
+                                            function(){window.location.reload();});
+                            }
+                            else
+                            {   
+                                layer.close(index);
+                                var msg = data.msg ? data.msg : '操作异常';
+                                layer.alert(msg, {icon: 2, closeBtn: false},
+                                            function(){window.location.reload();});
+                            }
+                        }
+                    })
+                }, function(index){
+                   layer.close(index);
+                });
+            }
+            else
+            {
+                var msg = data.msg ? data.msg : '操作异常，删除失败';
+                layer.alert(msg, {icon: 2, closeBtn: false},
+                    function(){window.location.reload();});
+            }
+        })
+        
+        //提交审核单
+        $("#sub_audit_list").click(function()
+        {   
+            var list_num = $('.itemlist').size();
+            
+            if(parseInt(list_num) == 0)
+            {
+                layer.alert('不存在退款明细的退款审核单无法提交！', {icon: 2, closeBtn: false}, 
+                    function(){window.location.reload();});
+                
+                return false;
+            }
+            
+            layer.confirm('确定提交退款审核单吗？确定会提交该退款审核单下所有退款申请', {
+                btn: ['确定', '取消'],
+                title: '是否提交?',
+                closeBtn: false
+                }, function(index, layero){
+                    layer.close(index);
+                    var refund_list_id = $('#refund_list_id').val();
+                    var url_current = $('#flow_url_current').val();
+                    var url = url_current + "/refund_list_id/"+ refund_list_id;
+
+                    var appUrl = "__APP__";
+                    var url = appUrl + '/Touch/MemberRefund/process&RECORDID=' + refund_list_id + '&flowTypePinYin=tksq';
+
+                    window.parent.location.href = url;
+                }, function(index){
+                    layer.close(index);
+                    return false;
+                }
+            );
+        })
+
+            $('#export_refunds').click(function() {
+                var refundListID = $('#refund_list_id').val();
+                if (!refundListID) {
+                    layer.alert('退款进度编号不能为空！', {icon: 2, closeBtn: false},
+                            function(){window.location.reload();});
+                    return false;
+                }
+
+                layer.confirm('确定导出退款审核单？', {
+                            btn: ['确定', '取消'],
+                            title: '确认',
+                            closeBtn: false
+                        }, function(index, layero){
+
+                            layer.close(index);
+                            location.href = "{:U('MemberRefund/exportRefunds')}&refund_list_id=" + refundListID;
+                        }, function(index){
+                            layer.close(index);
+                            return false;
+                        }
+                );
+
+            });
+        </script>
+    </body>
+</html>

@@ -1,0 +1,8 @@
+array (
+  'Filename' => '红色系.jpg',
+  'sl_forder' => '1000000/2013/12/03/133348/',
+  'PHPSESSID' => '5dc577186d5c56d5c45a768b957940cb',
+  'sl_id' => '48665',
+  'sl_cate' => '1',
+  'Upload' => 'Submit Query',
+)

@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+<title>CRM管理系统</title>
+<link rel=stylesheet href="./Tpl/css/global.css" type="text/css">
+<link rel=stylesheet href="./Tpl/css/mainPage.css" type="text/css">
+<script type="text/javascript" src="./Tpl/js/jquery-1.5.2.min.js"></script>
+<script>
+ $(function(){
+    var type=parseInt("{$kk}");
+    $.get("{:U('Page/index')}", {'ft':"kk",'id':type}, function(data){ 
+			$("#user").replaceWith("<div  id='user' class='bd'>"+data+"</div>")
+		});	
+	$.get("{:U('Page/index')}", {'ft':"yy",'id':type}, function(data){ 
+			$("#11").replaceWith("<div  id='11' class='bd'>"+data+"</div>")
+		});      
+    });
+	function check(id){
+	var id = id;
+	$("#inputT").val(id);
+	$.get("{:U('Page/index')}", {'ft':"kk",'id':id}, function(data){ 
+			$("#user").replaceWith("<div  id='user' class='bd'>"+data+"</div>")
+		});	
+	$.get("{:U('Page/index')}", {'ft':"yy",'id':id}, function(data){ 
+			$("#11").replaceWith("<div  id='11' class='bd'>"+data+"</div>")
+		});			
+	}
+	function edit(id){
+	var id = id;
+    $.get("{:U('Page/index')}", {'ft':"zz",'id':id}, function(data){ 
+			$("#user").replaceWith("<div  id='user' class='bd'>"+data+"</div>")
+		});		
+	}
+	/*function ajaxform(){
+		$.ajax({
+                cache: true,
+                type: "POST",
+                url:"{:U('Page/index')}",
+                data:$('#form1').serialize(),// 你的formid
+                async: false,
+                error: function(request) {
+                    alert("Connection error");
+                },
+                success: function(data) {
+                    $("#11").replaceWith("<div  id='11' class='bd'>"+data+"</div>")
+                }
+            });
+	}*/
+</script>
+</head>
+
+<body>
+	<div class="box" id="interestManage">
+    	<div class="box-tit"><h3>城市管理</h3></div>
+        <div class="box-con" >
+        	<div class="c-tit"><h4>{$menutitle}</h4></div>
+			<select name  ="type" class = "selector" style="width:600px;" onchange="check(this.value);">
+				<volist name="list" id="vo">
+				<option value="{$key}" <php>{if($key==$kk)echo 'selected';}</php> >{$vo.name}</option>
+				</volist>
+            </select>
+			<form id="form1" method="post"  action="{:U('Page/index')}" enctype="multipart/form-data" class="definewidth m20" >
+			<div  id='user'></div>
+			 <div class="bd">	
+                <div class="center-btn mt10"  style="margin:20px;"><input type="submit" value="确定" class="btn-a mr50"/></div>
+				<input id="inputT" type="hidden" name="inputT"  value="{$kk}">
+			</div>
+			</form>
+			<div  id='11'></div>
+          </div>
+		
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <include file="Tpl/Touch/Public/head.html" />
+    <title>{$title}</title>
+</head>
+<body>
+    <div class="head jumbotron">
+        <div class="container">
+            <h3>{$processTitle}</h3>
+            <span class="label label-danger" {$labelStyle}>{$title}</span>
+            <small>{$applicationTime}</small>
+            <include file="Tpl/Touch/Public/back_btn_box.html" />
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="container">
+            <!--申请说明-->
+            <include file="Tpl/Touch/Public/application_info.html" />
+
+            <div class="panel panel-primary">
+                <a name="member-discount-list"></a>
+                <div class="panel-heading"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;会员减免列表</div>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th class="text-center">序号</th>
+                            <th class="text-center">项目名称</th>
+                            <th class="text-center">客户姓名</th>
+                            <th class="text-center">联系方式</th>
+                            <th class="text-center">单套收费标准</th>
+                            <th class="text-center">减免金额</th>
+                            <th class="text-center">已缴金额	</th>
+                            <th class="text-center">未缴纳金额</th>
+                            <th class="text-center">发票状态</th>
+                            <th class="text-center">申请人</th>
+                            <th class="text-center">申请时间</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <volist name="viewData['memberDiscountInfo']" id="memberDiscountInfo" key="k">
+                            <tr>
+                                <td class="text-center">{$k}</td>
+                                <td class="text-center">{$memberDiscountInfo['PRJ_NAME']}</td>
+                                <td class="text-center">{$memberDiscountInfo['REALNAME']}</td>
+                                <td class="text-center">{$memberDiscountInfo['MOBILENO']}</td>
+                                <td class="text-center">{$memberDiscountInfo['TOTAL_PRICE']}</td>
+                                <td class="text-center">{$memberDiscountInfo['REDUCE_MONEY']}</td>
+                                <td class="text-center">{$memberDiscountInfo['PAID_MONEY']}</td>
+                                <td class="text-center">{$memberDiscountInfo['UNPAID_MONEY']}</td>
+                                <td class="text-center">{$viewData['invoiceStatus']['INVOICE_STATUS'][$memberDiscountInfo['INVOICE_STATUS']]}</td>
+                                <td class="text-center">{$memberDiscountInfo['APPLY_USER']}</td>
+                                <td class="text-center"><?=oracle_date_format($memberDiscountInfo['APPLY_TIME'],"Y-m-d")?></td>
+                            </tr>
+                        </volist>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <p class="ps-text">注：横向拖动表格可查看完整数据</p>
+            <!--流程图-->
+            <include file="Tpl/Touch/Public/work_flows.html" />
+            <!--审批意见-->
+            <include file="Tpl/Touch/Public/opinion_flow.html" />
+        </div>
+    </div>
+
+    <div class="foot">
+        <!--菜单-->
+        <include file="Tpl/Touch/Public/menu.html" />
+        <!--用户选择列表-->
+        <include file="Tpl/Touch/Public/user_list.html" />
+
+    </div>
+<include file="Tpl/Touch/Public/foot.html" />
+    <script type="application/javascript">
+        //撤销退票
+        $(".revoke_invoice_recycle").click(function()
+        {
+            var invoiceRecycleId = $(this).attr('id');
+            var invoiceRecycleRealName = $(this).attr('realname');
+
+            if(invoiceRecycleId > 0)
+            {
+                if(!confirm("亲，确定撤销此条退票？"))
+                    return false;
+
+                var _this = $(this);
+
+                $.ajax({
+                    type: "POST",
+                    url: "{:U('InvoiceRecycle/revoke_invoice_recycle')}",
+                    data:{'invoiceRecycleId' : invoiceRecycleId},
+                    dataType:"JSON",
+                    success:function(data){
+                         layer.alert(invoiceRecycleRealName+'撤销退票成功', {icon: 1, closeBtn: false},
+                                        function(){_this.parent().parent().remove();window.location.reload();});
+                        /*swal(invoiceRecycleRealName + ",撤销退款成功！");
+                        _this.parent().parent().remove();*/
+                    },
+                    error:function(data){
+
+                    },
+                });
+            }
+        });
+    </script>
+</body>
+</html>

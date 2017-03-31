@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>佣金索回</title>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--<link href="./Public/css/style2.css" type="text/css" rel="stylesheet"/>-->
+    <!--<link href="./Public/css/jquery-ui.css" type="text/css" rel="stylesheet"/>-->
+    <!--<script language="javascript" type="text/javascript" src="./Public/My97DatePicker/WdatePicker.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/validform/js/jquery-1.9.1.min.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/validform/js/Validform_v5.3.2.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/validform/js/common.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/js/common.js"></script>-->
+    <!--<script language="javascript" type="text/javascript" src="./Public/layer/layer.js"></script>-->
+    <!--<link rel="stylesheet" href="./Public/validform/css/style.css" type="text/css" media="all"/>-->
+    <!--<link rel="stylesheet" href="./Public/validform/css/validateForm.css" type="text/css" media="all"/>-->
+    <include file="./Tpl/Admin/Public/comm_css_js.html" />
+    <script>
+
+        //通过会员ID进行确认
+        /*$(function(){
+         $(".itemlist").each(function(){
+         var fid = $(this).attr("fid");
+         var state = $("select option[selected]").val();
+         //alert(state);
+         var call_date = $("input[name='"+fid+"_CALLBACK_DATE']").val();
+         if( state == "" ){
+         $("select[name='"+fid+"_STATUS']").parent().css("display","block");
+         $("select[name='"+fid+"_STATUS']").parent().siblings(".spanshow").css("display","none");
+         }
+
+         if( call_date == '' ){
+         $("input[name='"+fid+"_CALLBACK_DATE']").parent().css("display","block");
+         $("input[name='"+fid+"_CALLBACK_DATE']").parent().siblings(".spanshow").css("display","none");
+         }
+
+         });
+
+         //修改佣金索回状态
+         $(".STATUS").change(function(){
+         var status = $(this).val();
+         var fid = $(this).parents(".itemlist").attr("fid");
+         $.ajax({
+         type:"post",
+         url:"{:U('Financial/save_commssion_callback_data',$paramUrl)}",
+         dataType:"JSON",
+         data:{"status":status,"fid":fid},
+         success:function(data){
+         layer.alert(data.msg);
+         }
+         })
+         });
+
+         //修改佣金索回日期
+         $(".CALLBACK_DATE").blur(function(){
+         var callback_date = $(this).val();
+         var state1 = $("select option[selected]").val();
+         // alert(callback_date);
+         var fid = $(this).parents(".itemlist").attr("fid");
+         if( callback_date != '' && state1 == 1)
+         {
+         $.ajax({
+         type:"post",
+         url:"{:U('Financial/save_commssion_callback_data',$paramUrl)}",
+         dataType:"JSON",
+         data:{"callback_date":callback_date,"fid":fid},
+         success:function(data){
+         layer.alert(data.msg);
+         }
+         })
+         }
+         else
+         {
+         layer.alert("请确认该佣金已经索回！");
+         return false;
+         }
+
+         });
+         }) */
+    </script>
+</head>
+<body>
+<div class="containter">
+    <div class="right fright j-right">
+        <div class="handle-tab">
+            <ul>
+                <li><a href="{:U('Financial/financialConfirm',$paramUr)}">预收确认</a></li>
+                <li><a href="{:U('Financial/invoice',$paramUrl)}">开票</a></li>
+                <li><a href="{:U('Financial/reimConfirm',$paramUrl)}">报销确认</a></li>
+                <li><a href="{:U('Financial/yw_invoice',$paramUrl)}">业务开票</a></li>
+                <li><a href="{:U('Financial/business_change_invoice',$paramUrl)}">业务换票</a></li>
+                <li><a href="{:U('Financial/business_refund_invoice',$paramUrl)}">业务退票</a></li>
+                <li><a href="{:U('Financial/yw_refund',$paramUrl)}">业务回款</a></li>
+                <li class="selected"><a href="{:U('Financial/callback_commission',$paramUrl)}">佣金索回</a></li>
+            </ul>
+        </div>
+        {$form}
+    </div>
+</div>
+<include file="./Tpl/Admin/Public/filter.html"/>
+</body>
+</html>

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>驻场权限</title>
+        <meta charset="GBK">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="./Public/ztree/css/demo.css" type="text/css" rel="stylesheet"/>
+        <link href="./Public/ztree/css/metroStyle/metroStyle.css" type="text/css" rel="stylesheet"/>
+		<script type="text/javascript" src="./Public/validform/js/jquery-1.9.1.min.js"></script>
+		<script type="text/javascript" src="./Public/ztree/js/jquery.ztree.core-3.5.js"></script>
+		<script type="text/javascript" src="./Public/ztree/js/jquery.ztree.excheck-3.5.js"></script>
+		<script type="text/javascript" src="./Public/ztree/js/jquery.ztree.exedit-3.5.js"></script>
+	
+		<style>
+			#userList li{
+				list-style: none;
+			    text-align: center;
+			    border-bottom: 1px solid #d9d9d9;
+			    height: 30px;
+			    line-height: 30px;
+			    cursor: pointer;
+			    color: #999;
+			}
+			#userList li:hover{
+				color: #349bc1;
+			}
+			#userList li:focus{
+				color: #349bc1;
+			}
+			#proList li{
+				list-style: none;
+			    text-align: center;
+			    border-bottom: 1px solid #d9d9d9;
+			    height: 30px;
+			    line-height: 30px;
+			    cursor: pointer;
+			    color: #999;
+			}
+			#proList li:hover{
+				color: #349bc1;
+			}
+			#proList li:focus{
+				color: #349bc1;
+			}
+			.highlight{
+				background-color:#349ac0;
+				color: #fff !important;
+			}
+			.hidden{
+				display:none;
+			}
+			.display{
+				display:block;
+			}
+			.middle{
+				vertical-align:middle;
+			}
+			#chooseList{
+				padding: 4px;
+			    width: 188px;
+			    height: 360px;
+			    float: left;
+			    font-size: 12px;
+			    overflow: auto;
+			}
+			#chooseList p{
+				border: 1px dashed #349ac0;
+			    color: #349ac0;
+			    text-align: center;
+			    margin-left: 14%;
+			    /* margin-right: 44px; */
+			    margin-top: 10px;
+			    border-radius: 4px;
+			    padding: 0px 6px;
+			    width: 150px;
+			}
+			#chooseList input{
+				float: right;
+			}
+		</style>
+		
+</head>
+<body>       
+<div style="margin: 40px 80px;">
+	<form method="post" action="{:U('House/fieldAuth',array('add'=>1))}">
+	
+	<div class="content_wrap">
+		<div class="zTreeDemoBackground left">
+			<ul id="departTree" class="ztree"></ul>
+			<ul id = 'userList' class="userList hidden"></ul>
+		</div>
+		
+		 <div class="left" style="width:230px;height:362px;border:1px solid #d9d9d9;margin-top:10px;overflow:auto;font-size:12px;" id="chooseList"></div>
+
+		<div class="left" style="width:230px;height:370px;border:1px solid #d9d9d9;margin-top:10px;border-left:none;overflow:auto;" id="proList">
+			<ul>
+				<foreach name="proj" item="vo">
+					<li proid ="{$vo.ID}" onclick="ChoosePro('{$vo.ID}','{$vo.PROJECTNAME}')">{$vo.PROJECTNAME}</li>
+				</foreach>
+			</ul>
+		</div>
+	</div>
+	
+	<div style="width:815px;margin-top:10px;text-align:center;height:30px;font-size:12px;" id='choose'>
+		<input type='radio' name='item' value='1' style="vertical-align:middle;" /> <label style="vertical-align:middle;">项目选人</label> 
+		<input type='radio' name='item' value='2' style="vertical-align:middle;" checked/> <label style="vertical-align:middle;">人选项目</label>
+	</div>
+
+	<input type='hidden' name='projId' value='' id= 'projId'/>
+	<input type='hidden' name='erpId' value='6' id= 'erpId'/>
+	<input type='hidden' name='uId' value='' id= 'uId'/>
+
+	<div style="height: 30px; width: 80px; text-align: center;">
+			<input type='submit' name='submit' value='保存' style="height: 30px;width: 80px;background: #349bc1;color: #fff;border: none;border-radius: 4px;float: left;margin-left: 370px; font-weight: 600; font-size: 14px;cursor:pointer;"/>
+	</div>
+	</form>
+</div>
+<script>
+	 var setting = {
+			async: {
+				enable: true,
+				url:"{:U('Api/getAuth')}",
+				autoParam:["id","pId","name"],
+				dataFilter: filter
+			},
+            data: {
+                simpleData: {
+                    enable: true
+                }
+            },
+			callback: {
+				onClick:onClick
+			}  
+        };
+
+		function filter(treeId, parentNode, childNodes) {
+			if (!childNodes) return null;
+			return childNodes;
+		}
+		function onClick(event, treeId, treeNode) {
+			var zTree = $.fn.zTree.getZTreeObj("departTree"),
+			nodes = zTree.getSelectedNodes();
+			
+			if(!nodes.isParent){
+				treeClick(nodes[0].id);
+			}
+		}
+		function treeClick(id){
+			$.ajax({
+				url:"{:U('Api/getUsers')}",
+				dataType:"json",
+				data:{
+					'id':id
+				},
+				success:function(obJect){
+					var html = '';
+					for (var i=0, l=obJect.length; i<l; i++) {
+						html += "<li uid="+obJect[i].id+" onclick=ChooseUser("+obJect[i].id+",'"+obJect[i].name+"')>"+obJect[i].name+"</li>";
+					}
+					$("#userList").html(html).addClass('display');
+				}
+			});
+		}
+		function getChooseProj(id){
+			$.ajax({
+				url:"{:U('Api/getChooseProj')}",
+				dataType:"json",
+				data:{
+					'id':id
+				},
+				success:function(obJect){
+					var html = '';
+					var pid = '';
+					for (var i=0, l=obJect.length; i<l; i++) {
+						html += "<p><input type='checkbox' name='pid[]' value ='"+obJect[i].pro_id+"' class='middle' checked='true' onclick=editOption(this) /><label class='middle'>"+obJect[i].projectname+"</label></p>";
+
+						pid += obJect[i].pro_id + ',';
+					}
+
+					if(pid) pid= pid.substring(0, pid.length-1);
+
+					$("#projId").val(pid);
+					$("#chooseList").html(html);
+				}
+			});
+		}
+
+		function getChooseUser(id){
+			
+			$.ajax({
+				url:"{:U('Api/getChooseUser')}",
+				dataType:"json",
+				data:{
+					'id':id
+				},
+				success:function(obJect){
+					var html = '';
+					var uid = '';
+					for (var i=0, l=obJect.length; i<l; i++) {
+						html += "<p><input type='checkbox' name='uid[]' value ='"+obJect[i].use_id+"' class='middle' checked='true' onclick=editOption(this) /><label class='middle'>"+obJect[i].name+"</label></p>";
+
+						uid += obJect[i].use_id + ',';
+					}
+
+					if(uid) uid= uid.substring(0, uid.length-1);
+
+					$("#uId").val(uid);
+					$("#chooseList").html(html);
+				}
+			});
+		}
+
+
+		function ChooseUser(uid,uname){
+			if($(":radio:checked").val() == 2){
+
+				$("#userList li[uid ="+uid+"]").addClass('highlight');
+				$("#userList li[uid !="+uid+"]").removeClass('highlight');
+
+				$("#uId").val(uid);
+				$("#chooseList").html('');
+				$("#proList li").removeClass('highlight');
+
+				getChooseProj(uid);
+			}else{
+				if($("#projId").val()){
+					$("#userList li[uid ="+uid+"]").addClass('highlight');
+					$("#userList li[uid !="+uid+"]").removeClass('highlight');
+
+					var useId = $("#uId").val();
+					if(useId){
+						if(useId.indexOf(uid) >= 0){
+							alert("该人员已存在");
+						}else{
+							$("#uId").val(useId +','+uid);
+							var html = "<p><input type='checkbox' name='uid[]' value='"+uid+"' class='middle' checked='true' onclick=editOption(this) /><label class='middle'>"+uname+"</label></p> ";
+
+							$("#chooseList").append(html);
+						}
+					}else{
+						$("#uId").val(uid);
+						var html = "<p><input type='checkbox' name='uid[]' value='"+uid+"' class='middle' checked='true' onclick=editOption(this) /><label class='middle'>"+uname+"</label></p> ";
+
+						$("#chooseList").append(html);
+					}
+				}else{
+					alert('请先选择项目');
+				}
+			}
+			//selectType(uid);
+		}
+		function ChoosePro(pid,pname){
+			if($(":radio:checked").val() == 2){
+				if($("#uId").val()){
+					$("#proList li[proid ="+pid+"]").addClass('highlight');
+					$("#proList li[proid !="+pid+"]").removeClass('highlight');
+
+					var prjId = $("#projId").val();
+					if(prjId){
+						if(prjId.indexOf(pid) >= 0){
+							alert("该项目已存在");
+						}else{
+							$("#projId").val(prjId+","+pid);
+							var html = "<p><input type='checkbox' name='pid[]' value='"+pid+"' class='middle' checked='true' onclick=editOption(this) /><label class='middle'>"+pname+"</label></p>";
+
+							$("#chooseList").append(html);
+						}
+					}else{
+						$("#projId").val(pid);
+						var html = "<p><input type='checkbox' name='pid[]' value='"+pid+"' class='middle' checked='true' onclick=editOption(this) /><label class='middle'>"+pname+"</label></p>";
+
+						$("#chooseList").append(html);
+					}
+
+				}else{
+					alert("请选择人员");
+				}
+			}else{
+				$("#proList li[proid ="+pid+"]").addClass('highlight');
+				$("#proList li[proid !="+pid+"]").removeClass('highlight');
+
+				$("#projId").val(pid);
+				$("#chooseList").val('');
+				$("#userList li").removeClass('highlight');
+				
+				getChooseUser(pid);
+			}
+		}
+
+		function editOption(obj){
+			if(!obj.checked){
+				//alert(obj.value);
+				var uid = $("#uId").val().split(',');
+				var pid = $("#projId").val().split(',');
+
+				if($(":radio:checked").val() == 2){
+					pid.splice($.inArray(obj.value,pid),1);
+
+					$("#projId").val(pid);
+					
+					$("#chooseList :checkbox[value="+obj.value+"]").parent().remove();
+				}else{
+					uid.splice($.inArray(obj.value,uid),1);
+
+					$("#uId").val(uid);
+
+					$("#chooseList :checkbox[value="+obj.value+"]").parent().remove();
+				}
+
+				//obj.parent.remove();
+			}
+		}
+
+       
+        $(document).ready(function(){
+            $.fn.zTree.init($("#departTree"), setting);
+			
+			$("#choose :radio").bind('click',function(){
+
+				$("#uId").val('');
+				$("#projId").val('');
+				$("#chooseList").html('');
+				$("#userList li").removeClass('highlight');
+				$("#proList li").removeClass('highlight');
+			});
+			
+        });
+	
+		
+</script>
+</body>
+</html>

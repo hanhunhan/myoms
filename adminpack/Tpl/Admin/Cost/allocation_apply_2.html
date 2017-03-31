@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>划拨明细</title>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--<link href="./Public/css/style2.css" type="text/css" rel="stylesheet"/>-->
+    <!--<script type="text/javascript" src="./Public/validform/js/jquery-1.9.1.min.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/validform/js/Validform_v5.3.2.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/validform/js/common.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/js/common.js"></script>-->
+    <!--<script language="javascript" type="text/javascript" src="./Public/My97DatePicker/WdatePicker.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/validform/plugin/swfupload/swfuploadv2.2.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/validform/plugin/swfupload/Validform.swfupload.handler.js"></script>-->
+    <!--<script language="javascript" type="text/javascript" src="./Public/layer/layer.js"></script>-->
+    <!--<link rel="stylesheet" href="./Public/third/jquery_ui_autocomplete/themes/base/jquery.ui.all.css">-->
+    <!--<link rel="stylesheet" href="./Public/validform/css/style.css" type="text/css" media="all"/>-->
+    <!--<link rel="stylesheet" href="./Public/validform/css/validateForm.css" type="text/css" media="all"/>-->
+    <include file="./Tpl/Admin/Public/comm_css_js.html"/>
+</head>
+<body>
+<div class="containter">
+    <div class="right fright j-right">
+        <div class="handle-tab">
+            <ul>
+                <li class="selected"><a href="">划拨申请</a></li>
+            </ul>
+        </div>
+        {$form}
+    </div>
+</div>
+<script>
+    var bus_project = "<php>echo $bus_project</php>";
+    var bus_sel_pro = JSON.parse('<php>echo $bus_sel_pro</php>');
+    var project_id = "<php>echo $project_id</php>";
+    var project_type_id = "<php>echo $project_type_id</php>";
+    var allocation_info = "<php>echo $allocation_info</php>";
+    var koufei = "<php>echo $koufei</php>";
+    //修改，附上原始值
+    var modify_data = JSON.parse('<php>echo $modify_data</php>');
+    var id = 0;
+
+    $(document).ready(function () {
+        $(".share_fundpool_cost").each(function () {
+            id = $(this).attr("idval");
+            //如果两者都是非电商
+            if (!bus_project || !bus_sel_pro[id]) {
+                $(this).hide();
+            }
+        });
+
+        //解决前端数据修改问题
+        $(".itemlist").each(function () {
+            var projectid = $(this).attr("fid");
+            console.log(projectid);
+            console.log(modify_data);
+            //赋值
+            for (var key in modify_data) {
+                if (projectid == modify_data[key].PROJECTID) {
+                    $(this).find(".share_profit").val(modify_data[key].PROFIT);
+                    $(this).find(".share_cost").val(modify_data[key].OUTCOST);
+                    $(this).find(".share_fundpool_cost").val(modify_data[key].FUNDPOOLCOST);
+                    break;
+                }
+            }
+        });
+    });
+
+    $("#allocation_examine").click(function () {
+
+        var flag = true;
+
+        //填写数据监测
+        $("input[idval]").each(function () {
+            if ($(this).val() != '' && isNaN($(this).val())) {
+                layer.alert('填写的值必须为数字，谢谢!', {icon: 2});
+                flag = false;
+            }
+        });
+
+        if (!flag)
+            return false;
+
+        //获取ids
+        var ids = '';
+        $(".itemlist").each(function () {
+            ids += $(this).attr('fid') + ",";
+        });
+
+        //提交审核
+        layer.confirm('确定要提交审核吗？', {
+            btn: ['确定', '取消'],
+            title: '是否撤销审核?',
+            closeBtn: false
+        }, function (index, layero) {
+            //确认操作
+            $.ajax({
+                type: "POST",
+                url: "index.php?s=/Cost/allocationApply&act=commitApply",
+                data: {
+                    'act': 'examine',
+                    'project_id': project_id,
+                    'project_type_id': project_type_id,
+                    'ids': ids,
+                    'allocation_info': allocation_info,
+                    'koufei': koufei,
+                    'formdata': $('.registerform').serialize()
+                },
+                dataType: "JSON",
+                success: function (data) {
+                    if (data.status == 0) {
+                        layer.alert(data.msg, {icon: 2});
+                    }
+                    else if (data.status == 1) {
+                        var caseid = data.data.caseid;
+                        var allocation_id = data.data.allocation_id;
+
+                        var appUrl = "__APP__";
+                        var url = appUrl + '/Touch/Cost/process&RECORDID=' + allocation_id + '&CASEID=' + caseid + '&flowTypePinYin=chengbenhuabo';
+
+                        window.location.href = url;
+                    }
+                    else {
+                        var msg = data.msg ? data.msg : '操作异常';
+                        layer.alert(msg, {icon: 2});
+                    }
+                }
+            })
+        }, function (index) {
+            layer.close(index);
+        });
+
+    });
+</script>
+</body>
+</html>

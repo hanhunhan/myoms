@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>标准明细</title>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <include file="./Tpl/Admin/Public/comm_css_js.html"/>
+    <!--<link href="./Public/css/style2.css" type="text/css" rel="stylesheet"/>-->
+    <!--<script type="text/javascript" src="./Public/validform/js/jquery-1.9.1.min.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/js/common.js"></script>-->
+    <!--<script language="javascript" type="text/javascript" src="./Public/My97DatePicker/WdatePicker.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/validform/js/Validform_v5.3.2.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/validform/js/common.js"></script>-->
+    <!--<script language="javascript" type="text/javascript" src="./Public/layer/layer.js"></script>-->
+    <!--<link rel="stylesheet" href="./Public/validform/css/style.css" type="text/css" media="all"/>-->
+    <!--<link rel="stylesheet" href="./Public/validform/css/validateForm.css" type="text/css" media="all"/>-->
+    <script>
+        var appUrl;
+        $(document).ready(function () {
+            $("input[name=MTYPE]").click(function(){
+                if($(this).val()==0 ){
+                    $("input[name=STYPE][value=0]").prop("checked",true);
+                    $("input[name=STYPE][value=1]").parent().hide();
+                    $('input[name=AMOUNT]').parent().next().html('<span class="danwei">元</span>');
+                    $('input[name=AMOUNT]').parent().parent().siblings('.leftlable').html('金额<font style="color:#f00;font-size:18px; ">*</font>');
+                }else{
+                    $("input[name=STYPE][value=1]").parent().show();
+                }
+            })
+            
+            if($("input[name=MTYPE]:checked").val()==0){
+                $("input[name=STYPE][value=0]").prop("checked",true);
+                $("input[name=STYPE][value=1]").parent().hide();
+                $('input[name=AMOUNT]').parent().next().html('<span class="danwei">元</span>');
+                $('input[name=AMOUNT]').parent().parent().siblings('.leftlable').html('金额<font style="color:#f00;font-size:18px; ">*</font>');
+            }else{
+                $("input[name=STYPE][value=1]").parent().show();
+            }
+            
+            if ($("input[name=STYPE]:checked").val() == 1) {
+                $('input[name=AMOUNT]').parent().after('<span class="danwei">%</span>');
+                $('input[name=AMOUNT]').parent().parent().siblings('.leftlable').html('百分比<font style="color:#f00;font-size:18px; ">*</font>');
+            } else {
+                $('input[name=AMOUNT]').parent().after('<span class="danwei">元</span>');
+                $('input[name=AMOUNT]').parent().parent().siblings('.leftlable').html('金额<font style="color:#f00;font-size:18px; ">*</font>');
+            }
+            $("input[name=STYPE]").click(function () {
+                if ($(this).val() == 1) {
+                    $('input[name=AMOUNT]').parent().siblings('.danwei').html('%');
+                    $('input[name=AMOUNT]').parent().parent().siblings('.leftlable').html('百分比<font style="color:#f00;font-size:18px; ">*</font>');
+                } else {
+                    $('input[name=AMOUNT]').parent().siblings('.danwei').html('元');
+                    $('input[name=AMOUNT]').parent().parent().siblings('.leftlable').html('金额<font style="color:#f00;font-size:18px; ">*</font>');
+                }
+            });
+        })
+    </script>
+</head>
+<body>
+<div class="containter">
+    {$form}
+    <textarea id="last_filter_text" style="display: none">{$lastFilter}</textarea>
+</div>
+</body>
+</html>

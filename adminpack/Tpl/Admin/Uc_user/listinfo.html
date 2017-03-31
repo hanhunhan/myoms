@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+    <title>用户信息</title>
+    <link rel=stylesheet href="./Tpl/css/global.css" type="text/css">
+    <link rel=stylesheet href="./Tpl/css/mainPage.css" type="text/css">
+    <script type="text/javascript" src="./Tpl/js/jquery-1.5.2.min.js"></script>
+    <script>
+        function checkinfo(){
+            var username = $('#username').val();
+            username = username.replace(/^\s+|\s+$/,'');
+            if(username=='') {
+                $('#username_error').html('<font class="fred">*姓名不能为空！<font>');
+                return false;
+            }else
+                $('#username_error').html('');
+
+            var mo = $('#mo').val();
+            if(mo!=''){
+                var reg = /^\d{11}$/
+                if(!reg.test(mo)){
+                    $('#mo_error').html('<font class="fred">*手机号码格式不正确！<font>');
+                    return false;
+                }else
+                    $('#mo_error').html('');
+            }
+
+            var qq = $('#qq').val();
+            if(qq!=''){
+                var reg = /^\d+$/
+                if(!reg.test(qq)){
+                    $('#qq_error').html('<font class="fred">*QQ格式不正确！<font>');
+                    return false;
+                }else
+                    $('#qq_error').html('');
+            }
+
+            var email = $('#email').val();
+            if(email!=''){
+                var reg = /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/;
+                if(!reg.test(email)){
+                    $('#email_error').html('<font class="fred">*邮箱格式不正确！<font>');
+                    return false;
+                }else
+                    $('#email_error').html('');
+            }
+        }
+
+        function checkpwd(){
+            var oldpwd = $('#oldpwd').val();
+            if(oldpwd==''){
+                $('#oldpwd_error').html('<font class="fred">*请输入密码！<font>');
+                return false;
+            }else{
+                $('#oldpwd_error').html('');
+            }
+            var newpwd = $('#newpwd').val();
+            if(newpwd==''){
+                $('#newpwd_error').html('<font class="fred">*请输入新的密码！<font>');
+                return false;
+            }else{
+                if(newpwd.length <8){
+                    $('#newpwd_error').html('<font class="fred">*新的密码复杂度不够！密码长度不少于8位，必须是字母大写，字母小写，数字，特殊字符中任意三个组合，请重新设置！！<font>');
+                    return false;
+                }else{
+                    var ls = 0;
+                    var a=/([a-z])+/.exec(newpwd);
+                    var b=/([0-9])+/.exec(newpwd);
+                    var c=/([A-Z])+/.exec(newpwd);
+                    var d=/[^a-zA-Z0-9]+/.exec(newpwd);
+                    if(a){
+                        ls++;
+                    }
+                    if(b){
+                        ls++;
+                    }
+                    if(c){
+                        ls++;
+                    }
+                    if(d){
+                        ls++;
+                    }
+                    if(ls<3){
+                        $('#newpwd_error').html('<font class="fred">*新的密码复杂度不够！密码长度不少于8位，必须是字母大写，字母小写，数字，特殊字符中任意三个组合，请重新设置！！<font>');
+                        return false;
+                    }else{
+                        $('#newpwd_error').html('');
+                    }
+                }
+            }
+
+            var repwd = $('#repwd').val();
+
+            if(repwd==''){
+                $('#repwd_error').html('<font class="fred">*请再次输入新密码！<font>');
+                return false;
+            }else{
+                $('#repwd_error').html('');
+            }
+
+
+            if(newpwd!=repwd){
+                $('#repwd_error').html('<font class="fred">*两次输入的密码不一致！<font>');
+                return false;
+            }else{
+                $('#repwd_error').html('');
+            }
+        }
+    </script>
+</head>
+
+<body>
+<div class="box" id="interestManage">
+    <div class="box-tit"><h3>用户信息</h3></div>
+    <div class="box-con">
+        <div class="box-b">
+            <div class="hd"><h3>&nbsp;</h3></div>
+            <div class="bd">
+                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table-a">
+                    <tr>
+                        <th>手机号</th>
+                        <th>昵称</th>
+                        <th>注册时间</th>
+                        <th>注册 IP</th>
+                        <th>最后登录</th>
+                        <th>上次登录 IP</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                    <volist name="listinfo" id="vo">
+                        <tr>
+                            <td width="20%">{$vo.mobile}</td>
+                            <td width="10%">{$vo.nickname}</td>
+                            <td width="150">{$vo.regdate}</td>
+                            <td width="10%">{$vo.regip}</td>
+                            <td width="150">{$vo.lastlogintime}</td>
+                            <td width="10%">{$vo.lastloginip}</td>
+                            <td width="5%">{$vo.status}</td>
+                            <td>
+                                <a href="{:U('Uc_user/edit',array('id'=>$vo['userid']))}">修改</a> |
+                                <a href="{:U('Uc_user/ban',array('id'=>$vo['userid']))}">{$vo.font}</a>
+                            </td>
+                        </tr>
+                    </volist>
+                </table>
+                <div class="cut-page">{$page}</div>
+            </div>
+
+
+        </div>
+
+    </div>
+</div>
+</body>
+</html>

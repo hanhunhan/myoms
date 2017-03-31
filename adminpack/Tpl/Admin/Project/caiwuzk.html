@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>案例管理</title>
+        <meta charset="GBK">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="./Public/css/style2.css" type="text/css" rel="stylesheet"/>
+		<script type="text/javascript" src="./Public/validform/js/jquery-1.9.1.min.js"></script>
+		<script type="text/javascript" src="./Public/validform/js/Validform_v5.3.2.js"></script>
+		<script type="text/javascript" src="./Public/validform/js/common.js"></script>
+		<script type="text/javascript" src="./Public/js/common.js"></script>
+		<script language="javascript" type="text/javascript" src="./Public/My97DatePicker/WdatePicker.js"></script>
+		
+<script type="text/javascript" src="./Public/validform/plugin/swfupload/swfuploadv2.2.js"></script>
+<script type="text/javascript" src="./Public/validform/plugin/swfupload/Validform.swfupload.handler.js"></script>
+
+		<link rel="stylesheet" href="./Public/validform/css/style.css" type="text/css" media="all" />
+		<link rel="stylesheet" href="./Public/validform/css/validateForm.css" type="text/css" media="all" />
+		<script>
+		appUrl='';
+			$(document).ready(function(){
+				 
+				$("input[name=zijinchi]").click(function(){ 
+					if($(this).val()==1){
+						$("#shouru").html($("#shouru").attr('wk'));
+						$("#maoli").html($("#maoli").attr('wk'));
+					}else{
+						$("#shouru").html($("#shouru").attr('yk'));
+						$("#maoli").html($("#maoli").attr('yk'));
+
+					}
+				});
+			});
+		</script>
+    </head>
+    <body>
+         
+        <div class="containter">
+		   
+
+            <div class="right fright j-right">
+               
+                <div class="handle-tab">
+                <ul>
+				<if condition="($zhtongji neq 1) "> 
+                    <li><a href="{:U('Project/paylist',$paramUrl)}">每日支出</a></li> 
+					<li ><a href="{:U('Project/customerlist',$paramUrl)}">办卡用户</a></li>  
+					<li ><a href="{:U('Project/qurendaochang',$paramUrl)}">确认到场</a></li> 
+					</if>
+						<li   ><a href="{:U('Project/xiaoshouzk',$paramUrl)}">销售状况</a></li>
+						<li class="selected" ><a href="{:U('Project/caiwuzk',$paramUrl)}">财务状况</a></li>
+						
+                </ul>
+            </div>
+			 <div class="caseinfo-table">
+			<table style="table-layout:fixed;width:90%"><tbody>
+			<tr>  <td width="10%"> </td><td  >未扣资金池<input name="zijinchi" type="radio" value="1" checked/>  扣除资金池<input name="zijinchi" type="radio" value="2"/>  </td></tr>
+			<tr> <td>成本：</td><td id="zhichu" > {$zhichu}</td> </tr>
+			<tr><td>收入:</td><td id="shouru" wk="{$shouru}" yk="{$kshouru}"> {$shouru} </td></tr>
+			<tr> <td>毛利：</td><td id="maoli" wk="{$maoli}" yk="{$kmaoli}">{$maoli}</td></tr>
+			</tbody></table> 
+			</div>
+
+               
+        </div>
+    </div>
+	
+             
+               
+       
+      
+<script language="javascript" type="text/javascript">
+ 
+</script> 
+                      
+        
+    </body>
+</html>

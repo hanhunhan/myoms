@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>项目详情</title>
+        <meta charset="GBK">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!--<link href="./Public/css/style2.css" type="text/css" rel="stylesheet"/>-->
+		<!--<link href="./Public/css/jquery-ui.css" type="text/css" rel="stylesheet"/>-->
+		<!--<script type="text/javascript" src="./Public/validform/js/jquery-1.9.1.min.js"></script>-->
+		<!--<script type="text/javascript" src="./Public/validform/js/Validform_v5.3.2.js"></script>-->
+		<!--<script type="text/javascript" src="./Public/validform/js/common.js"></script>-->
+		<!--<script type="text/javascript" src="./Public/js/common.js"></script>-->
+		<!--<script language="javascript" type="text/javascript" src="./Public/My97DatePicker/WdatePicker.js"></script>-->
+		<!---->
+		<!--<script type="text/javascript" src="./Public/validform/plugin/swfupload/swfuploadv2.2.js"></script>-->
+		<!--<script type="text/javascript" src="./Public/validform/plugin/swfupload/Validform.swfupload.handler.js"></script>-->
+		<!--<script type="text/javascript" src="./Public/js/jquery-ui.js"></script>-->
+		<!---->
+		<!--<link rel="stylesheet" href="./Public/validform/css/style.css" type="text/css" media="all" />-->
+		<!--<link rel="stylesheet" href="./Public/validform/css/validateForm.css" type="text/css" media="all" />-->
+        <include file="./Tpl/Admin/Public/comm_css_js.html" />
+        <input type="hidden" name="scaleType" id="scaleType" value="{$scaleType}">
+		<style>
+			.ui-autocomplete {
+				max-height: 200px;
+				overflow-y: auto;
+				/* 防止水平滚动条 */
+				overflow-x: hidden;
+			}
+		</style>
+		<script>
+		$(document).ready(function(){           
+            $("input[name=MTYPE]").click(function(){
+                if($(this).val()==0 ){
+                    $("input[name=STYPE][value=0]").prop("checked",true);
+                    $("input[name=STYPE][value=1]").parent().hide();
+                    $('input[name=AMOUNT]').parent().next().html('<span class="danwei">元</span>');
+                    $('input[name=AMOUNT]').parent().parent().siblings('.leftlable').html('金额<font style="color:#f00;font-size:18px; ">*</font>');
+                }else{
+                    $("input[name=STYPE][value=1]").parent().show();
+                }
+            })
+            
+            if($("input[name=MTYPE]:checked").val()==0){
+                $("input[name=STYPE][value=0]").prop("checked",true);
+                $("input[name=STYPE][value=1]").parent().hide();
+                $('input[name=AMOUNT]').parent().next().html('<span class="danwei">元</span>');
+                $('input[name=AMOUNT]').parent().parent().siblings('.leftlable').html('金额<font style="color:#f00;font-size:18px; ">*</font>');
+            }else{
+                $("input[name=STYPE][value=1]").parent().show();
+            }
+            
+            
+			if($("input[name=STYPE]:checked").val()==1){
+				$('input[name=AMOUNT]').parent().after('<span class="danwei">%</span>');
+				$('input[name=AMOUNT]').parent().parent().siblings('.leftlable').html('百分比<font style="color:#f00;font-size:18px; ">*</font>');
+			}else{
+				$('input[name=AMOUNT]').parent().after('<span class="danwei">元</span>');
+				$('input[name=AMOUNT]').parent().parent().siblings('.leftlable').html('金额<font style="color:#f00;font-size:18px; ">*</font>');
+			}
+			$("input[name=STYPE]").click(function(){
+				if($(this).val()==1 ){
+					 
+					$('input[name=AMOUNT]').parent().siblings('.danwei').html('%');
+					$('input[name=AMOUNT]').parent().parent().siblings('.leftlable').html('百分比<font style="color:#f00;font-size:18px; ">*</font>');
+				}else{
+					 
+					$('input[name=AMOUNT]').parent().siblings('.danwei').html('元');
+					$('input[name=AMOUNT]').parent().parent().siblings('.leftlable').html('金额<font style="color:#f00;font-size:18px; ">*</font>');
+				}
+			});
+            
+
+		})
+        var scaleType = $("#scaleType").val();
+		function editThis(obj) {           
+			var thisid = $(obj).parent().attr('fid');
+			if (thisid) {
+				var url = appUrl + '/House/feescale/SCALETYPE/'+scaleType+'/CHANGE/-1/CID/{$CID}&operate=&flowId=&parentchooseid={$PID}&showForm=1&ID=' + thisid;
+				window.location.href = url;
+			}
+		}
+		function viewThis(obj) {
+			var thisid = $(obj).parent().attr('fid');
+			if (thisid) {
+				var url = appUrl + '/House/feescale/SCALETYPE/'+scaleType+'/CHANGE/-1/CID/{$CID}&operate=&flowId=&parentchooseid={$PID}&showForm=2&ID=' + thisid;
+				window.location.href = url;
+			}
+		}
+		function delThis(obj ){
+			var fid = $(obj).parent().attr('fid');
+			 
+			if (confirm("确定删除吗？")) {
+			   $.ajax({
+				   type:'GET',
+				   url:'',
+				   data:'faction=delData&ID='+fid,
+				   success:function(obj){  
+					  var res = eval("("+obj+")");
+					   if(res.status === 'success') 
+					   {
+							if(res.msg == '')
+							{
+								alert('删除成功！');
+							}
+							else
+							{
+								alert(res.msg);
+							}
+
+						  window.location.reload();
+					   } 
+					   else
+					   {
+							if(res.msg == '')
+							{
+								alert('不允许删除，删除失败！');
+							}
+							else
+							{
+								alert(res.msg);
+							}
+					   }
+				   }
+			   });
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		</script>
+   
+</head>
+<body>
+         
+  <div class="containter">
+             
+	<div class="right fright j-right">
+		 
+	   
+	 
+		{$form}
+
+	  <div>   
+  </div>
+<script>
+	$(function(){
+
+	}) 
+</script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Form设置</title>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--<link href="./Public/css/style2.css" type="text/css" rel="stylesheet"/>-->
+    <!--<script type="text/javascript" src="./Public/validform/js/jquery-1.9.1.min.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/validform/js/Validform_v5.3.2.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/validform/js/common.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/js/common.js"></script>-->
+    <!--<script language="javascript" type="text/javascript" src="./Public/My97DatePicker/WdatePicker.js"></script>-->
+
+    <!--<script type="text/javascript" src="./Public/validform/plugin/swfupload/swfuploadv2.2.js"></script>-->
+    <!--<script type="text/javascript"-->
+    <!--src="./Public/validform/plugin/swfupload/Validform.swfupload.handler.js"></script>-->
+
+    <!--<link rel="stylesheet" href="./Public/validform/css/style.css" type="text/css" media="all"/>-->
+    <!--<link rel="stylesheet" href="./Public/validform/css/validateForm.css" type="text/css" media="all"/>-->
+    <include file="./Tpl/Admin/Public/comm_css_js.html"/>
+    <script>
+        function editForm(obj) {
+            var url = appUrl + '/FormSet/FormList&add=0&FORMNO=53&showForm=1&ID=' + $(obj).parent().attr('fid');
+            window.location.href = url;
+        }
+        function FieldList(obj) {
+            var url = appUrl + '/FormSet/Field&add=0&FORMNO=62&FORMID=' + $(obj).parent().attr('fid');
+            window.location.href = url;
+        }
+        function ViewForm(obj) {
+            var url = appUrl + '/FormSet/ViewForm&add=0&FORMNO=' + $(obj).parent().attr('fid');
+            window.open(url);
+        }
+    </script>
+</head>
+<body>
+<div class="containter">
+    <div class="right fright j-right">
+        <div class="handle-tab">
+            <ul>
+                <li class="selected"><a href="{:U('FormSet/FormList')}">界面设置</a></li>
+            </ul>
+        </div>
+        {$form}
+    </div>
+</div>
+</body>
+</html>

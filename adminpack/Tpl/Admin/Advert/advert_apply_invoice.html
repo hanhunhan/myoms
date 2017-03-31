@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>分销会员开票工作流 </title>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--<link href="./Public/css/style2.css" type="text/css" rel="stylesheet"/>-->
+    <!--<script type="text/javascript" src="./Public/validform/js/jquery-1.9.1.min.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/validform/js/Validform_v5.3.2.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/validform/js/common.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/js/common.js"></script>-->
+    <!--<script language="javascript" type="text/javascript" src="./Public/My97DatePicker/WdatePicker.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/validform/plugin/swfupload/swfuploadv2.2.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/validform/plugin/swfupload/Validform.swfupload.handler.js"></script>-->
+    <!--<script language="javascript" type="text/javascript" src="./Public/layer/layer.js"></script>-->
+    <!--<link rel="stylesheet" href="./Public/validform/css/style.css" type="text/css" media="all"/>-->
+    <!--<link rel="stylesheet" href="./Public/validform/css/validateForm.css" type="text/css" media="all"/>-->
+    <include file="./Tpl/Admin/Public/comm_css_js.html" />
+    <script>
+        var appUrl;
+        function audit_to_flow() {
+            // url = Advert/opinionFlow/prjid/147/FLOWTYPE/hetongkaipiao/CASEID/245/RECORDID/40/TAB_NUMBER/11/invoiceId/162/is_from/1
+            var url = $("#cururl").val();
+            window.location.href = url;
+        }
+    </script>
+</head>
+<body>
+<div class="right fright j-right">
+    <div class="handle-tab">
+        <ul>
+            <li class="selected"><a href="{:U('Advert/applyInvoice',$paramUrl)}">开票申请</a></li>
+            <li><a href="{:U('Advert/opinionFlow',$paramUrl)}" id="submitFlow">审批意见</a></li>
+        </ul>
+    </div>
+    <input type="hidden" name="cururl" id="cururl" value="{:U('Advert/opinionFlow',$paramUrl)}">
+    {$form}
+    <div class="handle-tab-twolevl">
+        <div class="topline"></div>
+        <ul class="twolevelul">
+            <li class="twolevelli on">开票明细</li>
+        </ul>
+    </div>
+    <div class="contractinfo-table">
+        <table>
+            <thead>
+            <tr>
+                <td>合同金额</td>
+                <td>本次申请金额</td>
+                <td>累计开票金额（不含本次）</td>
+                <td>备注</td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>{$money}</td>
+                <td>{$invoice_money}</td>
+                <td>{$sum_money}</td>
+                <td>{$remark}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <if condition="$scale_type eq 2">
+        <?php if($form_member_distribution){ ?>
+        <div>
+            <div class="handle-tab-twolevl">
+                <div class="topline"></div>
+                <ul class="twolevelul">
+                    <li class="twolevelli on">分销会员</li>
+                </ul>
+
+            </div>
+            {$form_member_distribution}
+        </div>
+        <?php } ?>
+    </if>
+
+    <script>
+        $('#export_members').click(function() {
+            var url = "{:U('MemberDistribution/exportMembers', $paramUrl)}";
+            layer.confirm('确定导出分销会员？', {
+                btn: ['确定', '取消'],
+                title: '确认',
+                closeBtn: false
+            }, function (index, layero) {
+                layer.close(index);
+                location.href = url;
+            }, function (index) {
+                layer.close(index);
+                return false;
+            });
+        });
+    </script>
+</div>
+</body>
+</html>

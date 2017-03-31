@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title> 采购申请 </title>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="./Public/css/style2.css" type="text/css" rel="stylesheet"/>
+    <!--<script type="text/javascript" src="./Public/validform/js/jquery-1.9.1.min.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/validform/js/Validform_v5.3.2.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/validform/js/common.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/js/common.js"></script>-->
+    <!--<script language="javascript" type="text/javascript" src="./Public/My97DatePicker/WdatePicker.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/validform/plugin/swfupload/swfuploadv2.2.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/validform/plugin/swfupload/Validform.swfupload.handler.js"></script>-->
+    <!--<script language="javascript" type="text/javascript" src="./Public/layer/layer.js"></script>-->
+    <!--<link rel="stylesheet" href="./Public/validform/css/style.css" type="text/css" media="all"/>-->
+    <!--<link rel="stylesheet" href="./Public/validform/css/validateForm.css" type="text/css" media="all"/>-->
+    <include file="./Tpl/Admin/Public/comm_css_js.html" />
+    <script>
+        var appUrl;
+        $(function () {
+            //提交采购申请
+            $("#sub_purchase").click(function () {
+                var p_id = $('.itemlist').filter('.selected').attr('fid');
+                var case_id = $("#case_id").val();
+                var url_current = $('#current_opinion_url').val();
+                var url = url_current + "/purchase_id/" + p_id;
+                window.location.href = url;
+            })
+        })
+    </script>
+</head>
+<body>
+<div class="right fright j-right">
+    <div class="handle-tab" id="ull">
+        {$tabs}
+    </div>
+    <div class="containter">
+        {$form}
+    </div>
+    <input type="hidden" name="contract_type" id="contract_type" value="{$contract_type}">
+    <input type="hidden" name="case_id" id="case_id" value="{$case_id}">
+    <input type="hidden" name="current_url" id="current_opinion_url" value="{:U('Purchase/opinionFlow',$paramUrl)}">
+</div>
+</body>
+</html>

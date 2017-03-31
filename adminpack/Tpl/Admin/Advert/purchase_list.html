@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>采购明细</title>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--<link href="./Public/css/style2.css" type="text/css" rel="stylesheet"/>-->
+    <!--<script type="text/javascript" src="./Public/validform/js/jquery-1.9.1.min.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/validform/js/Validform_v5.3.2.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/validform/js/common.js"></script>-->
+    <!--<script type="text/javascript" src="./Public/js/common.js"></script>-->
+    <!--<script language="javascript" type="text/javascript" src="./Public/My97DatePicker/WdatePicker.js"></script>-->
+    <!--<script language="javascript" type="text/javascript" src="./Public/layer/layer.js"></script>-->
+    <!--<link rel="stylesheet" href="./Public/validform/css/style.css" type="text/css" media="all"/>-->
+    <!--<link rel="stylesheet" href="./Public/validform/css/validateForm.css" type="text/css" media="all"/>-->
+    <include file="./Tpl/Admin/Public/comm_css_js.html" />
+</head>
+<body>
+<div class="containter">{$form}</div>
+<div id="user_change" class='containter' style='display:none;height: 50px;'>
+    <table width="100%" height="100%" border="0" cellspacing="0" cellpadding="0" align="center" valign="middle">
+        <tr>
+            <td align="center">
+                <span class="fclos" style="display: inline;height: 50px;">采购人：</span>
+            </td>
+            <td align="left">
+                    <span class="fclos" style="display: inline;height: 50px;">
+                        <select name="buyer_user" id='buyer_user'>
+                            <option value="0">请选择</option>
+                            <foreach name="purchase_user" item="user">
+                                <option value="{$user.ID}">{$user.NAME}</option>
+                            </foreach>
+                        </select>
+                    </span>
+            </td>
+        </tr>
+    </table>
+</div>
+<script type="text/javascript">
+    /*变更采购人*/
+    $("#change_buyer").click(function () {
+        var purchase_id = new Array();
+        var i = 0;
+        $("input[name= 'checkedtd']:checkbox").each(function () {
+            if ($(this).prop("checked") == true) {
+                purchase_id[i] = $(this).val();
+                i += 1;
+            }
+        });
+
+        if (i == 0) {
+            layer.msg('请至少选择一条采购明细', {icon: 2});
+            return false;
+        }
+
+        //iframe层
+        layer.open({
+            type: 1,
+            title: '变更采购人',
+            shadeClose: true,
+            shade: 0.8,
+            btn: ['确 定', '取 消'],
+            area: ['280px', '150px'],
+            content: $('#user_change'),
+            yes: function (index, layero) {
+                var buyer_id = $("#buyer_user").val();
+                if (buyer_id > 0) {
+                    $.ajax({
+                        type: "POST",
+                        url: "index.php?s=/Purchase/change_buyer",
+                        data: {'purchase_id': purchase_id, 'buyer_id': buyer_id},
+                        dataType: "JSON",
+                        success: function (data) {
+                            if (data.state == 1) {
+                                layer.alert(data.msg, {icon: 1, closeBtn: false},
+                                        function () {
+                                            layer.close(index);
+                                            window.location.reload();
+                                        });
+                            } else if (data.state == 0) {
+                                layer.alert(data.msg, {icon: 2, closeBtn: false},
+                                        function () {
+                                            layer.close(index);
+                                            window.location.reload();
+                                        });
+                            } else {
+                                var msg = data.msg ? data.msg : '操作异常';
+                                layer.alert(msg, {icon: 2, closeBtn: false},
+                                        function () {
+                                            layer.close(index);
+                                            window.location.reload();
+                                        });
+                            }
+                        }
+                    })
+                } else {
+                    layer.tips('请选择采购人', '#buyer_user');
+                    return false;
+                }
+            }
+        });
+    })
+</script>
+</body>
+</html>

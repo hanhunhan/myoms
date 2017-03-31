@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>子页面</title>
+        <meta charset="GBK">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="./Public/css/style2.css" type="text/css" rel="stylesheet"/>
+		<script type="text/javascript" src="./Public/validform/js/jquery-1.9.1.min.js"></script>
+		<script type="text/javascript" src="./Public/validform/js/Validform_v5.3.2.js"></script>
+		<script type="text/javascript" src="./Public/validform/js/common.js"></script>
+		<script type="text/javascript" src="./Public/js/common.js"></script>
+		<script language="javascript" type="text/javascript" src="./Public/My97DatePicker/WdatePicker.js"></script>
+		
+<script type="text/javascript" src="./Public/validform/plugin/swfupload/swfuploadv2.2.js"></script>
+<script type="text/javascript" src="./Public/validform/plugin/swfupload/Validform.swfupload.handler.js"></script>
+
+		<link rel="stylesheet" href="./Public/validform/css/style.css" type="text/css" media="all" />
+		<link rel="stylesheet" href="./Public/validform/css/validateForm.css" type="text/css" media="all" />
+		<script>
+	$(document).ready(function(){
+		 
+		var BUDGETID = $("input[name='BUDGETID']").val();
+		var ID =$("input[name='ID']").val() ?$("input[name='ID']").val():0 ;
+	//	var BUDGETTYPE = $("select[name='BUDGETTYPE']").val();
+		var demo=$(".registerform").Validform();
+		demo.addRule([
+			{
+				ele:"select[name='FEEID']",
+				datatype:"*",
+				ajaxurl:"{:U('Project/ajaxcheckfee')}"+'&BUDGETID='+BUDGETID+'&ID='+ID,
+				nullmsg:"请选择类型！",
+				errormsg:"请选择类型！"
+			} 
+		]);
+
+	});
+	</script>
+    </head>
+    <body>
+         
+        <div class="containter">
+		   
+
+            <div class="right fright j-right" style="margin-top:30px;">
+               
+               
+			{$form}
+
+			
+ 
+
+			  <div>          
+			 {$form2}
+			 <div>
+        </div>
+    </div>
+	
+             
+               
+       
+                      
+        
+    </body>
+</html>

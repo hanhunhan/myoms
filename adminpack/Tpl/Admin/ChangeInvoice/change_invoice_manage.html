@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>会员换票管理</title>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="Public/third/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="./Public/css/style2.css" type="text/css" rel="stylesheet"/>
+    <script type="text/javascript" src="./Public/validform/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="./Public/validform/js/Validform_v5.3.2.js"></script>
+    <script type="text/javascript" src="./Public/validform/js/common.js"></script>
+    <script type="text/javascript" src="./Public/js/common.js"></script>
+    <script language="javascript" type="text/javascript" src="./Public/My97DatePicker/WdatePicker.js"></script>
+    <script type="text/javascript" src="./Public/validform/plugin/swfupload/swfuploadv2.2.js"></script>
+    <script type="text/javascript" src="./Public/validform/plugin/swfupload/Validform.swfupload.handler.js"></script>
+    <script src="./Public/third/jquery_ui_autocomplete/ui/jquery.ui.core.js"></script>
+    <script src="./Public/third/jquery_ui_autocomplete/ui/jquery.ui.widget.js"></script>
+    <script src="./Public/third/jquery_ui_autocomplete/ui/jquery.ui.position.js"></script>
+    <script type="text/javascript" src="./Public/third/jquery_ui_autocomplete/ui/jquery.ui.autocomplete.js"></script>
+    <script language="javascript" type="text/javascript" src="./Public/layer/layer.js"></script>
+    <script src="Public/third/bootstrap/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="./Public/third/jquery_ui_autocomplete/themes/base/jquery.ui.all.css">
+    <link rel="stylesheet" href="./Public/validform/css/style.css" type="text/css" media="all"/>
+    <link rel="stylesheet" href="./Public/validform/css/validateForm.css" type="text/css" media="all"/>
+</head>
+<body>
+<div class="containter">
+    <div class="right fright j-right">
+        <div class="handle-tab">
+            <ul>
+                <li class="selected"><a href="{:U('ChangeInvoice/change_invoice_manage',$paramUrl)}">换发票申请</a></li>
+                <li><a href="{:U('ChangeInvoice/opinionFlow',$paramUrl)}">审批意见</a></li>
+            </ul>
+        </div>
+        {$form}
+        <input type="hidden" name="current_opinion_url" id="current_opinion_url"
+               value="{:U('ChangeInvoice/opinionFlow',$paramUrl)}">
+        <input type="hidden" name="memberid" id="memberid" value="{$memberid}">
+    </div>
+</div>
+<script>
+    var appUrl;
+    function submit_to_opinion() {
+        var fid = $(".itemlist").attr("fid");
+        var url = $("#current_opinion_url").val();
+
+        var recordId = $("#memberid").val();
+        var appUrl = "__APP__";
+        var url = appUrl + '/Touch/ChangeInvoice/process&RECORDID=' + recordId + '&flowTypePinYin=huiyuanhuanpiao';
+
+        window.location.href = url;
+    }
+</script>
+</body>
+</html>

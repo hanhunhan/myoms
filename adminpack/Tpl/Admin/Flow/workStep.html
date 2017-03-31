@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>工作流</title>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <include file="./Tpl/Admin/Public/comm_css_js.html" />
+    <script>
+        function handleFlow(obj) {
+            var flowId = $(".j-right tbody .selected").attr('fid');
+            var url = '';
+            $.ajax({
+                url: "{:U('Api/getFlowType')}",
+                dataType: "json",
+                async: false,
+                data: {
+                    'flowId': flowId
+                },
+                success: function (obJect) {
+                    if (obJect['nopower'] == 1) {
+                        alert('您没有权限操作该城市的流程！');
+                    } else {
+                        var type = '&flowTypePinYin=' + obJect[0]['PINYIN'];
+                        switch (obJect[0]['PINYIN']) {
+                            case 'yewujintie':
+                                url = appUrl + '/Touch/Benefits/process&flowId=' + flowId + '&RECORDID=' + obJect[0]['RECORDID'] + '&CASEID=' + obJect[0]['CASEID'] + type;
+                                break;
+                            case 'caigoushenqing':
+                                if (obJect[0]['CASEID'] > 0) {
+                                    type += '&purchaseType=purchase';
+                                } else {
+                                    type += '&purchaseType=bulkPurchase';
+                                }
+                                url = appUrl + '/Touch/Purchase/process&flowId=' + flowId + '&RECORDID=' + obJect[0]['RECORDID'] + '&CASEID=' + obJect[0]['CASEID'] + type;
+                                break;
+                            case 'feifuxianchengbenshenqing':  // 非现金成本申请
+                                url = appUrl + '/Touch/PurchaseNocash/process&flowId=' + flowId + '&RECORDID=' + obJect[0]['RECORDID'] + '&CASEID=' + obJect[0]['CASEID'] + '&TAB_NUMBER=26' + type;
+                                break;
+                            case 'chengbenhuabo':  // 成本划拨
+                                url = appUrl + '/Touch/Cost/process&flowId=' + flowId + '&RECORDID=' + obJect[0]['RECORDID'] + '&CASEID=' + obJect[0]['CASEID'] + type;
+                                break;
+                            case 'lixiangbiangeng': // 立项变更
+                                url = appUrl + '/Touch/ProjectChange/show&flowId=' + flowId + '&RECORDID=' + obJect[0]['RECORDID'] + '&CASEID=' + obJect[0]['CASEID'] + '&CHANGE=-1&type=1&flowType=lixiangbiangeng&active=1&tabNum=20' + type;
+                                break;
+                            case 'biaozhuntiaozheng':  // 标准调整
+                                url = appUrl + '/Touch/Feescale_change/process&flowId=' + flowId + '&RECORDID=' + obJect[0]['RECORDID'] + '&CASEID=' + obJect[0]['CASEID'] + type;
+                                break;
+                            case 'hetongkaipiao':  // 合同开票
+                                url = appUrl + '/Touch/Advert/process&flowId=' + flowId + '&RECORDID=' + obJect[0]['RECORDID'] + '&CASEID=' + obJect[0]['CASEID'] + type;
+                                break;
+                            case 'tksq':  // 退款申请
+                                url = appUrl + '/Touch/MemberRefund/process&flowId=' + flowId + '&RECORDID=' + obJect[0]['RECORDID'] + '&CASEID=' + obJect[0]['CASEID'] + type;
+                                break;
+                            case 'dianziedu': // 垫资比例调整
+                                url = appUrl + '/Touch/Payout_change/process&flowId=' + flowId + '&RECORDID=' + obJect[0]['RECORDID'] + '&CASEID=' + obJect[0]['CASEID'] + type;
+                                break;
+                            case 'lixiangshenqing':  // 立项申请
+                                url = appUrl + '/Touch/ProjectSet/show&tabNum=20&flowId=' + flowId + '&RECORDID=' + obJect[0]['RECORDID'] + '&CASEID=' + obJect[0]['CASEID'] + type;
+                                break;
+                            case 'huiyuantuipiao':  // 会员退票
+                                url = appUrl + '/Touch/InvoiceRecycle/process&flowId=' + flowId + '&RECORDID=' + obJect[0]['RECORDID'] + '&CASEID=' + obJect[0]['CASEID'] + type;
+                                break;
+                            case 'xiangmuxiahuodong':  // 项目下活动
+//                                url = appUrl + '/Touch/Activ/process&flowId=' + flowId + '&RECORDID=' + obJect[0]['RECORDID'] + '&CASEID=' + obJect[0]['CASEID'] + '&active=1&tabNum=10';
+//                                break;
+                            case 'dulihuodongbiangeng':  // 独立活动
+//                                url = appUrl + '/Activ/opinionFlowChange&flowId=' + flowId + '&RECORDID=' + obJect[0]['RECORDID'] + '&CASEID=' + obJect[0]['CASEID'] + '&active=1&CHANGE=-1&type=3&tabNum=9&activId=' + obJect[0]['ACTIVID'];
+//                                break;
+                            case 'xiangmuxiahuodongbiangeng':  // 项目下活动变更
+//                                url =
+//                                        appUrl + '/Activ/opinionFlowChange&flowId=' + flowId + '&RECORDID=' + obJect[0]['RECORDID'] + '&CASEID=' + obJect[0]['CASEID'] + '&activId=' + obJect[0]['ACTIVID'] + '&active=1&CHANGE=-1&type=2&tabNum=9';
+//                                break;
+                            case 'dulihuodong':  // 独立活动
+                                url = appUrl + '/Touch/Activ/process&flowId=' + flowId + '&RECORDID=' + obJect[0]['RECORDID'] + '&CASEID=' + obJect[0]['CASEID'] + '&tabNum=8' + type;
+                                break;
+                            case 'xiangmuzhongzhi':  // 项目终止
+                                url =
+                                        appUrl + '/Touch/ProjectTermination/show&flowId=' + flowId + '&RECORDID=' + obJect[0]['RECORDID'] + '&CASEID=' + obJect[0]['CASEID'] + type;
+                                break;
+                            case 'xiangmujuesuan':  // 项目决算
+                                url =
+                                        appUrl + '/Touch/Finalaccounts/show&flowId=' + flowId + '&RECORDID=' + obJect[0]['RECORDID'] + '&CASEID=' + obJect[0]['CASEID'] + type;
+                                break;
+                            case 'jiekuanshenqing':  // 借款申请
+                                url =
+                                        appUrl + '/Touch/Loan/process&flowId=' + flowId + '&RECORDID=' + obJect[0]['RECORDID'] + '&CASEID=' + obJect[0]['CASEID'] + type;
+                                break;
+                            case 'jianmianshenqing':  // 会员减免
+                                url =
+                                        appUrl + '/Touch/MemberDiscount/process&flowId=' + flowId + '&RECORDID=' + obJect[0]['RECORDID'] + '&CASEID=' + obJect[0]['CASEID'] + type;
+                                break;
+                            case 'huiyuanhuanpiao':  // 会员换票
+                                url =
+                                        appUrl + '/Touch/ChangeInvoice/process&flowId=' + flowId + '&RECORDID=' + obJect[0]['RECORDID'] + '&CASEID=' + obJect[0]['CASEID'] + type;
+                                break;
+                            case 'yusuanqita':  // 预算其他
+                                url = appUrl + '/Touch/BenefitFlow/process&flowId=' + flowId + '&RECORDID=' + obJect[0]['RECORDID'] + '&CASEID=' + obJect[0]['CASEID'];
+                                break;
+                            case 'xiaomifengchaoe':  // 小蜜蜂
+                                url = appUrl + '/Touch/PurchasingBee/show&prjid=0&flowId=' + flowId + '&beeId=' + obJect[0]['RECORDID'] + '&TAB_NUMBER=25';
+                                break;
+                            case 'zhihuanshenqing':
+                                url = appUrl + '/Touch/Displace/process&flowId=' + flowId + '&RECORDID=' + obJect[0]['RECORDID'] + '&CASEID=' + obJect[0]['CASEID'] + type;
+                                break;
+                            case 'shoumai':
+                                url = appUrl + '/Touch/InboundUse/process&flowId=' + flowId +'&RECORDID='+obJect[0]['RECORDID'] + '&CASEID=' + obJect[0]['CASEID'] + type + '&flowDisplaceType=1';
+                                break;
+                            case 'neibulingyong':
+                                url = appUrl + '/Touch/InboundUse/process&flowId=' + flowId +'&RECORDID='+obJect[0]['RECORDID'] + '&CASEID=' + obJect[0]['CASEID'] + type + '&flowDisplaceType=2';
+                                break;
+                            case 'baosun':
+                                url = appUrl + '/Touch/InboundUse/process&flowId=' + flowId +'&RECORDID='+obJect[0]['RECORDID'] + '&CASEID=' + obJect[0]['CASEID'] + type + '&flowDisplaceType=3';
+                                break;
+                            case 'shoumaibiangeng':
+                                url = appUrl + '/Touch/DisplaceSaleChange/process&flowId=' + flowId +'&RECORDID='+obJect[0]['RECORDID'] + '&CASEID=' + obJect[0]['CASEID'] + type;
+                                break;
+                            case 'dianzibilichaoe':
+                                url = appUrl + '/Touch/AdvanceChaoe/show&flowId=' + flowId +'&RECORDID='+obJect[0]['RECORDID'] + '&CASEID=' + obJect[0]['CASEID'] + type ;
+                                break;
+                        }
+                        window.location.href = url;
+                    }
+                }
+            });
+        }
+
+        function viewFlow(obj) {
+            var flowId = $(obj).parent().attr('fid');
+            var url = "{:U('Flow/viewFlow')}" + "&FLOWID=" + flowId;
+
+            window.open(url,"_blank");
+
+//            layer.open({
+//                type: 2,
+//                title: '流程图',
+//                area: ['80%', '70%'],
+//                skin: 'layui-layer-iframe-padding', //样式类名
+//                shift: 1,
+//                shadeClose: true, //开启遮罩关闭
+//                content: url,
+//                btn: '关闭'
+//            });
+        }
+
+        function backFlow(obj) {
+            if (confirm("确定要退回流程发起人么?")) {
+
+                var flowId = $(".j-right tbody .selected").attr('fid');
+                var url = appUrl + '/Flow/backFlow&FLOWID=' + flowId;
+
+                window.location.href = url;
+            }
+        }
+
+        function finishFlow(obj) {
+            if (confirm("确定要备案?")) {
+                //var flowType = $(".j-right tbody .selected").attr('flowtype');
+                var flowId = $(".j-right tbody .selected").attr('fid');
+
+                //var url = appUrl+'/Flow/finishFlow&FLOWID='+flowId+'&type='+flowType;
+                var url = appUrl + '/Flow/finishFlow&FLOWID=' + flowId;
+                window.location.href = url;
+            }
+        }
+
+        function deliverFlow(obj) {
+            var flowId = $(".j-right tbody .selected").attr('fid');
+            //var flowType = $(".j-right tbody .selected").attr('flowtype');
+
+            var url = appUrl + '/Flow/deliverFlow&FLOWID=' + flowId;
+
+            window.location.href = url;
+        }
+    </script>
+</head>
+<body>
+<div class="containter">
+    <div class="right fright j-right">
+        <div class="handle-tab">
+            <ul>
+                <li class="selected"><a href="{:U('Flow/workStep')}">待办事项</a></li>
+                <li><a href="{:U('Flow/through')}">经办事项</a></li>
+                <li><a href="{:U('Flow/already')}">办结事项</a></li>
+            </ul>
+        </div>
+        {$form}
+    </div>
+    <textarea id="last_filter_text" style="display: none">{$lastFilter}</textarea>
+</div>
+<script>
+    $(function () {
+        $('#last_filter_result').text($('#last_filter_text').text());  // 附带上上次搜索的结果
+
+        $(".j-right tbody tr").click(function () {
+            $(this).siblings().removeClass("selected");
+            $(this).addClass("selected");
+        });
+    })
+</script>
+</body>
+</html>

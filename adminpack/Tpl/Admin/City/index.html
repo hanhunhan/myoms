@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=gb2312"/>
+    <title>城市列表</title>
+    <link rel=stylesheet href="./Tpl/css/global.css" type="text/css">
+    <link rel=stylesheet href="./Tpl/css/mainPage.css" type="text/css">
+    <script type="text/javascript" src="./Tpl/js/jquery-1.5.2.min.js"></script>
+</head>
+<body>
+<div class="box" id="interestManage">
+    <div class="box-tit"><h3>城市列表</h3></div>
+    <div class="box-con">
+        <div class="box-b">
+            <div class="hd"><h3>城市列表</h3></div>
+            <div class="bd">
+                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table-a">
+                    <tr>
+                        <th>序号</th>
+                        <th>名称</th>
+                        <th>排序</th>
+                        <th>添加时间</th>
+                        <th>修改时间</th>
+                        <th><a class="font-blue" href="{:U('City/edit?todo=add')}">添加城市</a></th>
+                    </tr>
+                    <volist name="re" id="vo">
+                        <tr>
+                            <td width="5%">{$vo.city_id}</td>
+                            <td width="40%">{$vo.city_name}</td>
+                            <td width="5%">{$vo.city_order}</td>
+                            <td width="15%">{$vo.city_created|date='Y-m-d H:i:s',###}</td>
+                            <td width="15%">{$vo.city_updated|date='Y-m-d H:i:s',###}</td>
+                            <td>
+                                <if condition="$vo['city_del'] eq 0">
+                                    <a href="{:U('City/edit?todo=edit&id='.$vo[city_id])}">修改</a> | <a
+                                        href="{:U('City/edit?todo=lock&id='.$vo[city_id])}">锁定</a>
+                                    <else/>
+                                    <a href="{:U('City/edit?todo=unlock&id='.$vo[city_id])}">解锁</a>
+                                </if>
+                            </td>
+                        </tr>
+                    </volist>
+                </table>
+                <div class="cut-page">{$page}</div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

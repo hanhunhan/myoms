@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="GBK">
+    <title>经营管理系统登陆</title>
+    <link href="css/main.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="login_title"><img src="images/title.png" alt=""/></div>
+<div class="login_cnt">
+    <div class="login_form">
+        <form id="form" action="" type="post" onsubmit="">
+            <div class="login_div1"><label class="placeholder" for="username">请输入您的用户名</label><input id="username"
+                                                                                                     type="text"
+                                                                                                     required/></div>
+            <div class="login_div1"><label class="placeholder" for="pwd">请记住您的密码</label><input id="pwd"
+                                                                                               type="password"/></div>
+            <div class="login_div2">
+                <label class="placeholder ie6" for="yzm">请输入验证码</label><input id="yzm" type="text"/>
+                <img src="images/check_number.jpg" width="92px" height="38px" alt=""/><span><a href="#">换一个?</a></span>
+
+                <div class="clr"></div>
+            </div>
+
+            <div class="login_btn">
+                <button type="button">用户登录</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+    var username = document.getElementById("username"),
+            pwd = document.getElementById("pwd"),
+            yzm = document.getElementById("yzm"),
+            isIE = /*@cc_on!@*/0;
+
+    function focusin(event) {
+        var e = isIE ? window.event : event,
+                target = isIE ? e.srcElement : e.target;
+        target.previousSibling.style.display = "none";
+
+    }
+
+    function focusout(event) {
+        var e = isIE ? window.event : event,
+                target = isIE ? e.srcElement : e.target;
+        if (target.value === "") {
+            target.previousSibling.style.display = "inline";
+        }
+    }
+
+    if (isIE) {
+        username.onfocusin = focusin;
+        username.onfocusout = focusout;
+
+        pwd.onfocusin = focusin;
+        pwd.onfocusout = focusout;
+
+        yzm.onfocusin = focusin;
+        yzm.onfocusout = focusout;
+    } else {
+        username.addEventListener("focus", focusin, true);
+        username.addEventListener("blur", focusout, true);
+
+        pwd.addEventListener("focus", focusin, true);
+        pwd.addEventListener("blur", focusout, true);
+
+        yzm.addEventListener("focus", focusin, true);
+        yzm.addEventListener("blur", focusout, true);
+    }
+</script>
+<!--input框提示js结束-->
+</body>
+</html>

@@ -1,0 +1,58 @@
+@charset "GBK";
+/************************************************************************************
+RESET
+*************************************************************************************/
+html, body, address, blockquote, div, dl, form, h1, h2, h3, h4, h5, h6, ol, p, pre, table, ul,
+dd, dt, li, tbody, td, tfoot, th, thead, tr, button, del, ins, map, object,
+a, abbr, acronym, b, bdo, big, br, cite, code, dfn, em, i, img, kbd, q, samp, small, span,
+strong, sub, sup, tt, var, legend, fieldset {
+	margin: 0;
+	padding: 0;
+}
+
+img, fieldset {
+	border: 0;
+}
+ul, ol {
+    list-style: none outside none;
+}
+a {
+    text-decoration: none;
+}
+
+/* set image max width to 100% */
+img {
+	max-width: 100%;
+            -ms-interpolation-mode: bicubic;
+	height: auto;
+	width: auto\9; /* ie8 */
+	
+}
+
+/* set html5 elements to block */
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section { 
+    display: block;
+}
+
+/************************************************************************************
+GENERAL STYLING
+*************************************************************************************/
+
+
+/****************************µÇÂ½Ò³Ãæ STYLING****************************/
+.login_title{width: 430px;margin:200px auto 0;}
+.login_cnt{margin-top: 30px;width: 100%;background-color: #5dafcd;}
+.login_form{width: 400px;margin:0 auto;padding: 55px 15px;}
+.login_form input{width: 335px;height: 35px;color: #c1dbe5;padding: 4px 0 0 65px;border:0;}
+.login_div1{position: relative;margin-bottom: 30px;background-color: #4a8ca4;border-radius: 5px;}
+.login_div2{position: relative;margin-bottom: 30px;}
+.login_div2 img{display: inline-block;float: left;margin-left:20px;}
+.login_div2 span{display: inline-block;padding: 8px 0 0 20px;}
+.login_div2 span a{color:#fff;font:normal 14px "Î¢ÈíÑÅºÚ";}
+.placeholder{position: absolute;top: 10px;left: 65px;color: #c1dbe5;font:normal 14px "Î¢ÈíÑÅºÚ";}
+.ie6{_left:-255px;}
+#username{background:url("../images/logo1.jpg") no-repeat  center left ; }
+#pwd{background:url("../images/logo2.jpg") no-repeat  center left ; }
+#yzm{background:url("../images/logo3.jpg") no-repeat  center left ;width: 135px;background-color: #4a8ca4;border-radius: 5px;float:left; }
+.clr{clear:both; padding:0; margin:0; background:none; }
+.login_btn button{width: 100%;text-align: center; cursor: pointer;background: #f1682d;border: none;height: 45px;margin-top:30px;color:#fff;;font:normal 18px  "Î¢ÈíÑÅºÚ";border-radius: 5px;}

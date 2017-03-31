@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>应付未付统计</title>
+        <meta charset="GBK">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!--<link href="./Public/css/style2.css" type="text/css" rel="stylesheet"/>-->
+        <!--<script type="text/javascript" src="./Public/validform/js/jquery-1.9.1.min.js"></script>-->
+        <!--<script type="text/javascript" src="./Public/validform/js/Validform_v5.3.2.js"></script>-->
+        <!--<script type="text/javascript" src="./Public/validform/js/common.js"></script>-->
+        <!--<script type="text/javascript" src="./Public/js/common.js"></script>-->
+        <!--<script language="javascript" type="text/javascript" src="./Public/My97DatePicker/WdatePicker.js"></script>		-->
+        <!--<script type="text/javascript" src="./Public/validform/plugin/swfupload/swfuploadv2.2.js"></script>-->
+        <!--<script type="text/javascript" src="./Public/validform/plugin/swfupload/Validform.swfupload.handler.js"></script>-->
+        <!--<script language="javascript" type="text/javascript" src="./Public/layer/layer.js"></script>-->
+        <!--<link rel="stylesheet" href="./Public/validform/css/style.css" type="text/css" media="all" />-->
+        <!--<link rel="stylesheet" href="./Public/validform/css/validateForm.css" type="text/css" media="all" />-->
+        <include file="./Tpl/Admin/Public/comm_css_js.html" />
+    </head>
+    <body>
+        <div class="containter">
+            <div class="right fright j-right">
+                <div class="handle-tab">
+                    <ul>
+                        <li><a href="{:U('Report/reim_cumulative',$paramUr)}">报销列表</a></li>
+                        <li class="selected"><a href="{:U('Report/pay_cumulative',$paramUr)}">应付未付列表</a></li>
+                    </ul>
+                </div>
+                {$form}
+            </div>
+        </div>
+        <textarea id="last_filter_text" style="display: none">{$lastFilter}</textarea>
+    </body>
+    <script>
+        $('#last_filter_result').text($('#last_filter_text').text());  // 附带上上次搜索的结果
+
+        $('#export_pay').click(function() {
+            var url = "{:U('Report/pay_cumulative&act=export&filterSql='.$filterSql, $paramUrl)}";
+            console.log(url);
+            layer.confirm('确定导出数据？', {
+                btn: ['确定', '取消'],
+                title: '确认',
+                closeBtn: false
+            }, function (index, layero) {
+                layer.close(index);
+                location.href = url;
+            }, function (index) {
+                layer.close(index);
+                return false;
+            });
+        });
+    </script>
+</html>

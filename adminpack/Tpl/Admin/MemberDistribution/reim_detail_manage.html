@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>报销明细</title>
+        <meta charset="GBK">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <include file="./Tpl/Admin/Public/comm_css_js.html" />
+    </head>
+	<script>
+	function editThis(obj) {
+			var thisid = $(obj).parent().attr('fid');
+			if (thisid) {
+				var url = appUrl + '/MemberDistribution/reim_detail_manage/prjid/{$PID}/TAB_NUMBER/4/CASE_TYPE/fx&parentchooseid={$MID}&showForm=1&ID=' + thisid;
+				window.location.href = url;
+			}
+		}
+		function viewThis(obj) {
+			var thisid = $(obj).parent().attr('fid');
+			if (thisid) {
+				var url = appUrl + '/MemberDistribution/reim_detail_manage/prjid/{$PID}/TAB_NUMBER/4/CASE_TYPE/fx&parentchooseid={$MID}&showForm=2&ID=' + thisid;
+				window.location.href = url;
+			}
+		}
+		function delThis(obj ){
+			var fid = $(obj).parent().attr('fid');
+			 
+			if (confirm("确定删除吗？")) {
+			   $.ajax({
+				   type:'GET',
+				   url:'',
+				   data:'faction=delData&ID='+fid,
+				   success:function(obj){  
+					  var res = eval("("+obj+")");
+					   if(res.status === 'success') 
+					   {
+							if(res.msg == '')
+							{
+								alert('删除成功！');
+							}
+							else
+							{
+								alert(res.msg);
+							}
+
+						  window.location.reload();
+					   } 
+					   else
+					   {
+							if(res.msg == '')
+							{
+								alert('不允许删除，删除失败！');
+							}
+							else
+							{
+								alert(res.msg);
+							}
+					   }
+				   }
+			   });
+			}
+			else
+			{
+				return false;
+			}
+		}
+	</script>
+    <body>
+        <div>{$form}</div>
+        <textarea id="last_filter_text" style="display: none">{$lastFilter}</textarea>
+    </body>
+</html>

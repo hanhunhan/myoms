@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <include file="Tpl/Touch/Public/head.html" />
+    <title>{$title}</title>
+</head>
+<script src="Public/validform/js/jquery-1.9.1.min.js"></script>
+<script language="javascript" type="text/javascript" src="./Public/layer/layer.js"></script>
+<script>
+        var appUrl;
+        function submitFlow() {
+            var discount_ad = $("#discount_ad").val();
+            var scale_type = $("#scale_type").val();
+            var benefits_type = $("#benefits_type").val();
+            //var fee_type = $("#fee_type").val();
+            var url;
+            var permisitionConDis = $('#permisition_con_dis').val();
+            if (permisitionConDis == 0) {
+                url = $("#current_url").val();
+                url = url + "/CASEID/" + $("#case_id").val();
+                window.location.href = url;
+                return;
+            }
+            if (!$("#fee_type").val() && !$("#fee_type").html() && benefits_type == 1) {
+				alert('请填写费用类别');
+                url = "{:U('BenefitFlow/process',$paramUrl)}";
+                    url = url + "/CASEID/" + $("#case_id").val();
+                    window.location.href = url;
+                return false;
+            }
+
+            if (scale_type != 3 && !discount_ad) {
+				alert('请填写折后广告费');
+                //layer.alert("请填写折后广告费", {icon: 0}, function (index) {
+                    url = "{:U('BenefitFlow/process',$paramUrl)}";
+                    url = url + "/CASEID/" + $("#case_id").val();
+                    window.location.href = url;
+                //});
+            } else {
+                url = $("#current_url").val();
+                url = url + "&CASEID=" + $("#case_id").val();
+                window.location.href = url;
+            }
+        }
+
+        function Comprehensive_Exe() { 
+            if ($("#income_exe").html() != 0) {
+                var comprehensive_exe = ($("#income_exe").html()  - $("#cost_exe").html()  - $("#discount_ad").val()) / $("#income_exe").html() ;
+                comprehensive_exe = (comprehensive_exe * 100).toFixed(2) + "%";
+            } else {
+                comprehensive_exe = "0%";
+            }
+ 
+            $("#comprehensive_exe").html(comprehensive_exe);
+        }
+
+        $(function () {
+            $("#discount_ad").blur(function () {
+                var discount_ad = $(this).val();
+                var comprehensive_exe = ($("#income_exe").html() - $("#cost_exe").html() - $("#discount_ad").val()) / $("#income_exe").html();
+                $.ajax({
+                    url: "{:U('BenefitFlow/update_benefits_data',$paramUrl)}",
+                    type: "post",
+                    dataType: "JSON",
+                    data: {discount_ad: discount_ad, act: 'discount_ad'},
+                    success: function (data) {
+                        if (data.state == 0) {
+                            //layer.tips(data.msg, '#discount_ad');
+							alert(data.msg);
+                        } else if (data.state == 1) {
+                            //layer.tips(data.msg, '#discount_ad');
+							alert(data.msg);
+                            if ($("#income_exe").html() != 0) {
+                                comprehensive_exe = (comprehensive_exe * 100).toFixed(2) + "%";
+                                $("#comprehensive_exe").html(comprehensive_exe);
+                            }
+                        } else {
+                            //layer.tips(data.msg, '#discount_ad');
+							alert(data.msg);
+                        }
+                    }
+                })
+            });
+            Comprehensive_Exe();
+
+            //保存活动的预估折后广告费
+            $("#discount_ad_budget").blur(function () {
+                var discount_ad_budget = $(this).val();
+                var activities_id = $("#activities_id").val();
+                var comprehensive = ($("#income").html() - $("#cost").html() - $("#discount_ad_budget").val()) / $("#income").html();
+                $.ajax({
+                    url: "{:U('BenefitFlow/update_benefits_data',$paramUrl)}",
+                    type: "post",
+                    dataType: "JSON",
+                    data: {discount_ad_budget: discount_ad_budget, activities_id: activities_id, act: 'discount_ad'},
+                    success: function (data) {
+                        if (data.state == 0) {
+                            //layer.tips(data.msg, '#discount_ad_budget');
+							alert(data.msg);
+                            //url = "{:U('Benefits/show_benefit_info',$paramUrl)}";
+                        } else if (data.state == 1) {
+                            //layer.tips(data.msg, '#discount_ad_budget');
+							alert(data.msg);
+                            //window.location.reload();  
+                            comprehensive = comprehensive + " %";
+                            $("#comprehensive").html(comprehensive);
+                        } else {
+                            //layer.tips(data.msg, '#discount_ad_budget');
+							alert(data.msg);
+                        }
+                    }
+                })
+            });
+
+            //是否在额度内|是否买足折扣要求
+            $("input[name='is_ok']").change(function () {
+                var inquota = $(this).val();
+                $.ajax({
+                    url: "{:U('BenefitFlow/update_benefits_data',$paramUrl)}",
+                    type: "post",
+                    dataType: "text",
+                    data: {inquota: inquota, act: 'is_ok'},
+                    success: function (res) {
+						res = eval("("+res+")");
+                        if (res.state==1) {
+                            //layer.alert("系统出错，数据保存失败，请重新填写", {icon: 2});
+							 
+                            url = "{:U('BenefitFlow/process',$paramUrl)}";
+                            window.location.href = url;
+                        }else alert('系统出错，数据保存失败，请重新填写');
+                    }
+                })
+            });
+
+            //报存费用类型
+            $("#fee_type").blur(function () {
+                var fee_type = $(this).val();
+                $.ajax({
+                    url: "{:U('BenefitFlow/update_benefits_data',$paramUrl)}",
+                    type: "post",
+                    dataType: "JSON",
+                    data: {fee_type: fee_type},
+                    success: function (data) {
+                       // layer.tips(data.msg, '#fee_type');
+						alert(data.msg);
+                    }
+                })
+            })
+        });
+    </script>
+<body>
+    <div class="head jumbotron">
+        <div class="container">
+            <h3>关于{$project.PROJECTNAME}预算外其他费用申请的审批</h3>
+            <span class="label label-danger" {$labelStyle}>{$flowTypeText}</span>
+            <small>{$applicationTime}</small>
+            <include file="Tpl/Touch/Public/back_btn_box.html" />
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="container">
+            <!--申请说明-->
+            <include file="Tpl/Touch/Public/application_info.html" />
+
+			<if condition="$btype.ID eq 1">
+            <!--采购详情  电商-->
+            <div class="panel panel-primary">
+                <a name="purchase-benefit"></a>
+                <div class="panel-heading"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;{$btype.YEWU}预算外费用申请</div>
+                 
+
+				 <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th class="text-center">合同编号</th>
+                                <th class="text-center">合同客户名称</th>
+                                <th class="text-center">项目名称</th>
+                                <if condition="$benefits_type eq 1">
+                                    <th>费用类别</th>
+                                </if>
+                                <th class="text-center">本次申请金额</th>
+                                <th class="text-center">累计申请金额(不含本次)</th>
+                                <if condition="$supplier">
+                                    <th class="text-center">供应商</th>
+                                </if>
+                                <th class="text-center">申请人</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>{$contract_no}</td>
+                                    <td>{$company}</td>
+                                    <td>{$project_name}</td>
+                                    <if condition="$benefits_type eq 1">
+                                        <empty name="fee_type">
+                                            <td><input type="text" name="fee_type" id="fee_type"></td>
+                                            <else/>
+                                            <td id="fee_type">{$fee_type}</td>
+                                        </empty>
+                                    </if>
+                                    <td>{$apply_amount}</td>
+                                    <td>{$sum_money}</td>
+                                    <if condition="$supplier">
+                                        <td>{$supplier}</td>
+                                    </if>
+                                    <td>{$auser}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+            </div>
+
+			
+			  <div class="panel panel-primary">
+                <a name="purchase-budget"></a>
+                <div class="panel-heading"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;{$btype.YEWU}立项预算:</div>
+                  
+
+				 <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th class="text-center">项目收入</th>
+                                <th class="text-center">线下费用</th>
+                                <th class="text-center">付现利润</th>
+                                <th class="text-center">付现利润率</th>
+                                <th class="text-center">折后广告</th>
+                                <th class="text-center">其他费用</th>
+                                <th class="text-center">综合利润率</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>{$project_budget_fee.prj_income}</td>
+                                <td>{$project_budget_fee.cost_fee}</td>
+                                <td>{$project_budget_fee.pay_profit}</td>
+                                <td>{$project_budget_fee.pay_profit_rate}%</td>
+                                <td>{$project_budget_fee.discount_ad}</td>
+                                <td>{$project_budget_fee.other_fee}</td>
+                                <td>{$project_budget_fee.Comprehensive_profit_rate}%</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+            </div>
+
+			
+			 <div class="panel panel-primary">
+                <a name="purchase-exec"></a>
+                <div class="panel-heading"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;{$btype.YEWU}项目执行情况:</div>
+                 
+
+				 <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th class="text-center">项目收入</th>
+                                <th class="text-center">线下费用</th>
+                                <th class="text-center">付现利润</th>
+                                <th class="text-center">付现利润率</th>
+                                <th class="text-center">折后广告</th>
+                                <th class="text-center">其他费用</th>
+                                <th class="text-center">综合利润率</th>
+                                <th class="text-center">是否在额度内</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td id="income_exe">{$project_exe_fee.prj_income_e}</td>
+                                <td id="cost_exe">{$project_exe_fee.cost_fee_e}</td>
+                                <td>{$project_exe_fee.pay_profit_e}</td>
+                                <td>{$project_exe_fee.pay_profit_rate_e}%</td>
+                                <td>
+                                    <if condition="$project_exe_fee.discount_ad_e eq -1">
+                                        <input type="text" name='discount_ad' id="discount_ad" nullmsg="请输入折后广告费！"
+                                               class="discount_ad">
+                                        <else/>
+                                        {$project_exe_fee.discount_ad_e}
+                                        <input type="hidden" name='discount_ad' id="discount_ad"
+                                               value="{$project_exe_fee.discount_ad_e}">
+                                    </if>
+                                </td>
+                                <td>{$project_exe_fee.other_fee_e}</td>
+                                <td id="comprehensive_exe">{$project_exe_fee.Comprehensive_profit_rate_e}%</td>
+                                <td>
+                                    <if condition="$isquota eq 1">
+                                        是
+                                        <elseif condition="$isquota eq 2"/>
+                                        否
+                                        <elseif condition="$permisition_in_limit eq 1"/>
+                                        <input type="radio" name="is_ok" value="1">是
+                                        <input type="radio" name="is_ok" value="2">否
+                                        <else/>
+                                        ----
+                                    </if>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+            </div>
+			</if>
+			<if condition='$btype.ID  eq 2'> <!--分销-->
+
+			<div class="panel panel-primary">
+                <a name="purchase-benefit"></a>
+                <div class="panel-heading"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;{$btype.YEWU}预算外费用申请</div>
+                 
+				<div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th class="text-center">合同编号</th>
+                                <th class="text-center">合同客户名称</th>
+                                <th class="text-center">项目名称</th>
+                                <if condition="$benefits_type eq 1">
+                                    <th>费用类别</th>
+                                </if>
+                                <th class="text-center">本次申请金额</th>
+                                <th class="text-center">累计申请金额(不含本次)</th>
+                                <if condition="$supplier">
+                                <th class="text-center">供应商</th>
+                                    </if>
+                                <th class="text-center">申请人</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>{$contract_no}</td>
+                                <td>{$company}</td>
+                                <td>{$project_name}</td>
+                                <if condition="$benefits_type eq 1">
+                                    <empty name="fee_type">
+                                        <td><input type="text" name="fee_type" id="fee_type"></td>
+                                        <else/>
+                                        <td id="fee_type">{$fee_type}</td>
+                                    </empty>
+                                </if>
+                                <td>{$apply_amount}</td>
+                                <td>{$sum_money}</td>
+                                <if condition="$supplier">
+                                <td>{$supplier}</td>
+                                    </if>
+                                <td>{$auser}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+            </div>
+
+			
+			  <div class="panel panel-primary">
+                <a name="purchase-budget"></a>
+                <div class="panel-heading"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;{$btype.YEWU}立项预算:</div>
+                 
+                
+				 <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th class="text-center">项目收入</th>
+                                <th class="text-center">线下费用</th>
+                                <th class="text-center">付现利润</th>
+                                <th class="text-center">付现利润率</th>
+                                <th class="text-center">折后广告</th>
+                                <th class="text-center">其他费用</th>
+                                <th class="text-center">综合利润率</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>{$project_budget_fee.prj_income}</td>
+                                <td>{$project_budget_fee.cost_fee}</td>
+                                <td>{$project_budget_fee.pay_profit}</td>
+                                <td>{$project_budget_fee.pay_profit_rate}%</td>
+                                <td>{$project_budget_fee.discount_ad}</td>
+                                <td>{$project_budget_fee.other_fee}</td>
+                                <td>{$project_budget_fee.Comprehensive_profit_rate}%</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+            </div>
+
+			
+			 <div class="panel panel-primary">
+                <a name="purchase-exec"></a>
+                <div class="panel-heading"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;{$btype.YEWU}项目执行情况:</div>
+                
+
+				 <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th class="text-center">项目收入</th>
+                                <th class="text-center">线下费用</th>
+                                <th class="text-center">付现利润</th>
+                                <th class="text-center">付现利润率</th>
+                                <th class="text-center">折后广告</th>
+                                <th class="text-center">其他费用</th>
+                                <th class="text-center">综合利润率</th>
+                                <th class="text-center">是否在额度内</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td id="income_exe">{$project_exe_fee.prj_income_e}</td>
+                                <td id="cost_exe">{$project_exe_fee.cost_fee_e}</td>
+                                <td>{$project_exe_fee.pay_profit_e}</td>
+                                <td>{$project_exe_fee.pay_profit_rate_e}%</td>
+                                <td>
+                                    <if condition="$project_exe_fee.discount_ad_e eq -1">
+                                        <input type="text" name='discount_ad' id="discount_ad" nullmsg="请输入折后广告费！"
+                                               class="discount_ad">
+                                        <else/>
+                                        {$project_exe_fee.discount_ad_e}
+                                        <input type="hidden" name='discount_ad' id="discount_ad"
+                                               value="{$project_exe_fee.discount_ad_e}">
+                                    </if>
+                                </td>
+                                <td>{$project_exe_fee.other_fee_e}</td>
+                                <td id="comprehensive_exe">{$project_exe_fee.Comprehensive_profit_rate_e}%</td>
+                                <td>
+                                    <if condition="$isquota eq 1">
+                                        是
+                                        <elseif condition="$isquota eq 2"/>
+                                        否
+                                        <elseif condition="$permisition_in_limit eq 1"/>
+                                        <input type="radio" name="is_ok" value="1">是
+                                        <input type="radio" name="is_ok" value="2">否
+                                        <else/>
+                                        ----
+                                    </if>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+            </div>
+
+
+			</if>
+
+			<if condition='$btype.ID eq 8'> <!--非我方收筹-->
+
+			<div class="panel panel-primary">
+                <a name="purchase-benefit"></a>
+                <div class="panel-heading"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;{$btype.YEWU}预算外费用申请</div>
+                 
+
+
+				<div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th>合同编号</th>
+                                <th>合同客户名称</th>
+                                <th>项目名称</th>
+                                <if condition="$benefits_type eq 1">
+                                    <th>费用类别</th>
+                                </if>
+                                <th>合同金额</th>
+                                <th>本次申请金额</th>
+                                <th>累计申请金额(不含本次)</th>
+                                <th>申请人</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>{$contract_no}</td>
+                                <td>{$company}</td>
+                                <td>{$project_name}</td>
+                                <if condition="$benefits_type eq 1">
+                                    <empty name="fee_type">
+                                        <td><input type="text" name="fee_type" id="fee_type"></td>
+                                        <else/>
+                                        <td id="fee_type">{$fee_type}</td>
+                                    </empty>
+                                </if>
+                                  <td>{$contract_money}</td>
+                                <td>{$apply_amount}</td>
+                                <td>{$sum_money}</td>
+                                <td>{$auser}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+            </div>
+
+
+			 <div class="panel panel-primary">
+                <a name="purchase-exec"></a>
+                <div class="panel-heading"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;{$btype.YEWU}项目执行情况:</div>
+                 
+
+				<div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th>开票金额</th>
+                                <th>回款金额</th>
+                                <th>线下费用</th>
+                                <th>付现利润</th>
+                                <th>付现利润率</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>{$contract_exe_fee.invoice_money_ad}</td>
+                                <td>{$contract_exe_fee.refund_money_ad}</td>
+                                <td>{$contract_exe_fee.cost_fee_ad}</td>
+                                <td>{$contract_exe_fee.pay_profit_ad}</td>
+                                <td>{$contract_exe_fee.pay_profit_rate_ad}%</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+            </div>
+
+					<if condition="($permisition_con_dis eq 1) OR ($permisition_in_limit eq 1)">
+                        <div id="contract_admin_confirm">
+                            <span class="admin-confirm-contract">合同管理员确认:</span>
+
+                            <div class="flow_title">
+                            </div>
+                        </div>
+                    </if>
+                    <span style="font-size:13px" id="confirmed_discount_ad">
+                        <if condition="$permisition_con_dis eq 1">
+                            该合同折扣为:
+                            <switch name="discount_ad">
+                                <case value="-1">
+                                    <input type="text" name="discount_ad" id="discount_ad"
+                                           style="width:50px">折&nbsp;&nbsp;&nbsp;
+                                </case>
+                                <default/>
+                                {$discount_ad}折&nbsp;&nbsp;&nbsp;
+                            </switch>
+                        </if>
+                        <if condition="$permisition_in_limit eq 1">
+                            是否符合折扣要求:
+                            <switch name="isquota">
+                                <case value="1">是</case>
+                                <case value="2">否</case>
+                                <default/>
+                                <input type="radio" name="is_ok" value="1">是
+                                <input type="radio" name="is_ok" value="2">否
+                            </switch>
+                            <else/>
+                            。
+                        </if>
+                    </span>
+			
+
+			</if>
+
+			<if condition="$benefits_type eq 1">
+                    <input type="hidden" name="current_url" id="current_url"
+                           value="__SELF__">
+            <else/>
+                    <input type="hidden" name="current_url" id="current_url"
+                           value="__SELF__">
+            </if>
+
+			 <input type="hidden" name="case_id" id="case_id" value="{$case_id}">
+             <input type="hidden" name="scale_type" id="scale_type" value="{$scale_type}">
+             <input type="hidden" name="benefits_type" id="benefits_type" value="{$benefits_type}">
+             <input type="hidden" name="activities_id" id="activities_id" value="{$activities_id}">
+            <!--流程图-->
+            <include file="Tpl/Touch/Public/work_flows.html" />
+
+            <!--审批意见-->
+            <include file="Tpl/Touch/Public/opinion_flow.html" />
+        </div>
+    </div>
+
+    <div class="foot">
+        <!--菜单-->
+        <include file="Tpl/Touch/Public/menu.html" />
+        <!--用户选择列表-->
+        <include file="Tpl/Touch/Public/user_list.html" />
+    </div>
+
+<include file="Tpl/Touch/Public/foot.html" />
+</body>
+</html>

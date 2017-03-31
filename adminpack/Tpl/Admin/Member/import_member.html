@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>电商会员导入</title>
+        <meta charset="GBK">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="./Public/css/style2.css" type="text/css" rel="stylesheet"/>
+        <script type="text/javascript" src="./Public/validform/js/jquery-1.9.1.min.js"></script>
+        <script language="javascript" type="text/javascript" src="./Public/layer/layer.js"></script>
+        <link rel="stylesheet" href="./Public/validform/css/style.css" type="text/css" media="all" />
+        <style>.caseinfo-table table td:nth-of-type(2n+1){width:10%}</style>
+        <style type="text/css">
+            .hide{display:none }
+            .progress{z-index: 2000}
+           .mask{position: fixed;top: 0;right: 0;bottom: 0;left: 0; z-index: 1000; background-color: #000000}
+       </style> 
+    </head>
+    <body>
+        <div>
+            <form class="registerform" id = 'registerform' method="post" action="{:U('Member/import_member')}/case_type/{$case_type}" enctype="multipart/form-data"> 
+                <div class="caseinfo-table"> 
+                    <table style="table-layout:fixed;width:90%">
+                        <tr> 
+                            <td  align='left' class='leftlable'>上传附件</td>
+                            <td  align='left'> 
+                                <input type = "file" name = "upfile" id = "upfile">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td  align='left' class='leftlable'>模板下载</td>
+                            <td  align='left'>
+                                <span class="fclos spanshow" style=" white-space:nowrap;">
+								<if condition="$case_type eq 'fx'">
+								 <a href='./Public/Uploads/down_template/moban_fx(V1.0).xlsx'>导入模板下载</a>
+								<else />
+                                    <a href='./Public/Uploads/down_template/moban(V1.0).xlsx'>导入模板下载</a>
+								</if>
+                                </span>
+                            </td> 
+                        </tr>
+                    </table>
+                </div>
+                    <div class="handle-btn">
+                        <input type="button"  value="导&nbsp;入" class="btn-blue" id = 'import_excel' />
+                        <input type="hidden" name ="opreate" value="import_data" />
+                    </div>
+            </form>
+        </div>
+        <img id="progressImgage" class="progress hide" alt="" src="./Public/images/loading_6.gif"/>
+        <div id="maskOfProgressImage" class="mask hide"></div>
+        <script type="text/javascript">
+            //通过付款详情退款
+            $("#import_excel").click(function(){
+                var file = $('#upfile').val();
+                
+                if( file == '' )
+                {   
+                    layer.alert('必须选择一个文件', {icon: 2});
+                    return false;
+                }
+                
+                var img = $("#progressImgage");
+                var mask = $("#maskOfProgressImage");
+                
+                img.show().css({
+                "position": "fixed",
+                "top": "50%",
+                "left": "50%",
+                "margin-top": function () { return -1 * img.height() / 2; },
+                "margin-left": function () { return -1 * img.width() / 2; }
+                });
+                
+                mask.show().css("opacity", "0.1");
+                $.ajax({
+                    type: "POST",
+                    url: "{:U('Member/import_member')}/case_type/{$case_type}",
+                    data:new FormData($('#registerform')[0]),
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    dataType:"JSON",
+                    success:function(data){
+                        img.hide();
+                        mask.hide();
+                        if(data.state == 0)
+                        {   
+                            layer.close();
+                            layer.open({
+                                type: 1,
+                                skin: 'layui-layer-rim', //加上边框
+                                area: ['550px', '400px'], //宽高
+                                content: data.msg
+                            });
+                        }
+                        else if(data.state == 1)
+                        {   
+                           layer.close();
+                           layer.alert(data.msg, {icon: 1},function(){parent.location.reload();});
+                        }
+                        else
+                        {  
+                           layer.close();
+                            var msg = data.msg ? data.msg : '操作异常';
+                           layer.alert(msg, {icon: 2});
+                        }
+                    }
+                 })   
+            })
+      </script>
+    </body>
+</html>

@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title> 开票记录 </title>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <include file="./Tpl/Admin/Public/comm_css_js.html" />
+    <style>
+        .form-control {
+            width: auto;
+        }
+    </style>
+    <script>
+        $('#last_filter_result').text($('#last_filter_text').text());  // 附带上上次搜索的结果
+
+        var appUrl;
+        $(function () {
+            function checkboxevent(obj) {
+                var fid = $(obj).val();
+                if ($(obj).is(':checked') && $("select[name='" + fid + "_STATUS']").val() != 4) {
+                    $("input[name='" + fid + "_INVOICE_TIME']").parent().show().siblings('span').hide();
+                    $("input[name='" + fid + "_INVOICE_NO']").parent().show().siblings('span').hide();
+                    $("[name='" + fid + "_INVOICE_BIZ_TYPE']").parent().show().siblings('span').hide();
+                    // $("input[name="+fid+"_TAX]").parent().show().siblings('span').hide();
+                } else {
+                    // $(this).attr("checked",'true');
+                    $("#selecttr" + fid).remove();
+                    $("input[name=" + fid + "_INVOICE_TIME]").parent().hide().siblings('span').show().siblings('.info').remove();
+                    $("input[name=" + fid + "_INVOICE_NO]").parent().hide().siblings('span').show().siblings('.info').remove();
+                    $("[name=" + fid + "_INVOICE_BIZ_TYPE]").parent().hide().siblings('span').show().siblings('.info').remove();
+                    //$("input[name="+fid+"_TAX]").parent().hide().siblings('span').show().siblings('.info').remove();
+                }
+            }
+
+            <?php if($act != 'refund_invoice'){?>
+            $('.checkedtd').each(function () {
+                $(this).click(function () {
+                    checkboxevent(this);
+                });
+            });
+            <?php } ?>
+
+            // 选择发票号码
+            $('select[name="BILLING_RECORD_ID"]').change(function() {
+                var billingRecordId = $(this).val();
+                var scaleType = $('input[name="scaleType"]').val();
+                if (billingRecordId) {
+                    $.ajax({
+                        url: "{:U('Financial/ajaxRemainInvoicePayAmount')}",
+                        data: { billing_record_id: billingRecordId, scale_type: scaleType },
+                        success: function(resp, xhr) {
+                            if (resp.status) {
+                                $('input[name="MONEY"]').val(resp.data.remain_amount).attr('data-max-amount', resp.data.remain_amount);
+                                $('#contain_member').val(resp.data.contain_member);
+                            } else {
+                                var msg = resp.msg || '获取剩余回款金额失败';
+                                layer.alert(msg, {icon: 2});
+                                layer.open({
+                                    content: msg,
+                                    icon: 2,
+                                    yes: function(index) {
+                                        layer.close(index);
+                                        $('select[name="BILLING_RECORD_ID"] option:first').attr('selected', 'selected');
+                                        $('[name="MONEY"]').val('');
+                                        $('[name="CREATETIME"]').val('');
+                                        $('[name="REMARK"]').val('');
+                                    }
+                                });
+                            }
+                        }
+                    })
+                }
+            });
+
+            // 提交表单控制
+            $('input[type="submit"]', 'form.registerform').click(function (e) {
+                var maxPayAmount = parseFloat($('input[name="MONEY"]').attr('data-max-amount'));
+                var payAmount = $('input[name="MONEY"]').val();
+                var scaleType = $('input[name="scaleType"]').val();
+                if (payAmount > maxPayAmount) {
+                    layer.alert('新增回款失败，申请回款金额大于剩余待回款金额', {icon: 2});
+                } else if (payAmount < maxPayAmount) {
+                    if(scaleType == 2){
+                        var containMember = $('#contain_member').val();
+                        if (containMember == 1) {
+                            layer.open({
+                                content: '新增回款金额，对应的会员未完全回款，请进入“佣金管理”界面进行操作',
+                                btn : ['确定', '取消'],
+                                yes: function(index) {
+                                    layer.close(index);
+                                    $('form.registerform').submit();
+                                }
+                            });
+                        } else {
+                            $('form.registerform').submit();
+                        }
+                    }else{
+                         $('form.registerform').submit();
+                    }
+                } else {
+                    return true;
+                }
+
+                return false;
+            });
+        });
+
+        //开票确认
+        function do_invoice() {
+            var fid;
+            var i = 0;
+            var j = 0;
+            var k = 0;
+            var invoiceid = new Array();
+            var have_invoiced = new Array();
+            var INVOICE_TIME = new Array();
+            var INVOICE_NO = new Array();
+            var INVOICE_BIZ_TYPE = new Array();  // 开票类型
+            $("input[name='checkedtd']").each(function () {
+                if ($(this).prop("checked") == true) {
+                    fid = $(this).val();
+                    var status = $("select[name='" + fid + "_STATUS']").val();
+                    if (status == 4) {
+                        //layer.alert("您所选的记录包含已经开票完成的，不能再次开票，请重新选择",{icon:2});
+                        //return false;
+                        have_invoiced[j] = $(this).val();
+                        j++;
+                    } else {
+                        invoiceid[i] = $(this).val();
+                        if($("input[name='" + invoiceid[i] + "_INVOICE_TIME']").val() != '' &&
+                                $("input[name='" + invoiceid[i] + "_INVOICE_NO']").val() != ''){
+                            INVOICE_TIME[k] = $("input[name='" + invoiceid[i] + "_INVOICE_TIME']").val();
+                            INVOICE_NO[k] = $("input[name='" + invoiceid[i] + "_INVOICE_NO']").val();
+                            INVOICE_BIZ_TYPE[k] = $("[name='" + invoiceid[i] + "_INVOICE_BIZ_TYPE']").val();
+                            k++;
+                        }
+                        i++;
+                    }
+                }
+            });
+            if (INVOICE_TIME.length < i || INVOICE_NO.length < i  || INVOICE_BIZ_TYPE.length < i) {
+                layer.alert("请填写完整发票号码、开票日期和发票类型", {icon: 2});
+                return false;
+            }
+
+            if (have_invoiced.length > 0) {
+                layer.alert("您所选的记录包含已经开票完成的，不能再次开票，请重新选择", {icon: 2});
+                return false;
+            }
+
+            if (invoiceid.length <= 0) {
+                layer.alert("请至少选择一条记录", {icon: 2});
+                return false;
+            } else {
+                $.ajax({
+                    type: "post",
+                    url: "{:U('Financial/do_invoice',$paramUrl)}",
+                    data: {invoiceid: invoiceid,invoice_time: INVOICE_TIME, invoice_no: INVOICE_NO, invoice_biz_type: INVOICE_BIZ_TYPE},
+                    dataType: "JSON",
+                    success: function (data) {
+                        if (data.state == 1) {
+                            layer.alert(data.msg, {icon: 1}, function (index) {
+                                window.location.reload();
+                            });
+                        } else if (data.state == 0) {
+                            layer.alert(data.msg, {icon: 2});
+                        } else if (data.state == 2) {
+                            layer.alert(data.msg, {icon: 2});
+                        }
+                    }
+                })
+            }
+        }
+
+        //确认换票
+        function confirm_change_invoice() {
+            var i = 0;
+            var j = 0;
+            var invoiceid = new Array();
+            var invoice_time = new Array();
+            var invoice_no = new Array();
+			 var invoice_no_old = new Array();
+            var invoice_biz_type = [];  // 开票类型列表
+
+            if(!confirm("亲，您确认换票吗？\n换票前，请检查日期和发票标号！"))
+                return false;
+
+            $("input[name='checkedtd']").each(function () {
+                if ($(this).prop("checked") == true) {
+                    invoiceid[i] = $(this).val();
+                    if ($("input[name='" + invoiceid[i] + "_INVOICE_TIME']").val() != '' && $("input[name='" + invoiceid[i] + "_INVOICE_NO']").val() != '') {
+                        invoice_time[j] = $("input[name='" + invoiceid[i] + "_INVOICE_TIME']").val();
+                        invoice_no[j] = $("input[name='" + invoiceid[i] + "_INVOICE_NO']").val();
+						invoice_no_old[j] = $("input[name='" + invoiceid[i] + "_INVOICE_NO_OLD']").val();
+                        invoice_biz_type[j] = $("[name='" + invoiceid[i] + "_INVOICE_BIZ_TYPE']").val();
+                        j++;
+                    }
+                    i++;
+                }
+            });
+
+            if (invoiceid.length < 1) {
+                layer.alert("对不起，请您至少选择一条记录！", {icon: 2});
+                return false;
+            }
+
+            if (invoice_time.length < i || invoice_no.length < i || invoice_biz_type < i) {
+                layer.alert("请填写完整发票号码、发票类型和开票日期", {icon: 2});
+                return false;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "{:U('Financial/confirm_change_invoice',$paramUrl)}",
+                data: {
+                    invoiceid: invoiceid,
+                    invoice_time: invoice_time,
+                    invoice_no: invoice_no,
+					 invoice_no_old: invoice_no_old,
+                    invoice_biz_type: invoice_biz_type
+                },
+                dataType: "JSON",
+                success: function (data) {
+                    if (data.status) {
+                        layer.alert("亲，换票成功!", {icon: 1}, function (index) {
+                            window.location.reload();
+                        });
+                    } else  {
+						if(data.msg) 
+						 layer.alert(data.msg, {icon: 2});
+						 else 
+                        layer.alert("对不起，亲，换票失败!", {icon: 2});
+                    }
+                },
+                error:function(){
+                    alert("网络连接失败，请重试~~~");
+                }
+            });
+        }
+
+        //确认退票
+        function confirm_refund_invoice() {
+            var i = 0;
+            var invoiceid = new Array();
+
+            if(!confirm("亲，您确认退票吗？"))
+                return false;
+
+            $("input[name='checkedtd']").each(function () {
+                if ($(this).prop("checked") == true) {
+                    invoiceid[i] = $(this).val();
+                    i++;
+                }
+            });
+
+            if (invoiceid.length <= 0) {
+                layer.alert("对不起，请您至少选择一条记录！", {icon: 2});
+                return false;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "{:U('Financial/confirm_refund_invoice',$paramUrl)}",
+                data: {invoiceid: invoiceid},
+                dataType: "JSON",
+                success: function (data) {
+                    if (data.status) {
+                        layer.alert(data.msg, {icon: 1}, function (index) {
+                            window.location.reload();
+                        });
+                    } else  {
+                        layer.alert("对不起，确认退票失败!", {icon: 2});
+                    }
+                },
+                error:function(){
+                    alert("网络连接失败，请重试~~~");
+                }
+            });
+        }
+
+        function save_data() {
+            var i = 0;
+            var j = 0;
+            var invoiceid = new Array();
+            var INVOICE_TIME = new Array();
+            var INVOICE_NO = new Array();
+            var INVOICE_BIZ_TYPE = [];
+            $("input[name='checkedtd']").each(function () {
+                if ($(this).prop("checked") == true) {
+                    invoiceid[i] = $(this).val();
+                    if ($("input[name='" + invoiceid[i] + "_INVOICE_TIME']").val() != '' &&
+                            $("input[name='" + invoiceid[i] + "_INVOICE_NO']").val() != '') {
+                        INVOICE_TIME[j] = $("input[name='" + invoiceid[i] + "_INVOICE_TIME']").val();
+                        INVOICE_NO[j] = $("input[name='" + invoiceid[i] + "_INVOICE_NO']").val();
+                        if ($("[name='" + invoiceid[i] + "_INVOICE_BIZ_TYPE']").val()) {
+                            INVOICE_BIZ_TYPE[j] = $("[name='" + invoiceid[i] + "_INVOICE_BIZ_TYPE']").val();
+                        }
+
+                        j++;
+                    }
+                    i++;
+                }
+            });
+            if (INVOICE_TIME.length < i || INVOICE_NO.length < i || INVOICE_BIZ_TYPE.length < i) {
+                layer.alert("请填写完整发票号码、开票日期和发票类型", {icon: 2});
+                return false;
+            }
+            $.ajax({
+                type: "post",
+                url: "{:U('Financial/save_data',$paramUrl)}",
+                data: {
+                    invoiceid: invoiceid,
+                    invoice_time: INVOICE_TIME,
+                    invoice_no: INVOICE_NO,
+                    invoice_biz_type: INVOICE_BIZ_TYPE
+                },
+                dataType: "JSON",
+                success: function (data) {
+                    if (data.state == 1) {
+                        layer.alert(data.msg, {icon: 1});
+                    } else if (data.state == 0) {
+                        layer.alert(data.msg, {icon: 2});
+                    }
+                }
+            })
+        }
+    </script>
+</head>
+<body>
+<div class="containter">
+    {$form}
+    <input type="hidden" name="scaleType" value="{$scaleType}">
+    <input type="hidden" id="caseid" value="{$case_id}">
+    <input type="hidden" id="contain_member" value="1" />
+    <textarea id="last_filter_text" style="display: none">{$lastFilter}</textarea>
+</div>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>活动决算</title>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="./Public/css/style2.css" type="text/css" rel="stylesheet"/>
+    <script type="text/javascript" src="./Public/validform/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="./Public/validform/js/Validform_v5.3.2.js"></script>
+    <script type="text/javascript" src="./Public/validform/js/common.js"></script>
+    <script type="text/javascript" src="./Public/js/common.js"></script>
+    <script language="javascript" type="text/javascript" src="./Public/My97DatePicker/WdatePicker.js"></script>
+    <script language="javascript" type="text/javascript" src="./Public/layer/layer.js"></script>
+    <link rel="stylesheet" href="./Public/validform/css/style.css" type="text/css" media="all"/>
+    <link rel="stylesheet" href="./Public/validform/css/validateForm.css" type="text/css" media="all"/>
+    <script>
+        var appUrl;
+        function applyReimburse() {
+            var cost_sup_id = new Array();
+            var amount = new Array();
+            var i = 0;
+            var myfee = $("#myfee").val();
+            var businessfee = $("#bussinessfee").val();
+            $("input[name='checkedtd']:checkbox").each(function () {
+                if ($(this).prop("checked") == true) {
+                    cost_sup_id[i] = $(this).val();
+                    amount[i] = $("input[name='" + cost_sup_id[i] + "_SUM_MONEY']").val();
+                    // alert(amount);
+                    i += 1;
+
+                }
+            });
+
+            if (cost_sup_id.length == 0) {
+                layer.alert('请至少选择一条记录!', {icon: 2});
+                return false;
+            }
+
+            $.ajax({
+                type: "post",
+                url: "{:U('Activ/applyReim',$paramUrl)}",
+                data: {"cost_sup_id": cost_sup_id, "myfee": myfee, "businessfee": businessfee, "amount": amount},
+                dataType: "JSON",
+                success: function (data) {
+                    if (data.state == 1) {
+                        layer.alert(data.msg, {icon: 1})
+                    }
+                    else if (data.state == 0) {
+                        layer.alert(data.msg, {icon: 2})
+                    }
+                    else if (data.state == 2) {
+                        layer.alert(data.msg, {icon: 0})
+                    }
+                }
+            })
+        }
+
+        $(function () {
+            $("#add_costsupplement").click(function () {
+                var summert_money = $(window.parent.document).find(".selected").children().eq(10).children().eq(0).html();
+                var parentchooseid = $(window.parent.document).find(".selected").children().eq(1).html();
+                var status = $(window.parent.document).find(".selected").children().eq(9).children().eq(0).html();
+                if (status != '申请通过') {
+                    layer.alert("只有审批通过的活动才能进行决算!", {icon: 0});
+                    return false;
+                }
+                if (summert_money <= 0) {
+                    layer.alert("该活动决算金额为0，决算金额 > 0 时，才能进行决算!", {icon: 0});
+                } else {
+                    window.location.href = "index.php?s=Activ/activSummery&showForm=3&parentchooseid=" + parentchooseid;
+                }
+            })
+        })
+
+    </script>
+</head>
+<body>
+<div>{$form}</div>
+<input type="hidden" name="myfee" id="myfee" value="{$myfee}">
+<input type="hidden" name="bussinessfee" id="bussinessfee" value="{$businessfee}">
+</body>
+</html>

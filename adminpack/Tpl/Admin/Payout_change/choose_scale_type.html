@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>选择业务类型</title>
+        <meta charset="GBK">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="./Public/css/style2.css" type="text/css" rel="stylesheet"/>
+        <link href="./Public/css/jquery-ui.css" type="text/css" rel="stylesheet"/>
+        <script type="text/javascript" src="./Public/validform/js/jquery-1.9.1.min.js"></script>
+        <script type="text/javascript" src="./Public/validform/js/Validform_v5.3.2.js"></script>
+        <!--<script type="text/javascript" src="./Public/validform/js/common.js"></script>-->
+        <script type="text/javascript" src="./Public/js/common.js"></script>
+        <script language="javascript" type="text/javascript" src="./Public/layer/layer.js"></script>
+        <link rel="stylesheet" href="./Public/validform/css/style.css" type="text/css" media="all" />
+        <link rel="stylesheet" href="./Public/validform/css/validateForm.css" type="text/css" media="all" />	
+        
+    </head>
+<body>
+    <br />
+    <div class="right fright j-right">
+        <div style="margin:0 auto;width:200px;">
+            <volist name="business_type" id="vo" key="k">
+                <input type="checkbox" name="scale_type[]" value="{$k}"/>{$vo}<br /><br />
+            </volist>
+        </div>
+        <input type="hidden" id="aa" value="1">
+    </div>
+
+</body>
+</html>

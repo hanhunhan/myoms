@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>大宗采购申请</title>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <include file="./Tpl/Admin/Public/comm_css_js.html"/>
+</head>
+<body>
+<div class="containter">
+    <div class="right fright j-right">
+        <div class="handle-tab">
+            {$tabs}
+        </div>
+        {$form}
+        <input type="hidden" name="url_current" id="url_current" value="{:U('Purchase/bulk_purchase_opinionFlow',$paramUrl)}">
+    </div>
+</div>
+<script type="text/javascript">
+    //提交采购申请
+    $("#sub_purchase").click(function () {
+
+        var p_id = $('.itemlist').filter('.selected').attr('fid');
+        var status = $("select[name=" + p_id + "_STATUS]").val();
+        if (status == 0) {
+            layer.confirm(
+                    '确定要提交采购申请吗(采购申请所有采购明细都会被提交)？',
+                    {title: '提交采购申请'},
+                    function (index) {
+                        $.ajax({
+                            type: "GET",
+                            url: "{:U('Purchase/check_purchase_list_by_pid')}",
+                            data: {'p_id': p_id},
+                            dataType: "JSON",
+                            success: function (data) {
+                                if (data.status == 1) {
+                                    var url_current = $('#url_current').val();
+//                                    var url = url_current + "/purchase_id/" + p_id;
+                                    var url = "{:U('Touch/Purchase/process')}" + '/RECORDID/' + p_id;
+                                    window.location.href = url;
+                                }
+                                else {
+                                    layer.alert(data.msg, {icon: 2, closeBtn: false},
+                                            function () {
+                                                layer.close(index);
+                                                window.location.reload();
+                                            });
+                                }
+                            }
+                        })
+                    }
+            );
+        }
+        else {
+            layer.alert('未提交过的采购申请才能提交', {icon: 2});
+        }
+    });
+    // 查看采购流程图
+    $('#show_flow_step').click(function () {
+        // 定义异步调用的处理函数
+        // 获取工作流ID异步调用成功回调函数
+        function getFlowIdSuccess(resp, status, xhr) {
+            if (resp) {
+                resp = JSON.parse(resp);
+            }
+
+            if (resp.status == 'noauth') {
+                var message = resp.msg || '权限不足';
+                layer.alert(message, {icon: 2});
+                return;
+            }
+
+            if (resp.status) {
+                var viewFlowUrl = "{:U('Flow/viewFlow')}";
+                viewFlowUrl += '/FLOWID/' + resp.data;
+                layer.open({
+                    type: 2,
+                    title: '流程图',
+                    shadeClose: true,
+                    shade: 0.8,
+                    area: ['90%', '90%'],
+                    content: viewFlowUrl
+                });
+
+            } else {
+                var message = resp.message || '获取工作流ID失败';
+                layer.alert(message, {icon: 2});
+            }
+        }
+
+        // 获取工作流ID异步调用失败回调函数
+        function getFlowIdFail(xhr, status, error) {
+            layer.alert('服务器访问异常，请稍后重试!', {icon: 2});
+        }
+
+        // 显示流程图
+        var selectedItem = $('.contractinfo-table .itemlist.selected');
+        if (!selectedItem) {
+            layer.alert('请选择一条采购申请!', {icon: 2});
+            return;
+        }
+        var fid = selectedItem.attr('fid');
+        $.ajax({
+            url: "{:U('Purchase/getFlowId')}",
+            data: {
+                'purchaseId': fid
+            },
+            success: getFlowIdSuccess,
+            error: getFlowIdFail
+        });
+
+    });
+</script>
+<include file="./Tpl/Admin/Public/filter.html"/>
+</body>
+</html>

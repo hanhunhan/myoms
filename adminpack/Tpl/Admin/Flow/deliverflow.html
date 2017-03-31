@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>工作流</title>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="./Public/css/style2.css" type="text/css" rel="stylesheet"/>
+    <link href="./Public/css/jquery-ui.css" type="text/css" rel="stylesheet"/>
+    <script type="text/javascript" src="./Public/validform/js/jquery-1.9.1.min.js"></script>
+
+    <script type="text/javascript" src="./Public/js/common.js"></script>
+    <script type="text/javascript" src="./Public/js/jquery-ui.js"></script>
+</head>
+<body>
+<div class="containter">
+    <div class="right fright j-right">
+        <div class="flow_title">
+            委托
+        </div>
+        <form class="registerform" method="post"
+              action="{:U('Flow/deliverFlow',array('status'=>'add','flowId'=>$flowId))}">
+            <div class="caseinfo-table">
+                <table>
+                    <tr>
+                        <td align="center">委托至</td>
+                        <td>
+                            <input type="text" name="DEAL_USER" id="DEAL_USER" placeholder="名称" size="30"
+                                   maxlength="30"/>
+                            <input type="hidden" name="DEAL_USERID" id="DEAL_USERID"/>
+                            <input type="hidden" name="CITY" id="CITY"/>
+                            <input type="hidden" name="PHONE" id="PHONE"/>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="handle-btn">
+                <input type="submit" value="保&nbsp;存" class="btn-blue"/>
+                <input type="button" value="关&nbsp;闭" class="btn-gray j-formclose"/>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    $(function () {
+        $("#DEAL_USER").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "{:U('Api/getFlowPeople')}",
+                    dataType: "json",
+                    data: {
+                        'search': request.term
+                    },
+                    success: function (obJect) {
+                        response($.map(obJect, function (item) {
+                            return {
+                                label: item.name,
+                                value: item.name,
+                                USERID: item.id,
+                                PHONE: item.phone,
+                                CITY: item.city
+                            }
+                        }));
+                    }
+
+                });
+            },
+            select: function (event, ui) {
+                $("#DEAL_USERID").val(ui.item.USERID);
+                $("#PHONE").val(ui.item.PHONE);
+                $("#CITY").val(ui.item.CITY);
+            }
+        });
+    });
+</script>
+</body>
+</html>

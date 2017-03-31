@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <include file="Tpl/Touch/Public/head.html" />
+    <title>{$title}</title>
+</head>
+<body>
+    <div class="head jumbotron">
+        <div class="container">
+            <h3>关于{$project->name}独立活动项目的申请</h3>
+            <span class="label label-danger">独立活动</span>
+            <small>2016年6月2日 09:34</small>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="container">
+            <div class="panel panel-primary">
+                <a name="activity-detail"></a>
+                <div class="panel-heading"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;活动详情</div>
+                <ul class="list-group">
+                    <volist name="activity" id="item">
+                        <li class="list-group-item"><label>{$item['alias']}</label>{$item['val']}</li>
+                    </volist>
+                </ul>
+
+            </div>
+
+            <div class="panel panel-primary">
+                <a name="budget"></a>
+                <div class="panel-heading"><i class="glyphicon glyphicon-yen"></i>&nbsp;活动预算</div>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th class="text-center">序号</th>
+                            <th class="text-center">编号</th>
+                            <th class="text-center">金额</th>
+                            <th class="text-center">费用类型</th>
+                            <th class="text-center">费用占比</th>
+                            <th class="text-center">备注</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <volist name="budget" id="bItem" key="k">
+                            <tr>
+                                <td class="text-center">{$k}</td>
+                                <td class="text-center">{$bItem['ID']}</td>
+                                <td class="text-center">{$bItem['AMOUNT']}</td>
+                                <td class="text-center">{$bItem['FEE_NAME']}</td>
+                                <td class="text-center">{$bItem['RATIO']}</td>
+                                <td class="text-center">{$bItem['MARK']}</td>
+                            </tr>
+                        </volist>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <p class="ps-text">注：横向拖动表格可查看完整数据</p>
+        </div>
+    </div>
+
+    <div class="foot">
+        <div class="catalog-button" id="catalog-button">
+            <span class="glyphicon glyphicon-list"></span>
+        </div>
+        <div class="overlay">
+        </div>
+
+        <nav class="cbp-spmenu cbp-spmenu-vertical cbp-spmenu-right" id="right-menu">
+            <h3>目录</h3>
+            <a href="#activity-detail">活动详情</a>
+            <a href="#budget">活动预算</a>
+            <a href="#">流程图</a>
+        </nav>
+
+        <!--转交至用户选择-->
+        <div id="deal-user-list" class="users">
+                <div class="users-header">
+                    <!--搜索框-->
+                    <div class="search-box">
+                        <input type="text" class="search-box-text pull-left" id="keyword" placeholder="请输入姓名或部门进行搜索">
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+
+                <div class="users-body">
+                    <!--用户列表-->
+                </div>
+
+                <div class="users-footer">
+                    <!--操作栏-->
+                    <div class="button-box">
+                        <button class="btn btn-primary pull-left ok">确定</button>
+                        <button class="btn btn-default pull-right back">返回</button>
+                        <div class="select-result"></div>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+        </div>
+
+
+        <!--抄送至用户选择-->
+        <div id="copy-user-list" class="users">
+            <div class="users-header">
+                <!--搜索框-->
+                <div class="search-box">
+                    <input type="text" class="search-box-text pull-left" id="" placeholder="请输入姓名或部门进行搜索">
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+
+            <div class="users-body">
+                <!--用户列表-->
+            </div>
+
+            <div class="users-footer">
+                <!--操作栏-->
+                <div class="button-box">
+                    <button class="btn btn-primary pull-left ok">确定</button>
+                    <button class="btn btn-default pull-right back">返回</button>
+                    <div class="select-result"></div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<include file="Tpl/Touch/Public/foot.html" />
+</body>
+</html>

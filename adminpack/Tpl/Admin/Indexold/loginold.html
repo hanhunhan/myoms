@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+<title>登录页面</title>
+<style>
+*{margin:0;padding:0}
+body{background-image:url(./Tpl/images/login-bg.jpg);background-position: center; background-repeat: no-repeat;background-attachment: fixed; background-color:#C6C6C6}
+#login-warp{width:358px;height:345px;left:50%;top:50%;margin-left:-183px;margin-top:-179px; position:absolute; text-align:center}
+#copyright{ text-align:center; line-height:25px; position:absolute;bottom:20px;font-size:12px;width:100%; text-align:center;color:#808080}
+.wp{width:352px;margin:0 auto;}
+.login-logo{margin-bottom:25px}
+.user-input,.pass-input{ border:none;width:297px;height:40px;padding-left:55px;margin-bottom:15px;color:#999999;font-size:14px; line-height:40px}
+.user-input{background:url(./Tpl/images/user-input.gif) no-repeat;}
+.pass-input{ background:url(./Tpl/images/password-input.gif) no-repeat}
+.code{ text-align:left;height:40px;margin-bottom:15px; }
+.code img{float:left;margin-left:10px;margin-top:3px; cursor:pointer}
+.code-input{width:127px;height:40px;background:url(./Tpl/images/code-input.gif) no-repeat; border:none;float:left;padding:0 3px; text-align:center;font-size:14px;color:#999999;line-height:40px}
+.remember{font-size:12px;color:#4D4D4D; text-align:left;margin-bottom:15px; position:relative}
+.remember input{ position:relative;top:3px}
+.remember a{ position:absolute;right:0; text-decoration:none;color:#4D4D4D}
+.remember a:hover{ text-decoration:underline;color:#f60}
+.sub-btn{width:352px;height:40px; border:none;background:url(./Tpl/images/login-btn.gif) no-repeat; cursor:pointer}
+</style>
+
+<!--[if IE 6]>
+<script src="./Tpl/js/DD_belatedPNG_0.0.8a-min.js"></script>
+<script>
+DD_belatedPNG.fix('.login');
+</script>
+<![endif]--> 
+<script>
+	function changeVerify(){
+		var timenow = new Date().getTime();
+		document.getElementById('verifyImg').src="{:U('Index/verify?t=')}"+timenow;
+}
+function input(){
+	if(document.getElementById('uname').value=="请输入用户名")
+		document.getElementById('uname').value="";
+}
+function output(){
+	if(document.getElementById('uname').value=="")
+		document.getElementById('uname').value="请输入用户名";
+}
+</script>
+</head>
+
+<body>
+   	<div id="login-warp">
+    	<!--img src="./Tpl/images/login-logo.png" width="358" height="79" class="login-logo" /-->
+        <form action="{:U('Index/login')}" method="post">
+        <div class="wp">
+        	<input id="uname" type="text" name="uname" class="user-input" value="请输入用户名" onfocus="input()" onblur="output()" />
+            <input type="password" name="psw" class="pass-input"/>
+            <div class="code">
+                <input type="text" name="postcode" class="code-input"/> <img onclick="javascript:changeVerify()" id="verifyImg" src="{:U('Index/verify')}" width="94" height="34" /> 
+            </div>
+            
+            <input type="submit" class="sub-btn" value="" />
+        </div>
+        <input type="hidden" name="act" value="login"/>
+        </form>
+    </div>
+
+    <div id="copyright">
+    	&copy;2006-2013 365地产家居网　江苏三六五网络股份有限公司 苏ICP证编号 B2-20110162信息网络传播视听节目许可证 1009365号<br />
+广播电视节目制作经营许可证（苏）字第230号　江苏省文明网站 举报电话：025-86656195
+    </div>
+    
+</body>
+</html>
+

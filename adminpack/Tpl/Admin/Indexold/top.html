@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+<title>400-header</title>
+<link rel=stylesheet href="./Tpl/css/global.css" type="text/css">
+<link rel=stylesheet href="./Tpl/css/top.css" type="text/css">
+<script type="text/javascript" src="./Tpl/js/jquery-1.5.2.min.js"></script>
+<!--[if IE 6]>
+<script src="./Tpl/js/DD_belatedPNG_0.0.8a-min.js"></script>
+<script>
+DD_belatedPNG.fix('.top-left,.top-right,.house365-logo');
+</script>
+<![endif]--> 
+<script>
+(function($){
+		var defaults={
+			selectClassName:'.select-val',
+			selectList:'.select-list'
+			};
+		var cache = [];
+		$.fn.selectBox=function(options){
+			options = $.extend({},defaults,options);
+			this.each(function(){
+				var self = $(this);
+				var _select = self.find(options['selectClassName']);
+				var list = self.find(options['selectList']);
+				cache.push(list);
+				var func = function(){
+					list.hide();
+					$(document).unbind('click', func);
+				};
+				_select.bind('click', function(event){
+					$.each(cache, function(i, n){
+						n.hide();
+					});
+					list.show();
+					$(document).bind('click', func);
+					event.stopPropagation();  //防止事件流冒泡
+				});
+				list.find('a').bind('click', function(event){
+					_select.text($(this).text());
+					list.hide();
+					event.stopPropagation();
+				});
+				list.bind('mouseout',function(){
+				  list.hide();
+				});
+				list.bind('mouseover',function(){
+				  list.show();
+				});
+			})
+		}
+	})(jQuery);
+$(function(){
+$('.select-city').selectBox()
+})
+
+function refush(){
+	parent.mainFrame.location.reload();
+}
+
+function AddFavorite(sURL, sTitle){
+    try
+    {
+        window.external.addFavorite(sURL, sTitle);
+    }
+    catch (e)
+    {
+        try
+        {
+            window.sidebar.addPanel(sTitle, sURL, "");
+        }
+        catch (e)
+        {
+            alert("加入收藏失败，请使用Ctrl+D进行添加");
+        }
+    }
+}
+
+function redirect(channelid){
+	window.top.location.href = "{:U('Index/index')}"+'&channelid='+channelid;
+}
+
+function powerfrom(power){
+	window.top.location.href = "{:U('Index/index')}"+'&power='+power;
+}
+</script>
+</head>
+
+<body>
+    <div id="header">
+    	<div class="top">
+        	<div class="top-left" style="display:none;">
+            	<div class="select-city">
+                	<div class="select-val">{$cityname[$channelid]}</div>
+					<if condition="$powercitynums gt 1">
+                    <div class="select-list clearfix">
+					<volist name="powercity" id="vo">
+						<if condition="$vo neq $channelid">
+						<!--<a href="{:U('Index/index',array('channelid'=>$vo))}">{$cityname[$vo]}</a>-->
+						<a href="javascript:redirect({$vo})">{$cityname[$vo]}</a>
+						</if>
+					</volist>
+                    </div>
+					</if>
+                </div>
+            </div>
+            <div class="top-right">
+            	<a href="#" class="house365-logo">House365</a>
+            </div>
+        </div>
+        <div class="top-tool">
+        	<div class="user-info"><span>用户名：{$Think.session.uinfo.tname}</span>
+				<neq name="lastlogin" value="0"><span>上次登录时间：{$lastlogin|date='Y-m-d H:i:s',###}</span><else />首次登录</neq>
+			<!--span>
+				<volist name="allpower" id="vo">
+					<if condition="$vo eq $power">
+					    <a style="margin:0 5px;"><a href="javascript:powerfrom({$vo})" style="color:#BEE646;text-decoration:none;font-weight:bold;">{$powername[$vo]}</a></a>
+					<else/>
+						<a style="margin:0 5px;"><a href="javascript:powerfrom({$vo})" style="color:#DCDCDE;text-decoration:none">{$powername[$vo]}</a></a>
+					</if>
+				</volist>
+			</span-->
+			</div>
+            <div class="tools"><a href="#" onclick="refush();return false;" class="refurbish">刷新</a><a href="#" onclick="AddFavorite('http://crm.house365.com:81','CRM管理后台')" class="collect">加入收藏</a><a href="{:U('Index/loginOut')}" class="loginout">退出登录</a></div>
+        </div>
+    </div>
+</body>
+</html>

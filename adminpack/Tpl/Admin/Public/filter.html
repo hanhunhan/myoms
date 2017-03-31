@@ -1,0 +1,6 @@
+<textarea id="last_filter_text" style="display: none">{$lastFilter}</textarea>
+<script>
+    $(function() {
+        $('#last_filter_result').text($('#last_filter_text').text());  // 附带上上次搜索的结果
+    });
+</script>

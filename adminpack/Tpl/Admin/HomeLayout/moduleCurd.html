@@ -1,0 +1,96 @@
+<div class="box" id="interestManage">
+    <div class="box-tit"><h3><?=$typeName?>模块</h3></div>
+    <div class="box-con" >
+        <div class="c-tit"><h4><?=$typeName?>模块</h4></div>
+        <form method="POST" target='pxiframe' action="{:U('HomeLayout/moduleCurd')}" onsubmit="return check();">
+            <div class="bd">
+                <table class="table2" width="98%">
+                    <tr>
+                        <td>
+                            <em class="xing">*</em>模块名称：</td>
+                        <td>
+                            <input type="text" name="Homemoduel[moduleName]" id="moduleName" value="<?=$resData[moduleName]?>" style="width:400px;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                           链接地址：</td>
+                        <td>
+                            <input type="text" name="Homemoduel[moduleUrl]" id="moduleUrl" value="<?=$resData[moduleUrl]?>" style="width:400px;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            扩展分类标题：</td>
+                        <td>
+                            <input type="text" name="Homemoduel[extClassifyName]" id="extClassifyName" value="<?=$resData[extClassifyName]?>" style="width:400px;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <fieldset style="padding: 2px;margin-top:10px;margin-bottom:10px;">
+                            <legend>
+                                模块扩展分类设置 <input type="button" value="新增" onclick="add_tr()" >
+                                <table  class="table2" width="98%" id="ext_table">
+                                    <tr>
+                                        <td>扩展分类节点名</td>
+                                        <td>扩展分类链接</td>
+                                        <td>排序</td>
+                                        <td>操作</td>
+                                    </tr>
+                                    <?php foreach($extList as $ext){?>
+                                            <tr>
+                                                <input type="hidden"  class="extId" name="Ext[extId][]" value="<?=$ext['extId']?>">
+                                                <td><input type="text" name="Ext[extName][]" value="<?=$ext['extName']?>"></td>
+                                                <td><input type="text" name="Ext[extLink][]" value="<?=$ext['extLink']?>"  style="width: 90%;"></td>
+                                                <td><input type="text" name="Ext[rank][]"  value="<?=($ext['rank'])?$ext['rank']:'0';?>"></td>
+                                                <td>
+                                                    <input type="button" name="" value="删除" onclick="del_tr(this)">
+                                                </td>
+                                            </tr>
+                                    <?php }?>
+                                </table>
+
+                            </legend>
+                        </fieldset>
+                    </tr>
+                </table>
+                <div class="center-btn mt10"  style="margin:20px;">
+                    <input type="submit" name="sub" value="确定" class="btn-a mr50"/>
+                    <input  type="button" class="btn-a" onclick="history.go(-1)" value="返回"/>
+                    <input name='curdType' type='hidden' value='<?=$_GET[curdType]?>'>
+                    <input name='moduleId' type='hidden' value='<?=$resData[moduleId]?>'>
+                    <input name="del_ext_ids" type="hidden" value="" id="del_ext_ids">
+                </div>
+        </form>
+
+    </div>
+
+</div>
+
+ <script>
+     function del_tr(dom){
+         var tr =   $(dom).parent().parent();
+         var extId = tr.find('input.extId').val();
+         if(extId){
+             if($("#del_ext_ids").val()){
+                 var del_ids = $("#del_ext_ids").val()+","+extId;
+             }else{
+                 var del_ids = extId;
+             }
+            $("#del_ext_ids").val(del_ids);
+         }
+         tr.remove();
+     }
+
+     function add_tr(){
+         var tr = "<tr>" +
+                 "<input type='hidden' name='Ext[extId][]' value=''>" +
+                 "<td><input type='text' name='Ext[extName][]' value=''></td>" +
+                 "<td><input type='text' name='Ext[extLink][]' value=''></td>" +
+                 "<td><input type='text' name='Ext[rank][]' value=''></td>" +
+                 "<td><input type='button' value='删除' onclick='del_tr(this)' ></td>" +
+                 "</tr>";
+        $("#ext_table").append(tr);
+     }
+
+ </script>

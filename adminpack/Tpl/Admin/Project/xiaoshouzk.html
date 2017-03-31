@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>案例管理</title>
+        <meta charset="GBK">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="./Public/css/style2.css" type="text/css" rel="stylesheet"/>
+		<script type="text/javascript" src="./Public/validform/js/jquery-1.9.1.min.js"></script>
+		<script type="text/javascript" src="./Public/validform/js/Validform_v5.3.2.js"></script>
+		<script type="text/javascript" src="./Public/validform/js/common.js"></script>
+		<script type="text/javascript" src="./Public/js/common.js"></script>
+		<script language="javascript" type="text/javascript" src="./Public/My97DatePicker/WdatePicker.js"></script>
+		
+<script type="text/javascript" src="./Public/validform/plugin/swfupload/swfuploadv2.2.js"></script>
+<script type="text/javascript" src="./Public/validform/plugin/swfupload/Validform.swfupload.handler.js"></script>
+
+		<link rel="stylesheet" href="./Public/validform/css/style.css" type="text/css" media="all" />
+		<link rel="stylesheet" href="./Public/validform/css/validateForm.css" type="text/css" media="all" />
+    </head>
+    <body>
+         
+        <div class="containter">
+		   
+
+            <div class="right fright j-right">
+               
+                <div class="handle-tab">
+                <ul>
+				<if condition="($zhtongji neq 1) "> 
+                    <li><a href="{:U('Project/paylist',$paramUrl)}">每日支出</a></li> 
+					<li ><a href="{:U('Project/customerlist',$paramUrl)}">办卡用户</a></li>  
+					<li ><a href="{:U('Project/qurendaochang',$paramUrl)}">确认到场</a></li> 
+				</if>
+						<li class="selected" ><a href="{:U('Project/xiaoshouzk',$paramUrl)}">销售状况</a></li>
+						<li  ><a href="{:U('Project/caiwuzk',$paramUrl)}">财务状况</a></li>
+						
+                </ul>
+            </div>
+			 
+
+
+
+			<div class="contractinfo-table">
+			<table> 
+			<thead><tr> <td>确认成交套数</td><td>实际导客量</td><td>办卡收入</td><td>预估导客量</td><td>预估成交套数</td> </tr> </thead>
+			<tbody>
+			<tr> <td align="left"><span class="fclos">{$qurencj}</span></td> <td align="left"><span class="fclos">0</span></td> <td align="left"><span class="fclos">{$bkshouru}</span></td> <td align="left"><span class="fclos">{$daokel}</span></td> <td align="left"><span class="fclos">{$chengjiaots}</span></td> </tr>
+			
+			</tbody></table></div>
+
+               
+        </div>
+    </div>
+	
+             
+               
+       
+      
+<script language="javascript" type="text/javascript">
+ 
+</script> 
+                      
+        
+    </body>
+</html>

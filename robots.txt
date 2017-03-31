@@ -1,0 +1,9 @@
+User-agent:*
+Disallow:/list-*.html$
+Disallow:/list.php$
+
+User-agent:Slurp
+Disallow:/list-*.html&
+Disallow:/top10.php
+http://newhouse.house365.com/web_sitemap_70ac52a8.xml.gz # Added by Google Sitemap Generator
+  #dddd

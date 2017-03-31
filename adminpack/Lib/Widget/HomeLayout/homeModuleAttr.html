@@ -1,0 +1,34 @@
+<div class="item_div" <?php if(!$data){?> style="display:none;" id="item_div_tpl" <?php }?>>
+        <fieldset style="padding: 2px;margin-top:10px;margin-bottom:10px;border: 1px #0066FF solid;">
+            <legend>
+                模块属性节点&nbsp;&nbsp;
+                <input type="button" value="删除节点" onclick="item_del(this)" tag="<?=$data['aId']?>">
+            </legend>
+            <table class="table2" width="98%">
+                <tr>
+                    <td width="15%">属性名称</td>
+                    <td width="85%">
+                        <input  style="width: 50%"  type="text" name="cName" value="<?=$data[cName]?>">
+                    </td>
+                </tr>
+                <tr>
+                    <td width="30%">keyName</td>
+                    <td>
+                        <input   style="width: 50%" type="text" name="keyName" value="<?=$data[keyName]?>">
+                    </td>
+                </tr>
+                <tr class="checkbox_tr">
+                    <td >扩展选项</td>
+                    <td>
+                        <?php foreach($extSelectArr as $key=>$ext){?>
+                        <label style="margin: 10px;">
+                            <?=$ext?>
+                            <input type="checkbox"   name="extSelect" value="<?=$key?>"  <?=(in_array($key,$data[extSelect]))?'checked':'';?>>
+                        </label>
+                        <?php }?>
+                    </td>
+                </tr>
+            </table>
+            <input name="aId" type="hidden" value="<?=$data[aId]?>">
+        </fieldset>
+</div>

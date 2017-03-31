@@ -1,0 +1,33 @@
+<notempty name="workFlows">
+    <div class="panel panel-primary panel-flow-graph">
+        <a name="flow-graph"></a>
+        <div class="panel-heading"><i class="glyphicon glyphicon-calendar"></i>&nbsp;流程图</div>
+        <ul class="flow-graph-ul">
+            <volist name="workFlows" id="flow">
+                <li class="">
+                    <p><span class="label label-success">第{$flow['step']}步</span>&nbsp;<span class="label label-danger">
+                        <switch name="flow['STATUS']">
+                            <case value="1">未开始办理</case>
+                            <case value="2">办理中</case>
+                            <case value="3">已办结</case>
+                            <case value="4">结束</case>
+                        </switch>
+                    </span>&nbsp;&nbsp;<span class="text-gray font-sm">{$flow['E_TIME']}</span></p>
+                    <blockquote>
+                        <p>{$flow['DEAL_INFO']}</p>
+                        <footer>经办人:&nbsp;<strong>{$flow['NAME']}</strong></footer>
+                    </blockquote>
+                    <notempty name="flow['FILES']">
+                        <dl>
+                            <dt>附件:</dt>
+                            <volist name="flow['FILES']" id="file">
+                                <dd style="word-break: break-all;"><a href="{:C('DOMAIN_NAME')}/index.php?s=/Upload/showfile&filecode={$file['code']}" class="download-file" data-file-code="{$file['code']}">{$file['name']}</a></dd>
+                            </volist>
+
+                        </dl>
+                    </notempty>
+                </li>
+            </volist>
+        </ul>
+    </div>
+</notempty>

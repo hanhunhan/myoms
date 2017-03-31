@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>置换申请</title>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <include file="./Tpl/Admin/Public/comm_css_js.html" />
+</head>
+<body>
+<div class="containter">
+    <div class="right fright j-right">
+        <div class="handle-tab">
+            {$tabs}
+        </div>
+        {$form}
+    </div>
+</div>
+<script type="text/javascript">
+    /*---------------*/
+    /***提交置换申请***/
+    /*---------------*/
+    $("#sub_displace").click(function () {
+        var p_id = $('.itemlist').filter('.selected').attr('fid');
+        var status = $("select[name=" + p_id + "_STATUS]").val();
+
+        //如果未提交
+        if (status == 0) {
+            layer.confirm(
+                    '确定要提交置换申请吗(置换申请下所有置换明细都会被提交)？',
+                    {title: '提交置换申请'},
+                    function (index) {
+                        //数据监测
+                        $.ajax({
+                            type: "GET",
+                            url: "{:U('Displace/checkDisplaceDetailById')}",
+                            data: {'drId': p_id},
+                            dataType: "JSON",
+                            success: function (data) {
+                                if (data.status == 1) {
+                                    var url = "{:U('Touch/Displace/process')}" + '/RECORDID/' + p_id + '/CASE_TYPE/' + "{$caseType}";
+                                    window.location.href = url;
+                                }
+                                else {
+                                    layer.alert(data.msg, {icon: 2, closeBtn: false},
+                                            function () {
+                                                layer.close(index);
+                                                window.location.reload();
+                                            });
+                                }
+                            }
+                        })
+                    }
+            );
+        }
+        else {
+            layer.alert('“未提交”状态下的置换申请才能提交！', {icon: 2});
+        }
+    });
+
+    //最晚送达时间判断
+    $('input[name="END_TIME"]').blur(function() {
+        if (!$('input[name="END_TIME"]').val().trim()) return;
+
+        var postDate = new Date($('input[name="END_TIME"]').val());
+        var nowDate = new Date();
+
+        if (postDate< nowDate) {
+            alert('最晚送达时间不得小于当前时间');
+            $('input[name="END_TIME"]').val('');
+        }
+    });
+
+
+    // 查看置换申请流程图
+    $('#show_flow_step').click(function () {
+        // 定义异步调用的处理函数
+        // 获取工作流ID异步调用成功回调函数
+        function getFlowIdSuccess(resp, status, xhr) {
+            if (resp) {
+                resp = JSON.parse(resp);
+            }
+
+            if (resp.status == 'noauth') {
+                var message = resp.msg || '权限不足';
+                layer.alert(message, {icon: 2});
+                return;
+            }
+
+            if (resp.status) {
+                var viewFlowUrl = "{:U('Flow/viewFlow')}";
+                viewFlowUrl += '/FLOWID/' + resp.data;
+                layer.open({
+                    type: 2,
+                    title: '流程图',
+                    shadeClose: true,
+                    shade: 0.8,
+                    area: ['90%', '90%'],
+                    content: viewFlowUrl
+                });
+
+            } else {
+                var message = resp.message || '获取工作流ID失败';
+                layer.alert(message, {icon: 7});
+            }
+        }
+
+        // 获取工作流ID异步调用失败回调函数
+        function getFlowIdFail(xhr, status, error) {
+            layer.alert('服务器访问异常，请稍后重试!', {icon: 2});
+        }
+
+        // 显示流程图
+        var selectedItem = $('.contractinfo-table .itemlist.selected');
+        if (!selectedItem) {
+            layer.alert('请选择一条置换申请!', {icon: 7});
+            return;
+        }
+        var fid = selectedItem.attr('fid');
+        if (fid) {
+            if ($("select[name='" + fid + "_STATUS']").val() == 0) {
+                layer.alert('该置换申请尚未发起工作流!', {icon: 7});
+                return;
+            }
+            $.ajax({
+                url: "{:U('Displace/getFlowId')}",
+                data: {
+                    'displaceId': fid
+                },
+                success: getFlowIdSuccess,
+                error: getFlowIdFail
+            });
+        }
+    });
+</script>
+<include file="./Tpl/Admin/Public/filter.html" />
+</body>
+</html>

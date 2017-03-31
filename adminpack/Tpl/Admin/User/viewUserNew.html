@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>用户管理</title>
+	<meta charset="GBK">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!--<link href="./Public/css/style2.css" type="text/css" rel="stylesheet"/>-->
+	<!--<script type="text/javascript" src="./Public/validform/js/jquery-1.9.1.min.js"></script>-->
+	<!--<script type="text/javascript" src="./Public/validform/js/Validform_v5.3.2.js"></script>-->
+	<!--<script type="text/javascript" src="./Public/validform/js/common.js"></script>-->
+	<!--<script type="text/javascript" src="./Public/js/common.js"></script>-->
+	<!--<script language="javascript" type="text/javascript" src="./Public/My97DatePicker/WdatePicker.js"></script>-->
+		<!---->
+	<!--<script type="text/javascript" src="./Public/validform/plugin/swfupload/swfuploadv2.2.js"></script>-->
+	<!--<script type="text/javascript" src="./Public/validform/plugin/swfupload/Validform.swfupload.handler.js"></script>-->
+
+	<!--<link rel="stylesheet" href="./Public/validform/css/style.css" type="text/css" media="all" />-->
+	<!--<link rel="stylesheet" href="./Public/validform/css/validateForm.css" type="text/css" media="all" />-->
+    <include file="./Tpl/Admin/Public/comm_css_js.html" />
+</head>
+<body>
+	<div class="containter">
+		<div class="right fright j-right">
+            <div class="handle-tab">
+                <ul>
+                    <switch name="action">
+                        <case value="viewUserNew">
+                            <li class="selected"><a href="{:U('User/viewUserNew')}">用户管理</a></li>
+                        </case>
+                        <case value="userinfoNew">
+                            <li class="selected"><a href="{:U('User/userinfoNew', 'showForm=2')}">用户信息</a></li>
+                        </case>
+                    </switch>
+                </ul>
+            </div>
+			{$form}	 
+		</div>
+    </div>
+<script>
+	$(document).ready(function(){
+        // 部门选择
+        var deptOptions = '{$deptOptions}';
+        if (deptOptions) {
+            $('select[name="DEPTID"]')
+                    .html(deptOptions)
+                    .addClass('js-example-basic-single')
+                    .val($('input[name="DEPTID_OLD"]').val())
+                    .unbind('focus')
+                    .select2({
+                        allowClear: true,
+                        noResults: '没有找到相关信息'
+                    });
+
+            // 权限选择
+
+        }
+		$('select[name="ROLEID"]').select2({allowClear: true});
+		$(".contractinfo-table tbody tr").click(function () {
+			$(this).siblings().removeClass("selected");
+			$(this).addClass("selected");
+		});
+		
+		$("input[name$='USERNAME']").bind('change',function(){
+			var demo=$(".registerform").Validform();
+			demo.addRule([
+				{
+					ele:"input[name$='USERNAME']",
+					datatype:"*",
+					ajaxurl:"{:U('Api/check_User_Exist')}"+"&USERNAME="+$("input[name$='USERNAME']").val()+"&ID={$ID}",
+					nullmsg:"请填写用户名！",
+					errormsg:"请重新编辑用户名！"
+				} 
+			]);
+		});
+	});
+	
+	function baseInfo(obj){
+		var ID = $(obj).parent().attr("fid");
+        var referFrom = $('#refer_from').val();
+		var URL = "{:U('User/viewUserNew')}"+"&showForm=1&ID="+ID;
+
+		fedit(this,URL, referFrom);
+	}
+
+	function cityInfo(obj){
+		var ID = $(obj).parent().attr("fid");
+        var referFrom = $('#refer_from').val();
+		var URL = "{:U('User/viewUserNew')}"+"&showForm=1&ISCITY=-1&ID="+ID;
+
+		fedit(this,URL, referFrom);
+	}
+	
+	function delInfo(obj){
+		fdel(obj);
+	}
+</script>
+</body>
+</html>

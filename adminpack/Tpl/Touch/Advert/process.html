@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <include file="Tpl/Touch/Public/head.html" />
+    <title>{$title}</title>
+</head>
+<body>
+    <div class="head jumbotron">
+        <div class="container">
+            <h3>{$processTitle}</h3>
+            <span class="label label-danger" {$labelStyle}>{$title}</span>
+            <small>{$applicationTime}</small>
+            <include file="Tpl/Touch/Public/back_btn_box.html" />
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="container">
+            <!--申请说明-->
+            <include file="Tpl/Touch/Public/application_info.html" />
+
+            <div class="panel panel-primary">
+                <a name="invoice-apply"></a>
+                <div class="panel-heading"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;开票申请</div>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th class="text-center">序号</th>
+                            <th class="text-center">城市</th>
+                            <th class="text-center">项目名称</th>
+                            <th class="text-center">合同编号</th>
+                            <th class="text-center">业务类型</th>
+                            <th class="text-center">申请人</th>
+                            <th class="text-center">申请时间</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <volist name="viewData['applyInfo']" id="applyInfo" key="k">
+                            <tr>
+                                <td class="text-center">{$k}</td>
+                                <td class="text-center">{$applyInfo['CITY_NAME']}</td>
+                                <td class="text-center">{$applyInfo['PROJECTNAME']}</td>
+                                <td class="text-center">{$applyInfo['CONTRACT_NO']}</td>
+                                <td class="text-center">{$viewData['caseType'][$applyInfo['SCALETYPE']]}</td>
+                                <td class="text-center">{$applyInfo['APPLY_USER_NAME']}</td>
+                                <td class="text-center"><?=$applyInfo['CREATETIME']?></td>
+                            </tr>
+                        </volist>
+                        </tbody>
+                    </table>
+                </div>
+                <notempty name="attachment">
+                    <div class="panel-footer">
+                        <dl>
+                            <dt>附件:</dt>
+                            <volist name="attachment" id="file">
+                                <dd style="word-break: break-all;"><a href="{:C('DOMAIN_NAME')}/index.php?s=/Upload/showfile&filecode={$file['code']}" class="download-file" data-file-code="{$file['code']}">{$file['name']}</a></dd>
+                            </volist>
+                        </dl>
+                    </div>
+                </notempty>
+            </div>
+
+            <p class="ps-text">注：横向拖动表格可查看完整数据</p>
+
+            <div class="panel panel-primary">
+                <a name="invoice-detail"></a>
+                <div class="panel-heading"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;开票明细</div>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th class="text-center">合同金额</th>
+                            <th class="text-center">本次申请金额</th>
+                            <th class="text-center">累计开票金额（不含本次）</th>
+                            <th class="text-center">发票种类</th>
+                            <th class="text-center">发票类型</th>
+                            <th class="text-center">备注</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td class="text-center">{$viewData['totalInfo']['money']}</td>
+                            <td class="text-center">{$viewData['totalInfo']['invoice_money']}</td>
+                            <td class="text-center">{$viewData['totalInfo']['sum_money']}</td>
+                            <td class="text-center">{$viewData['totalInfo']['invoice_class']}</td>
+                            <td class="text-center">{$viewData['totalInfo']['invoice_biz_type']}</td>
+                            <td class="text-center">{$viewData['totalInfo']['remark']}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <p class="ps-text">注：横向拖动表格可查看完整数据</p>
+
+            <?php if(!empty($viewData['memberInfo'])){?>
+            <div class="panel panel-primary">
+                <a name="members"></a>
+                <div class="panel-heading"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;分销会员</div>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th class="text-center">序号</th>
+                            <th class="text-center">客户姓名</th>
+                            <th class="text-center">客户手机号</th>
+                            <th class="text-center">签约日期</th>
+                            <th class="text-center">签约套数</th>
+                            <th class="text-center">后佣收费标准</th>
+                            <th class="text-center">结项比例（%）</th>
+                            <th class="text-center">结项金额（元）</th>
+                            <th class="text-center">发票状态</th>
+                            <th class="text-center">后佣中介佣金</th>
+                            <th class="text-center">中介成交奖励</th>
+                            <th class="text-center">置业顾问成交奖励</th>
+                            <th class="text-center">外部成交奖励</th>
+                            <th class="text-center">证件类型</th>
+                            <th class="text-center">证件号码</th>
+                            <th class="text-center">房号</th>
+                            <th class="text-center">房屋面积</th>
+                            <th class="text-center">房屋总价</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <volist name="viewData['memberInfo']" id="memberInfo" key="k">
+                            <tr>
+                                <td class="text-center">{$k}</td>
+                                <td class="text-center">{$memberInfo['REALNAME']}</td>
+                                <td class="text-center">{$memberInfo['MOBILENO']}</td>
+                                <td class="text-center"><?=oracle_date_format($memberInfo['SIGNTIME'],"Y-m-d")?></td>
+                                <td class="text-center">{$memberInfo['SIGNEDSUITE']}</td>
+                                <td class="text-center"><?=$viewData['feesArr'][1][$memberInfo['TOTAL_PRICE_AFTER']]?></td>
+                                <td class="text-center">{$memberInfo['PERCENT']|floatval}</td>
+                                <td class="text-center">{$memberInfo['AMOUNT']|floatval}</td>
+                                <td class="text-center">{$viewData['invoiceStatus'][$memberInfo['INVOICE_STATUS']]}</td>
+                                <td class="text-center"><?=$viewData['feesArr'][2][$memberInfo['AGENCY_REWARD_AFTER']]?></td>
+                                <td class="text-center"><?=$viewData['feesArr'][4][$memberInfo['AGENCY_DEAL_REWARD']]?></td>
+                                <td class="text-center"><?=$viewData['feesArr'][5][$memberInfo['PROPERTY_DEAL_REWARD']]?></td>
+                                <td class="text-center"><?=$viewData['feesArr'][3][$memberInfo['OUT_REWARD']]?></td>
+                                <td class="text-center">{$certificateType[$memberInfo['CERTIFICATE_TYPE']]}</td>
+                                <td class="text-center">{$memberInfo['IDCARDNO']}</td>
+                                <td class="text-center">{$memberInfo['ROOMNO']}</td>
+                                <td class="text-center">{$memberInfo['HOUSEAREA']}</td>
+                                <td class="text-center">{$memberInfo['HOUSETOTAL']}</td>
+                            </tr>
+                        </volist>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <p class="ps-text">注：横向拖动表格可查看完整数据</p>
+            <div class="pull-right" style="margin-top: -15px;margin-bottom: 20px;"><a class="btn btn-sm btn-danger" id="export_members">导出会员</a></div>
+            <div style="clear:both"></div>
+            <?php } ?>
+            <!--流程图-->
+            <include file="Tpl/Touch/Public/work_flows.html" />
+
+            <!--审批意见-->
+            <include file="Tpl/Touch/Public/opinion_flow.html" />
+        </div>
+    </div>
+
+    <div class="foot">
+        <!--菜单-->
+        <include file="Tpl/Touch/Public/menu.html" />
+        <!--用户选择列表-->
+        <include file="Tpl/Touch/Public/user_list.html" />
+
+    </div>
+<include file="Tpl/Touch/Public/foot.html" />
+    <script type="text/javascript">
+        $('#export_members').click(function() {
+            var url = "__APP__" + '/MemberDistribution/exportMembers&CASEID=<?=$CASEID?>&flowId=<?=$flowId?>&invoiceId=<?=$invoiceId?>';
+            location.href = url;
+        });
+    </script>
+</body>
+</html>

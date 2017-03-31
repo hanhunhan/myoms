@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="GBK">
+    <title>开票回款记录</title>
+    <include file="./Tpl/Admin/Public/comm_css_js.html"/>
+</head>
+<body>
+<div class="containter">
+    <div class="right fright j-right">
+        {$html}
+        <input id="total_amount" type="hidden" name="total_amount" value="{$total_amount}" />
+    </div>
+</div>
+<script>
+    $(function () {
+        $('[name="PERCENT"], [name="AMOUNT"]').blur(function () {
+            var inpName = $(this).attr('name');
+            var percent = $.trim($('[name="PERCENT"]').val());
+            var oldPercent = $('[name="PERCENT_OLD"]').val();
+            var amount = $.trim($('[name="AMOUNT"]').val());
+            var oldAmount = $.trim($('[name="AMOUNT_OLD"]').val());
+            var totalAmount = parseFloat($("#total_amount").val());
+            if (inpName == 'PERCENT') {
+                if (percent <= 0) {
+                    alert('结款比例不能为0');
+                    $('[name="PERCENT"]').val($('[name="PERCENT_OLD"]').val());
+                    return;
+                } else if (percent > 100) {
+                    alert('结款比例不能超过100%');
+                    $('[name="PERCENT"]').val($('[name="PERCENT_OLD"]').val());
+                    return;
+                }
+                amount = totalAmount * percent / 100;
+                $('[name="AMOUNT"]').val(save2DigsAfterPoint(amount));
+            } else if (inpName == 'AMOUNT') {
+                if (amount <= 0) {
+                    alert('结款金额不能为0');
+                    $('[name="AMOUNT"]').val($('[name="AMOUNT_OLD"]').val());
+                    return;
+                } else if (amount > totalAmount + Number(1)) {
+                    alert('超过了最大可结算金额，不能申请开票');
+                    return;
+                }
+
+                percent = amount * 100 / totalAmount;
+                $('[name="PERCENT"]').val(save2DigsAfterPoint(percent));
+            }
+        });
+
+        $(window).keydown(function (event) {
+            if (event.keyCode == 13) {
+                event.preventDefault();
+                return false;
+            }
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+<script>
+    $(function () {
+        var isShowOptionBtn = "{$isShowOptionBtn}";
+        if (isShowOptionBtn == DISPLAY_OPTION_BTN.HIDE) {
+            $.each($('.page a'), function (index, elem) {
+                if (!REG_EXPS.ORDER.test($(elem).text())
+                        && !REG_EXPS.SEARCH.test($(elem).text())
+                        && !REG_EXPS.REFRESH.test($(elem).text())) {
+                    $(elem).remove();
+                }
+            });
+
+            $('.buttons').remove();
+            $('.handle-btn').remove();
+        }
+    });
+</script>

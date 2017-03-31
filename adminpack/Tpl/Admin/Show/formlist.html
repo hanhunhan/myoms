@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+<title>字段管理</title>
+<link rel=stylesheet href="./Tpl/css/global.css" type="text/css">
+<link rel=stylesheet href="./Tpl/css/mainPage.css" type="text/css">
+<script type="text/javascript" src="./Tpl/js/jquery-1.5.2.min.js"></script>
+</head>
+
+<body>
+	<div class="box" id="interestManage">
+    	<div class="box-tit"><h3>字段管理</h3></div>
+        <div class="box-con">
+			 
+            <div class="box-b">
+			<a href="{:U('Show/viewForm')}">表单管理 </a> > <a href="#">字段管理 </a> 
+            	<div class="hd"><h3> {$formtitle} </h3></div>
+                <div class="bd">
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table-a">
+                      <tr>
+                        <th width="10%">字段名称</th>
+                        <th width="10%">所属界面</th>
+                        <th width="10%">字段含义</th>
+                        <th><a class="font-blue" href="{:U('Show/addFormlist?FORMNO='.$FORMNO.'&formtitle='.$formtitle)}">添加 </a> | <a class="font-blue" href="{:U('Show/addAutoFormlist?FORMNO='.$FORMNO)}">自动添加 </a></th>
+                      </tr>
+                    <volist name="re" id="vo">
+                        <tr>
+                        <td>{$vo.FIELDNAME}</td>
+                        <td>{$vo.FORMNO}</td>
+                        <td>{$vo.FIELDMEANS}</td>
+                        <td>					 
+                            <a href="{:U('Show/editFormlist?todo=edit&FIELDNAME='.$vo[FIELDNAME].'&FORMNO='.$vo[FORMNO].'&formtitle='.$formtitle)}">修改</a>  |					 
+                            <a href="{:U('Show/delFormlist?FIELDNAME='.$vo[FIELDNAME].'&FORMNO='.$vo[FORMNO])}" onclick="return confirm('确定删除？');">删除</a>  					 
+                        </td>	
+                        </tr>
+                    </volist>
+                    <empty name="re">
+                        <tr>
+                            <td colspan="4">暂无相关数据</td>
+                        </tr>   
+                    </empty>    
+                    </table>
+                  <div class="cut-page">{$page}</div>
+
+              </div>
+          </div>
+
+        </div>
+    </div>
+</body>
+</html>

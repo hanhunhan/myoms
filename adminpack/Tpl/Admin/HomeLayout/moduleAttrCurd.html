@@ -1,0 +1,90 @@
+<div class="box" id="interestManage">
+    <div class="box-tit"><h3><?=$typeName?>模块属性</h3></div>
+    <div class="box-con" >
+        <div class="c-tit"><h4><?=$typeName?>模块属性</h4></div>
+        <form method="POST" action="{:U('HomeLayout/moduleAttrCurd')}" onsubmit="sub();return false;">
+            <div class="bd">
+                <input type="button" value="新增节点" onclick="add_attr_item();">
+                <!--                新增节点模板-->
+                <?=W('HomeLayout',array('widgetName'=>'homeModuleAttr'))?>
+                <table class="table2" width="98%">
+                    <tr>
+                        <td style="width: 15%;">
+                            <em class="xing">*</em>模块名称：
+                        </td>
+                        <td>
+                            <label><?=$moduleRes['moduleName']?></label>
+                        </td>
+                    </tr>
+                </table>
+                <div id="item_list" >
+                    <?php if($listData){?>
+                                <?php  foreach($listData as $data){?>
+                                        <?=W('HomeLayout',array('widgetName'=>'homeModuleAttr','data'=>$data))?>
+                                <?php }?>
+                    <?php }?>
+                </div>
+                <div class="center-btn mt10"  style="margin:20px;">
+                    <input type="submit"  value="确定" class="btn-a mr50" >
+                    <input  type="button" class="btn-a" onclick="history.go(-1)" value="返回"/>
+                </div>
+                    <input type="hidden" name="del_ids" value="" id="del_ids">
+                    <input name='curdType' type='hidden' value='<?=$_GET[curdType]?>'>
+                    <input name='moduleId' id="moduleId" type='hidden' value='<?=$moduleId?>'>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    var item_list = $("#item_list");
+    var item_tpl = $("#item_div_tpl").html();
+    var del_ids = "";
+    //新增item_div节点
+    function add_attr_item(){
+        item_list.append('<div class="item_div"> '+item_tpl+'</div>');
+    }
+
+    //删除item_div 节点
+    function item_del(dom){
+        var item_id = $(dom).attr('tag');
+        $(dom).parent().parent().parent().remove();
+        del_ids = del_ids+$('#del_ids').val()+item_id+",";
+    }
+
+    //ajax提交
+    function sub(){
+        var moduleId = $("#moduleId").val();
+        var data = [];
+        del_ids = del_ids.substr(0,del_ids.length-1);
+        $("#item_list .item_div").each(function(){
+            var itemData = {};
+            itemData.cName = $(this).find("input[name=cName]").val();
+            itemData.keyName = $(this).find("input[name=keyName]").val();
+            itemData.aId = $(this).find("input[name=aId]").val();
+            itemData.extSelect = [];
+            $(this).find("input[name=extSelect]").each(function(){
+                if($(this).is(":checked")){
+                    itemData.extSelect.push($(this).val());
+                }
+            });
+            data.push(itemData);
+        });
+        $.ajax({
+            url:"{:U('HomeLayout/moduleAttrCurd')}",
+            data:{formData:data,moduleId:moduleId,del_ids:del_ids},
+            type:'post',
+            success:function(res){
+                if(res==1){
+                    alert('保存成功');
+                }else{
+                    alert('保存失败')
+                }
+                window.location.href = "<?=U('HomeLayout/moduleList')?>";
+            }
+        })
+    }
+</script>
+
+
+
+

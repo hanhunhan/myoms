@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>调整过程表</title>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="./Public/css/style2.css" type="text/css" rel="stylesheet"/>
+    <link href="./Public/css/jquery-ui.css" type="text/css" rel="stylesheet"/>
+    <script type="text/javascript" src="./Public/validform/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="./Public/validform/js/Validform_v5.3.2.js"></script>
+    <script type="text/javascript" src="./Public/validform/js/common.js"></script>
+    <script type="text/javascript" src="./Public/js/common.js"></script>
+    <script language="javascript" type="text/javascript" src="./Public/My97DatePicker/WdatePicker.js"></script>
+    <script type="text/javascript" src="./Public/validform/plugin/swfupload/swfuploadv2.2.js"></script>
+    <script type="text/javascript" src="./Public/validform/plugin/swfupload/Validform.swfupload.handler.js"></script>
+    <script type="text/javascript" src="./Public/js/jquery-ui.js"></script>
+
+    <link rel="stylesheet" href="./Public/validform/css/style.css" type="text/css" media="all"/>
+    <link rel="stylesheet" href="./Public/validform/css/validateForm.css" type="text/css" media="all"/>
+    <link rel="stylesheet" href="./Public/css/report.css" type="text/css" media="all"/>
+    <style>
+        html {
+            overflow: auto;
+        }
+
+        .menufixed {
+            top: 0;
+            position: fixed;
+        }
+
+        .jbtab th {
+            background: none repeat scroll 0 0 #417eb7;
+            color: #fff;
+            padding: 5px 0;
+        }
+
+        .jbtab td {
+            border: 1px solid #e1e1e1;
+            padding: 10px 0;
+        }
+
+        .kctjbot input {
+            height: 30px;
+            line-height: 30px;
+        }
+
+        .smalltext {
+            text-align: right;
+            color: brown;
+            float: right;
+            padding-right: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="containter">
+    <div class="right fright j-right">
+        <form id="search_form" action="__ACTION__" method="post">
+            <div class="kctjcon">
+                <table cellpadding="0" cellspacing="0" width="100%">
+                    <tr>
+                        <td align="right">项目名称：&nbsp;</td>
+                        <td>
+                            <input type="text" id="search_prjname" name="search_prjname" value="{$search_prjname}"
+                                   class="width190 ac_input"/> <span class="c-red">[逗号分隔，对比查询]</span>
+                        </td>
+                        <td align="right">是否已决算：&nbsp;</td>
+                        <td>
+                            <div class="jssel">
+                                <select name="search_state">
+                                    <volist name="prjState" id="vo" k="key">
+                                        <if condition="$search_state eq $key">
+                                            <option value="{$key}" selected='selected'>{$vo}</option>
+                                            <else/>
+                                            <option value="{$key}">{$vo}</option>
+                                        </if>
+                                    </volist>
+                                </select>
+                            </div>
+                        </td>
+                        <td align="right"> &nbsp;</td>
+                        <td></td>
+                    </tr>
+                </table>
+                <div class="kctjbot">
+                    <input type="submit" class="btn2 sm_blue" value="查 询"/>
+                    <input type="submit" class="btn2" style="border:none;cursor:pointer;" name="export" value="导出数据"/>
+                </div>
+            </div>
+            <input type="hidden" id="u" value="{$pageurl}&pn={$page}"/>
+        </form>
+        <div class="contractinfo-table">
+            <table>
+                <thead>
+                {$th_str}
+                </thead>
+                <tbody>
+                {$data_str}
+                </tbody>
+            </table>
+            <p class="pagenum">{$page_nav}</p>
+        </div>
+    </div>
+</div>
+<include file="./Tpl/Admin/Public/search_project_name.html"/>
+</body>
+</html>

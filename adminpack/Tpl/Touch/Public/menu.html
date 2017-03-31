@@ -1,0 +1,13 @@
+<notempty name="menu">
+    <div class="catalog-button" id="catalog-button">
+        <span class="glyphicon glyphicon-list"></span>
+    </div>
+    <div class="overlay">
+    </div>
+    <nav class="cbp-spmenu cbp-spmenu-vertical cbp-spmenu-right" id="right-menu">
+        <h3>Ŀ¼</h3>
+        <volist name="menu" id="menuItem">
+            <a href="#{$menuItem['name']}" class="page-anchor">{$menuItem['text']}</a>
+        </volist>
+    </nav>
+</notempty>
